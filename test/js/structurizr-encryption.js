@@ -9,19 +9,18 @@ QUnit.test("construction throws an exception when no properties are specified", 
     );
 });
 
-QUnit.test("construction sets iv and salt when not specified", function(assert) {
+QUnit.test("construction sets iv, salt, and location when not specified", function(assert) {
     const properties = {
         type: "aes",
         iterationCount: 1000,
         keySize: 128,
-        iv: undefined,
-        salt: undefined,
         location: "Client",
         passphrase: "password"
     };
 
     const strategy = new StructurizrEncryptionStrategy(properties);
 
+    assert.equal(properties.location, "Client");
     assert.equal(properties.iv.length, 32);
     assert.equal(properties.salt.length, 32);
     assert.notEqual(properties.iv, properties.salt);
@@ -57,7 +56,8 @@ QUnit.test("encrypt", function(assert) {
               "iv": "12345678901234567890123456789012",
               "keySize": 128,
               "salt": "12345678901234567890123456789012",
-              "type": "aes"
+              "type": "aes",
+              "location": "Client"
             }
         }
     );
@@ -84,7 +84,8 @@ QUnit.test("decrypt", function(assert) {
           "iv": "12345678901234567890123456789012",
           "keySize": 128,
           "salt": "12345678901234567890123456789012",
-          "type": "aes"
+          "type": "aes",
+          "location": "Client"
         }
     };
     

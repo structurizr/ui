@@ -16,6 +16,8 @@ class StructurizrEncryptionStrategy {
         if (this.#encryptionProperties.salt === undefined) {
             this.#encryptionProperties.salt = this.#generateSecureRandomBytesAsHex();
         }
+
+        this.#encryptionProperties.location = "Client";
     }
 
     decrypt(encryptedWorkspace) {
@@ -56,7 +58,8 @@ class StructurizrEncryptionStrategy {
                 keySize: this.#encryptionProperties.keySize,
                 iterationCount: this.#encryptionProperties.iterationCount,
                 salt: this.#encryptionProperties.salt,
-                iv: this.#encryptionProperties.iv
+                iv: this.#encryptionProperties.iv,
+                location: this.#encryptionProperties.location
             }
         };
     }
