@@ -1,7 +1,3 @@
-var structurizr = structurizr || {
-    util: {}
-};
-
 structurizr.util.shadeColor = function(color, percentAsInteger, darkMode) {
     if (darkMode === true) {
         percentAsInteger = -percentAsInteger;

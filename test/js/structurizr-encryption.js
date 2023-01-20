@@ -1,4 +1,4 @@
-QUnit.test("construction throws an exception when no properties are specified", function(assert) {
+QUnit.test("new StructurizrEncryptionStrategy() throws an exception when no properties are specified", function(assert) {
     assert.throws(
         function() {
             new StructurizrEncryptionStrategy();
@@ -9,7 +9,7 @@ QUnit.test("construction throws an exception when no properties are specified", 
     );
 });
 
-QUnit.test("construction sets iv, salt, and location when not specified", function(assert) {
+QUnit.test("new StructurizrEncryptionStrategy() sets iv, salt, and location when not specified", function(assert) {
     const properties = {
         type: "aes",
         iterationCount: 1000,
@@ -26,7 +26,7 @@ QUnit.test("construction sets iv, salt, and location when not specified", functi
     assert.notEqual(properties.iv, properties.salt);
 });
 
-QUnit.test("encrypt", function(assert) {
+QUnit.test("StructurizrEncryptionStrategy.encrypt()", function(assert) {
     const strategy = new StructurizrEncryptionStrategy({
         type: "aes",
         iterationCount: 1000,
@@ -63,7 +63,7 @@ QUnit.test("encrypt", function(assert) {
     );
 });
 
-QUnit.test("decrypt", function(assert) {
+QUnit.test("StructurizrEncryptionStrategy.decrypt()", function(assert) {
     const strategy = new StructurizrEncryptionStrategy({
         type: "aes",
         iterationCount: 1000,
