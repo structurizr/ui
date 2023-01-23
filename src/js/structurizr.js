@@ -9,6 +9,7 @@ var Structurizr = Structurizr || {
 };
 
 var structurizr = structurizr || {
+    ui: {},
     util: {}
 };
 
