@@ -13,6 +13,19 @@ var structurizr = structurizr || {
     util: {}
 };
 
+structurizr.constants = {
+    CUSTOM_VIEW_TYPE: "Custom",
+    SYSTEM_LANDSCAPE_VIEW_TYPE: "SystemLandscape",
+    SYSTEM_CONTEXT_VIEW_TYPE: "SystemContext",
+    CONTAINER_VIEW_TYPE: "Container",
+    COMPONENT_VIEW_TYPE: "Component",
+    DYNAMIC_VIEW_TYPE: "Dynamic",
+    DEPLOYMENT_VIEW_TYPE: "Deployment",
+    FILTERED_VIEW_TYPE: "Filtered",
+
+    DEFAULT_DEPLOYMENT_ENVIRONMENT_NAME: "Default"
+};
+
 window.onerror = function (msg, url, lineNo, columnNo, error) {
     logError(msg, url, lineNo, error);
 };
