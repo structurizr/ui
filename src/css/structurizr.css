@@ -1,0 +1,770 @@
+body {
+    font-family: "Open Sans", sans-serif;
+    padding-left: 0;
+    padding-right: 0;
+    line-height: 1.5;
+}
+.centered {
+    text-align: center;
+}
+#footer {
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 0;
+    padding-right: 0;
+    background: #438DD5;
+    color: #ffffff;
+    font-size: 20px;
+}
+#footer a, #footer a:hover {
+    color: white;
+}
+.container {
+    font-size: 18px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.section {
+    margin-right: 0;
+    margin-left: 0;
+    padding-top: 40px;
+    padding-bottom: 100px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.jumbo h1 {
+    font-size: 60px;
+    font-weight: normal;
+}
+.jumbo {
+    font-size: 30px;
+}
+.row {
+    padding-bottom: 20px;
+}
+h1 {
+    font-size: 50px;
+    font-weight: normal;
+    margin-top: 30px;
+}
+h2 {
+    font-size: 40px;
+    font-weight: normal;
+    margin-top: 30px;
+}
+h3 {
+    font-size: 30px;
+    font-weight: normal;
+    margin-top: 30px;
+}
+h4 {
+    font-size: 25px;
+    font-weight: normal;
+    margin-top: 30px;
+}
+h5 {
+    font-size: 16px;
+    font-weight: normal;
+}
+h6 {
+    font-size: 13px;
+    font-weight: normal;
+}
+.profileImage {
+    border: 1px solid #808080;
+    border-radius: 6px;
+    height: 48px;
+    width: 48px;
+}
+
+#diagramContainer {
+    background: gray;
+    margin: 0;
+    padding: 0;
+    border-style: none;
+}
+
+#diagramViewport {
+    background: gray;
+    text-align: center;
+    margin: 0 auto 0 auto;
+    padding: 0;
+    border-style: none;
+    overflow: scroll;
+}
+
+#diagramCanvas {
+    border-style: none;
+    background: white;
+    padding: 0;
+    margin: auto;
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+
+#diagramDefinition {
+    padding: 0;
+    background: #dddddd;
+}
+.c4MetaModel td {
+    font-size: 13px;
+}
+.c4MetaModel td ul {
+    padding: 0 0 0 20px;
+}
+.dashboardMetaData {
+    font-size: 14px;
+}
+.workspaceMetaData {
+    font-size: 10px;
+    color: gray;
+}
+a:hover {
+    text-decoration: none;
+}
+
+.hideHorizontalScrollbars {
+    overflow-x: hidden !important;
+}
+.hideVerticalScrollbars {
+    overflow-y: hidden !important;
+}
+
+.panel-title {
+    font-size: 24px;
+}
+.table-vcenter td {
+    vertical-align: middle!important;
+}
+.pricingSmallPrint {
+    font-size: 13px;
+}
+#buildNumber {
+}
+.inactive {
+    opacity:0.4;
+    filter:alpha(opacity=40);
+}
+.pricingPagePrice {
+    font-size: 80px;
+    font-weight: bold;
+}
+.img-thumbnail {
+    color: #ddd;
+}
+label {
+    font-weight: normal;
+}
+.label {
+    font-weight: normal;
+}
+.imageTitle {
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+.structurizrEmbed {
+    padding: 0;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+}
+.embedCode {
+    font-size: 11px;
+}
+.codeSample {
+    font-size: 11px;
+}
+
+a {
+    color: #1168BD;
+}
+
+.structurizrBackgroundGray {
+    background: #777777;
+    color: #ffffff;
+}
+.structurizrBackgroundDarker {
+    background: #02172C;
+    color: #ffffff;
+}
+.structurizrBackgroundDark {
+    background: #08427B;
+    color: #ffffff;
+}
+.structurizrBackgroundBase {
+    background: #1168BD;
+    color: #ffffff;
+}
+.structurizrBackgroundLight {
+    background: #438DD5;
+    color: #ffffff;
+}
+.structurizrBackgroundLighter {
+    background: #85BBF0;
+    color: #ffffff;
+}
+.structurizrBackgroundDarker a, .structurizrBackgroundDark a, .structurizrBackgroundBase a, .structurizrBackgroundLight a {
+    color: #85BBF0;
+}
+
+.label-primary {
+    background: #1168BD;
+}
+.label-version {
+    background: #999999;
+}
+
+th {
+    font-weight: normal;
+}
+
+.grayscale {
+    -webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
+    filter: grayscale(100%);
+}
+
+.exampleDiagram {
+    -webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
+    filter: grayscale(100%);
+}
+
+.exampleDiagram:hover {
+    -webkit-filter: none; /* Chrome, Safari, Opera */
+
+    filter: none;
+}
+code {
+    color: #08427B;
+    background: #E9F4FE;
+}
+.marker-vertex {
+    fill: #dddddd;
+    r: 20;
+}
+
+.marker-vertex:hover {
+    fill: #ff0000;
+}
+
+.smaller {
+    font-size: 11px;
+}
+
+.dashboardPublicWorkspace {
+    border-color: #d9534f;
+}
+
+.dashboardPublicWorkspace a {
+    color: #d9534f;
+}
+
+.dashboardPrivateWorkspace {
+    border-color: #337ab7;
+}
+
+#documentationContent {
+    margin-bottom: 100px;
+}
+
+#documentationContent img {
+    cursor: pointer;
+}
+
+#documentationContent table th, #decisionLogContent table th {
+    padding: 5px 10px 5px 10px;
+    border: solid 1px gray;
+    font-weight: bold;
+    background: #eeeeee;
+}
+
+#documentationContent table td, #decisionLogContent table td {
+    padding: 5px 10px 5px 10px;
+    border: solid 1px gray;
+}
+
+#documentationNavigation {
+    padding: 0px 0px 20px 5px;
+    line-height: 200%;
+}
+
+.documentationNavigationLink {
+
+}
+
+.documentationNavigationLinkActive {
+    font-weight: bold;
+}
+
+.documentationNavigationHeading {
+    font-size: 20px;
+    margin-bottom: 0px;
+    margin-top: 20px;
+}
+
+.documentationNavigationSection {
+    font-size: 12px;
+}
+
+.documentationNavigationSubSection {
+    padding-left: 20px;
+    font-size: 11px;
+}
+
+.documentationNavigationSubSubSection {
+    padding-left: 30px;
+    font-size: 10px;
+}
+
+.documentationSection {
+    font-size: 18px;
+    padding-left: 10px;
+    padding-right: 30px;
+}
+
+#documentationNavigationPanel {
+    overflow-y: scroll;
+}
+#documentationPanel {
+    overflow-y: scroll;
+    padding-top: 20px;
+    padding-bottom: 50px;
+}
+
+#documentationMetadata {
+    font-size: 9px;
+    color: #777777;
+}
+
+.decisionNavigationLink {
+
+}
+
+.decisionNavigationLinkActive {
+    font-weight: bold;
+}
+
+.decisionNavigationHeading {
+    font-size: 20px;
+    margin-bottom: 0px;
+    margin-top: 20px;
+}
+
+.decisionNavigationItem {
+    font-size: 12px;
+}
+
+.decisionLogSummary {
+    font-size: 18px;
+}
+
+.decisionLogSummary table td {
+    border-top: 1px solid #ddd !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+
+.faded {
+    color: #aaaaaa;
+}
+mark {
+    background: #85BBF0;
+    color: #ffffff;
+    padding: 0;
+}
+
+.editorGuidance {
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+}
+
+.carousel-caption {
+    background: #438DD5;
+    color: #ffffff;
+    text-shadow: none;
+    font-size: 30px;
+    opacity: 0.9;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.carousel-control {
+    color: #000000;
+    text-shadow: none;
+    opacity: 0.1;
+}
+.carousel-control:hover, .carousel-control:focus {
+    opacity: 0.1;
+}
+
+.btn {
+    text-shadow: none;
+}
+.glyphicon-btn {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 0;
+    vertical-align: top;
+}
+.icon-btn {
+    width: 18px;
+    height: 18px;
+    margin-bottom: 1px;
+    vertical-align: middle;
+}
+
+.glyphicon-xs {
+    width: 15px;
+    height: 15px;
+    margin-bottom: 1px;
+}
+.icon-xs {
+    width: 12px;
+    height: 12px;
+    margin: 2px 2px 4px 0;
+}
+
+.glyphicon-sm {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-bottom: 1px;
+}
+.icon-sm {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin: 2px 2px 4px 0;
+}
+
+.glyphicon-md {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 2px;
+}
+.icon-md {
+    width: 26px;
+    height: 26px;
+    margin: 2px 2px 4px 0;
+}
+
+.glyphicon-lg {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 2px;
+}
+
+.glyphicon-xl {
+    width: 40px;
+    height: 40px;
+}
+
+.glyphicon-xxl {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.glyphicon-white {
+    filter: invert(1);
+}
+.icon-white {
+    filter: invert(1);
+}
+
+.glyphicon-gray {
+    filter: invert(0.5);
+}
+
+.glyphicon-h1 {
+    width: 50px;
+    height: 50px;
+    vertical-align: middle;
+    line-height: 1.1;
+    margin-bottom: 10px;
+}
+
+.glyphicon-h2 {
+    width: 36px;
+    height: 36px;
+    vertical-align: middle;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+hr {
+    border-top: 1px solid #ddd;
+}
+.modal-xl {
+    width: 95%
+}
+.structurizrBannerLight {
+    display: block;
+}
+.structurizrBannerDark {
+     display: none;
+}
+
+#exploreTree .node {
+    cursor: pointer;
+}
+#exploreTree .node circle {
+    fill: #ffffff;
+    stroke-width: 2px;
+}
+#exploreTree .node text {
+    font-size: 10px;
+    fill: #000000;
+}
+#exploreTree .link {
+    fill: none;
+    stroke: #cccccc;
+    stroke-width: 1px;
+}
+#exploreTree .componentType {
+    font-weight: bold;
+}
+#exploreTree .sharedCode {
+    fill: #bbb;
+}
+
+#exploreBlocks .node rect {
+    stroke: #ffffff;
+    stroke-width: 1px;
+}
+#exploreBlocks .node text {
+    pointer-events: none;
+}
+#exploreBlocks .elementName {
+    font-size: 13px;
+}
+#exploreBlocks .elementDescription {
+    font-size: 8px;
+}
+#exploreBlocks path.link {
+    fill: none;
+    stroke: #dddddd;
+    stroke-width: 1px;
+}
+#exploreBlocks .componentType {
+    font-weight: bold;
+}
+#exploreBlocks .sharedCode {
+    fill-opacity: 0.5;
+}
+#exploreBlocks {
+    padding-top: 20px;
+}
+
+#exploreGraph {
+    background: #ffffff;
+}
+#exploreGraph .link {
+    stroke-width: 1px;
+    fill: none;
+}
+#exploreGraph .node {
+    stroke-width: 2px;
+}
+#exploreGraph .nodeName {
+    font-size: 13px;
+    cursor: default;
+    fill: #000000;
+}
+#exploreGraph .nodeMetadata {
+    font-size: 8px;
+    fill: #444444;
+    cursor: default;
+}
+
+#exploreDependencies .node circle {
+    stroke-width: 2px;
+}
+#exploreDependencies .node {
+    font-size: 10px;
+}
+#exploreDependencies .node text {
+    fill: #000000;
+}
+#exploreDependencies .link {
+    fill: none;
+    stroke: #eeeeee;
+    stroke-width: 2px;
+}
+#exploreDependencies .link:hover {
+    stroke-width: 4px;
+    stroke: #cccccc;
+}
+#exploreDependencies .cyclic {
+    stroke: #ff0000;
+}
+
+#exploreComponentAndCodeDependencies .links line {
+    stroke-opacity: 0.6;
+}
+#exploreComponentAndCodeDependencies .nodes circle {
+    stroke-width: 2px;
+}
+
+#exploreCodeUsageCount .code {
+    fill: #dddddd;
+    stroke: #bbbbbb;
+}
+#exploreCodeUsageCount text {
+    fill: #000000;
+}
+#exploreCodeUsageCount .bar {
+    stroke-width: 2px;
+}
+#exploreCodeUsageCount .axis {
+    font-size: 11px;
+}
+#exploreCodeUsageCount .axis path, #exploreCodeUsageCount .axis line {
+    fill: none;
+    display: none;
+}
+#exploreCodeUsageCount .label {
+    font-size: 11px;
+}
+
+#editorControls .nav a, #staticViewControls .nav a {
+    color: #000000;
+}
+#editorControls .nav-pills li a:hover, #staticViewControls .nav-pills li a:hover {
+    background: #85BBF0;
+}
+#editorControls .nav-pills li.active a, #staticViewControls .nav-pills li.active a {
+    background: #438DD5;
+}
+
+#editorStaticElementsTree, #editorDeploymentNodesTree {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#editorStaticElementsTree .node, #editorDeploymentNodesTree .node {
+    cursor: pointer;
+}
+#editorStaticElementsTree .node circle, #editorDeploymentNodesTree .node circle {
+    fill: #ffffff;
+    stroke-width: 2px;
+}
+#editorDeploymentNodesTree .node rect {
+    fill: #ffffff;
+}
+#editorStaticElementsTree .node text, #editorDeploymentNodesTree .node text {
+    font-size: 11px;
+    font-weight: bold;
+    fill: #000000;
+}
+#editorStaticElementsTree .link, #editorDeploymentNodesTree .link {
+    fill: none;
+    stroke: #e6e6e6;
+    stroke-width: 1px;
+}
+
+#editorRelationshipsGraph {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#editorRelationshipsGraph .node circle {
+    stroke-width: 2px;
+}
+#editorRelationshipsGraph .node {
+    font-size: 11px;
+    font-weight: normal;
+    fill: #333333;
+}
+#editorRelationshipsGraph .node text {
+    fill: #000000;
+}
+#editorRelationshipsGraph .link {
+    fill: none;
+    stroke: #eeeeee;
+    stroke-width: 2px;
+}
+#editorRelationshipsGraph .link:hover {
+    stroke-width: 4px;
+    stroke: #777777;
+}
+#editorRelationshipsGraph .cyclic {
+    stroke: #ff0000;
+}
+#editorRelationshipsGraph .multiple {
+    stroke: #aaaaaa;
+}
+
+#topNavigation, #workspaceSummaryControls {
+    padding: 10px;
+    background: #ffffff;
+    border-bottom: solid 1px #dddddd;
+    box-shadow: 0px 0px 3px #dddddd;
+    font-size: 18px;
+    font-weight: normal;
+}
+.topNavigationItem {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+#editorControls, #diagramControls, #explorationControls, #documentationControls, #decisionLogControls, #healthControls {
+    padding: 10px;
+    background: #ffffff;
+    border-bottom: solid 1px #dddddd;
+    box-shadow: 0px 0px 3px #dddddd;
+}
+#topNavigation .row, #workspaceSummaryControls .row, #editorControls .row, #diagramControls .row, #explorationControls .row, #documentationControls .row, #decisionLogControls .row, #healthControls .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+#diagramNavigationPanel {
+    background: #ffffff;
+    overflow-y: scroll;
+    border-right: solid 1px #dddddd;
+}
+.brandingLogo {
+    max-height: 35px;
+}
+
+[data-braintree-id="discover-card-icon"], [data-braintree-id="maestro-card-icon"] {
+    display: none !important;
+}
+.btn-active {
+    background: #999999;
+}
+
+#quickFindModal .selected {
+    background: #85BBF0;
+    color: #ffffff;
+}
+
+#quickFindModal .quickNavigationItem {
+    padding: 4px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+#progressMessage {
+    position: absolute;
+    z-index: 10;
+    width: 400px;
+    opacity: .80;
+    margin-left: -200px;
+    top: 40%;
+    left: 50%;
+    text-align: center;
+    font-size: 30px;
+    border-radius: 5px;
+    padding: 20px;
+    background: #999999;
+}

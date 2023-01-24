@@ -1,0 +1,87 @@
+<script nonce="${scriptNonce}">
+    structurizr.autoSave = false;
+    var structurizrEncryptionStrategy;
+    const structurizrApiClient = new structurizr.io.StructurizrApiClient(
+        "${structurizrConfiguration.apiUrl}",
+        "${workspace.id}",
+        "${workspace.apiKey}",
+        "${workspace.apiSecret}",
+        "${user.username}"
+    );
+
+    structurizrApiClient.getWorkspace(
+        "${workspace.internalVersion}",
+        function(response) {
+            if (response.success) {
+                const json = response.json;
+                json.id = ${workspace.id}; // force the workspace ID to be set correctly
+
+                if (json.ciphertext && json.encryptionStrategy) {
+                    showPassphraseModalAndDecryptWorkspace(json, loadWorkspace);
+                } else {
+                    loadWorkspace(json);
+                }
+            }
+        }
+    );
+
+    Structurizr.saveWorkspace = function(refresh) {
+        if (structurizr.autoSave === false) {
+            progressMessage.show('<p>Saving workspace...</p>');
+        }
+        $('#exitAndUnlockWorkspaceButton').prop('disabled', 'disabled');
+
+        var callback = function(response) {
+            progressMessage.hide();
+            $('#exitAndUnlockWorkspaceButton').prop('disabled', '');
+
+            if (response.success === true) {
+                if (refresh === true) {
+                    var indexOfVersionParameter = window.location.href.indexOf('?version=');
+                    if (indexOfVersionParameter > -1) {
+                        window.location.href = window.location.href.substr(0, indexOfVersionParameter);
+                    } else {
+                        location.reload();
+                    }
+                }
+            } else {
+                $('#exitAndUnlockWorkspaceButton').prop('disabled', 'disabled');
+            }
+
+            if (window.workspaceSaved !== undefined) {
+                workspaceSaved(response.success);
+            }
+
+            try {
+                if (structurizr && structurizr.scripting) {
+                    structurizr.scripting.workspaceSaved();
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        };
+
+        putWorkspaceViaApi(callback);
+    };
+
+    function putWorkspaceViaApi(callback) {
+        var workspace = Structurizr.workspace.cloneWorkspaceAndRemoveUnnecessaryElements();
+
+        if (structurizrEncryptionStrategy) {
+            try {
+                var encryptedWorkspace = structurizrEncryptionStrategy.encrypt(workspace);
+                if (encryptedWorkspace) {
+                    structurizrApiClient.putWorkspace(encryptedWorkspace, callback);
+                    Structurizr.workspace.setUnsavedChanges(false);
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Workspace " + id + " could not be saved - please try again or contact raise a ticket via https://structurizr.com/help");
+            }
+        } else {
+            structurizrApiClient.putWorkspace(workspace, callback);
+        }
+
+        Structurizr.workspace.setUnsavedChanges(false);
+    }
+</script>

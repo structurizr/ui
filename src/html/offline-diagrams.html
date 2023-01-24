@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-size: 14px;
+            font-family: "Open Sans", sans-serif;
+            padding: 0;
+            margin: 0;
+        }
+        #controls {
+            padding: 10px;
+            background: #eeeeee;
+            border-bottom: solid 1px #dddddd;
+            text-align: center;
+        }
+
+        select {
+            font-family: "Open Sans", sans-serif;
+            font-size: 13px;
+        }
+        .hidden {
+            display: none;
+        }
+        .diagramKey {
+            padding: 40px 0px 20px 0px;
+            font-size: 30px;
+            text-align: center;
+            width: 50%;
+            margin: auto;
+        }
+        svg {
+            display: block;
+            margin: auto;
+        }
+        #footer {
+            padding: 10px;
+            text-align: center;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            #controls {
+                background: #444444;
+                border-bottom: solid 1px #333333;
+            }
+            select {
+                background: #222222;
+                color: #eeeeee;
+                border: 1px solid #999999;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+</head>
+<body onhashchange="hashChanged();">
+
+    <div id="controls">
+        <select id="diagramDropDown" onchange="changeHash()"></select>
+    </div>
+
+    <div id="diagrams">
+    </div>
+
+    <script>
+        function getSelectedDiagramIndex() {
+            return document.getElementById("diagramDropDown").selectedIndex;
+        }
+
+        function setSelectedDiagramIndex(index) {
+            document.getElementById("diagramDropDown").selectedIndex = index;
+        }
+
+        function getNumberOfDiagrams() {
+            return document.getElementById("diagramDropDown").length;
+        }
+
+        function showSelectedDiagram() {
+            showDiagramAtIndex(getSelectedDiagramIndex());
+        }
+
+        function changeHash() {
+            var selectedIndex = getSelectedDiagramIndex();
+            var viewKey = getOption(selectedIndex);
+
+            window.location.hash = encodeURIComponent(viewKey);
+        }
+
+        function hashChanged() {
+            var hash = window.location.hash;
+            if (hash !== undefined && hash.trim().length > 0) {
+                hash = hash.substring(1, hash.length);
+                hash = decodeURIComponent(hash);
+                var index = getIndexOfDiagramKey(hash);
+                if (index > -1) {
+                    setSelectedDiagramIndex(index);
+                    showSelectedDiagram();
+                }
+            } else {
+                window.location.hash = getOption(0);
+            }
+        }
+
+        function getIndexOfDiagramKey(key) {
+            var options = document.getElementById("diagramDropDown").options;
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value === key) {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        function getOption(index) {
+            return document.getElementById("diagramDropDown").options[index].value;
+        }
+
+        function showDiagramAtIndex(index) {
+            var diagrams = document.getElementsByClassName("diagram");
+            for (var i = 0; i < diagrams.length; i++) {
+                var diagram = diagrams[i];
+
+                if (diagram.id === "diagram" + index) {
+                    diagram.className = "diagram";
+                } else {
+                    diagram.className = "diagram hidden";
+                }
+            }
+        }
+
+        document.addEventListener("keydown", changeDiagram);
+
+        function changeDiagram(evt) {
+            var selectedDiagramIndex = getSelectedDiagramIndex();
+            var numberOfDiagrams = getNumberOfDiagrams();
+            if (evt.key === 'ArrowRight') {
+                window.location.hash = getOption(Math.min(selectedDiagramIndex + 1, numberOfDiagrams - 1));
+            } else if (evt.key === 'ArrowLeft') {
+                window.location.hash = getOption(Math.max(selectedDiagramIndex - 1, 0));
+            }
+        }
+
+        function structurizrElementDoubleClicked(evt, viewKey, url) {
+            if (viewKey !== undefined) {
+                if (evt.altKey === true && url !== undefined) {
+                    window.open(url);
+                } else {
+                    window.location.hash = encodeURIComponent(viewKey);
+                }
+            } else if (url !== undefined) {
+                window.open(url);
+            }
+        }
+
+        function structurizrRelationshipDoubleClicked(evt, url) {
+            window.open(url);
+        }
+
+        hashChanged();
+    </script>
+
+</body>
+</html>

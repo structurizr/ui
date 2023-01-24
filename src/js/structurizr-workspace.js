@@ -59,7 +59,7 @@ structurizr.Workspace = class Workspace {
     }
 
     hasDocumentation() {
-        // check for workspace level documentation
+        // check for workspace level sections
         if (this.#workspace.documentation.sections.length > 0) {
             return true;
         }
@@ -74,6 +74,32 @@ structurizr.Workspace = class Workspace {
                 if (softwareSystem.containers) {
                     softwareSystem.containers.forEach(function (container) {
                         if (container.documentation.sections.length > 0) {
+                            result = true;
+                        }
+                    });
+                }
+            }
+        });
+
+        return result;
+    }
+
+    hasDecisions() {
+        // check for workspace level decisions
+        if (this.#workspace.documentation.decisions.length > 0) {
+            return true;
+        }
+
+        var result = false;
+        this.#workspace.model.softwareSystems.forEach(function(softwareSystem) {
+            if (softwareSystem.documentation.decisions.length > 0) {
+                result = true;
+            }
+
+            if (result === false) {
+                if (softwareSystem.containers) {
+                    softwareSystem.containers.forEach(function (container) {
+                        if (container.documentation.decisions.length > 0) {
                             result = true;
                         }
                     });

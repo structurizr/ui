@@ -1,0 +1,18 @@
+#decisionLogContent {
+    font-size: 18px;
+}
+
+.decisionTimelineYear {
+    font-size: 30px;
+    color: gray;
+    font-weight: normal;
+}
+
+.decisionSummaryMetadata {
+    color: gray;
+    font-size: 60%;
+}
+
+.otherStatus {
+    opacity: 0.2;
+}
