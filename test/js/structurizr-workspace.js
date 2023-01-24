@@ -1,11 +1,101 @@
-QUnit.test("Workspace.getId() returns -1 when there is no workspace ID", function( assert ) {
+QUnit.test("Workspace() initialises an empty JSON document", function( assert ) {
+    var workspace = new structurizr.Workspace({});
+
+    assert.deepEqual(workspace.getDocumentation(), {
+        "decisions": [],
+        "images": [],
+        "sections": []      
+    });
+
+    assert.deepEqual(workspace.getModel(), {
+        "customElements": [],
+        "deploymentNodes": [],
+        "people": [],
+        "softwareSystems": []        
+    });
+
+    assert.deepEqual(workspace.getViews(), {
+        "componentViews": [],
+        "configuration": {
+          "branding": {
+            "font": {
+              "name": "Open Sans",
+              "url": undefined
+            }
+          },
+          "styles": {
+            "elements": [],
+            "relationships": []
+          },
+          "terminology": {},
+          "themes": []
+        },
+        "containerViews": [],
+        "customViews": [],
+        "deploymentViews": [],
+        "dynamicViews": [],
+        "filteredViews": [],
+        "systemContextViews": [],
+        "systemLandscapeViews": []
+    });
+});
+
+
+QUnit.test("Workspace.getId() returns -1 when there is no ID", function( assert ) {
     var workspace = new structurizr.Workspace({});
     assert.equal(workspace.getId(), -1);
 });
 
-QUnit.test("Workspace.getId() returns the workspace ID", function( assert ) {
+QUnit.test("Workspace.getId() returns the ID", function( assert ) {
     var workspace = new structurizr.Workspace({ id: 123 });
     assert.equal(workspace.getId(), 123);
+});
+
+QUnit.test("Workspace.getName() returns an empty string when there is no name", function( assert ) {
+    var workspace = new structurizr.Workspace({});
+    assert.equal(workspace.getName(), "");
+});
+
+QUnit.test("Workspace.getName() returns the name", function( assert ) {
+    var workspace = new structurizr.Workspace({ name: "Name" });
+    assert.equal(workspace.getName(), "Name");
+});
+
+QUnit.test("Workspace.findElementById() returns undefined when the element doesn't exist", function( assert ) {
+    var workspace = new structurizr.Workspace({});
+    assert.equal(workspace.findElementById('123'), undefined);
+});
+
+QUnit.test("Workspace.findElementById() returns the specified element", function( assert ) {
+    var workspace = new structurizr.Workspace({
+        model: {
+            people: [
+                {
+                    id: '1',
+                    name: 'User 1'
+                },
+                {
+                    id: '2',
+                    name: 'User 2'
+                },
+                {
+                    id: '3',
+                    name: 'User 3'
+                }
+            ]
+        }
+    });
+    assert.deepEqual(workspace.findElementById('2'), {
+        "id": "2",
+        "name": "User 2",
+        "parentId": undefined,
+        "type": "Person"
+    });
+});
+
+QUnit.test("Workspace.findRelationshipById() returns undefined when the relationship doesn't exist", function( assert ) {
+    var workspace = new structurizr.Workspace({});
+    assert.equal(workspace.findRelationshipById('123'), undefined);
 });
 
 QUnit.test("Workspace.findViewByKey() returns undefined when the view does not exist", function( assert ) {
