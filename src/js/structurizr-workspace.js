@@ -9,11 +9,34 @@ structurizr.Workspace = class Workspace {
         this.#json = json;
         this.#workspace = JSON.parse(JSON.stringify(json));
 
+        this.#initDocumentation();
         this.#initViews();
     }
 
     getId() {
         return this.#workspace.id !== undefined ? this.#workspace.id : -1;
+    }
+
+    #initDocumentation() {
+        if (this.#workspace.documentation === undefined) {
+            this.#workspace.documentation = {};
+        }
+
+        if (this.#workspace.documentation.sections === undefined) {
+            this.#workspace.documentation.sections = [];
+        }
+
+        if (this.#workspace.documentation.decisions === undefined) {
+            this.#workspace.documentation.decisions = [];
+        }
+
+        if (this.#workspace.documentation.images === undefined) {
+            this.#workspace.documentation.images = [];
+        }
+    }
+
+    getDocumentation() {
+        return this.#workspace.documentation;
     }
 
     #initViews() {

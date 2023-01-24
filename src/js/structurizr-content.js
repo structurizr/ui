@@ -3,7 +3,7 @@
 // - diagrams from the workspace (as iframe embeds)
 structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix) {
 
-    var images = [];
+    var images = workspace.getDocumentation().images;
     var embedIndex = 0;
 
     var md = window.markdownit();
@@ -180,17 +180,9 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix)
     };
 
     this.setScope = function(element) {
-        var workspaceImages = [];
-        if (workspace && workspace.documentation && workspace.documentation.images) {
-            workspaceImages = workspace.documentation.images;
+        if (element.documentation && element.documentation.images) {
+            images = element.documentation.images.concat(images);
         }
-
-        var elementImages = [];
-        if (element && element.documentation && element.documentation.images) {
-            elementImages = element.documentation.images;
-        }
-
-        images = elementImages.concat(workspaceImages);
     }
 
 };
