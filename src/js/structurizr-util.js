@@ -87,6 +87,13 @@ structurizr.util.atob = function(encoded) {
     return CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(encoded));
 };
 
+structurizr.util.exportWorkspace = function(id, json) {
+    const filename = 'structurizr-' + id + '-workspace.json';
+    structurizr.util.downloadFile(json, "text/plain;charset=utf-8", filename);
+};
+
+
+
 if (!String.prototype.startsWith) {
     String.prototype.startsWith = function(searchString, position){
         return this.substr(position || 0, searchString.length) === searchString;

@@ -72,7 +72,7 @@
         var modal = $('#clientSideEncryptedWorkspacePassphraseModal');
 
         try {
-            structurizrEncryptionStrategy = new StructurizrEncryptionStrategy(
+            structurizrEncryptionStrategy = new structurizr.io.EncryptionStrategy(
                 {
                     iterationCount: workspace.encryptionStrategy.iterationCount,
                     iv: workspace.encryptionStrategy.iv,

@@ -1,7 +1,7 @@
-QUnit.test("new StructurizrEncryptionStrategy() throws an exception when no properties are specified", function(assert) {
+QUnit.test("StructurizrEncryptionStrategy() throws an exception when no properties are specified", function(assert) {
     assert.throws(
         function() {
-            new StructurizrEncryptionStrategy();
+            new structurizr.io.EncryptionStrategy();
         },
         function(err) {
             return err.toString() === "Missing encryption properties";
@@ -9,7 +9,7 @@ QUnit.test("new StructurizrEncryptionStrategy() throws an exception when no prop
     );
 });
 
-QUnit.test("new StructurizrEncryptionStrategy() sets iv, salt, and location when not specified", function(assert) {
+QUnit.test("StructurizrEncryptionStrategy() sets iv, salt, and location when not specified", function(assert) {
     const properties = {
         type: "aes",
         iterationCount: 1000,
@@ -18,7 +18,7 @@ QUnit.test("new StructurizrEncryptionStrategy() sets iv, salt, and location when
         passphrase: "password"
     };
 
-    const strategy = new StructurizrEncryptionStrategy(properties);
+    const strategy = new structurizr.io.EncryptionStrategy(properties);
 
     assert.equal(properties.location, "Client");
     assert.equal(properties.iv.length, 32);
@@ -27,7 +27,7 @@ QUnit.test("new StructurizrEncryptionStrategy() sets iv, salt, and location when
 });
 
 QUnit.test("StructurizrEncryptionStrategy.encrypt()", function(assert) {
-    const strategy = new StructurizrEncryptionStrategy({
+    const strategy = new structurizr.io.EncryptionStrategy({
         type: "aes",
         iterationCount: 1000,
         keySize: 128,
@@ -64,7 +64,7 @@ QUnit.test("StructurizrEncryptionStrategy.encrypt()", function(assert) {
 });
 
 QUnit.test("StructurizrEncryptionStrategy.decrypt()", function(assert) {
-    const strategy = new StructurizrEncryptionStrategy({
+    const strategy = new structurizr.io.EncryptionStrategy({
         type: "aes",
         iterationCount: 1000,
         keySize: 128,

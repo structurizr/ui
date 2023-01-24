@@ -1,4 +1,4 @@
-class StructurizrEncryptionStrategy {
+structurizr.io.EncryptionStrategy = class EncryptionStrategy {
 
     #encryptionProperties = undefined;
 
