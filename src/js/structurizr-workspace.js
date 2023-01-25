@@ -11,9 +11,14 @@ structurizr.Workspace = class Workspace {
         this.#json = json;
         this.#workspace = JSON.parse(JSON.stringify(json));
 
+        this.#initWorkspace();
         this.#initDocumentation(this.#workspace);
         this.#initModel();
         this.#initViews();
+    }
+
+    getJson() {
+        return JSON.parse(JSON.stringify(this.#json));
     }
 
     getId() {
@@ -24,9 +29,17 @@ structurizr.Workspace = class Workspace {
         return this.#workspace.name ? this.#workspace.name : "";
     };
 
+    getDescription() {
+        return this.#workspace.description ? this.#workspace.description : "";
+    };
+
     getLastModifiedDate() {
         return this.#workspace.lastModifiedDate;
     };
+
+    getProperty(name) {
+        return this.#workspace.properties[name];
+    }
 
     getDocumentation() {
         return this.#workspace.documentation;
@@ -38,6 +51,12 @@ structurizr.Workspace = class Workspace {
 
     getViews() {
         return this.#workspace.views;
+    }
+
+    #initWorkspace() {
+        if (this.#workspace.properties === undefined) {
+            this.#workspace.properties = {};
+        }
     }
 
     #initDocumentation(workspaceOrElement) {
@@ -226,7 +245,7 @@ structurizr.Workspace = class Workspace {
         if (deploymentNode.containerInstances) {
             for (var i = 0; i < deploymentNode.containerInstances.length; i++) {
                 const containerInstance = deploymentNode.containerInstances[i];
-                const container = this.findElementById[containerInstance.containerId];
+                const container = this.findElementById(containerInstance.containerId);
                 containerInstance.name = container.name;
                 containerInstance.description = container.description;
                 containerInstance.technology = container.technology;
@@ -269,6 +288,10 @@ structurizr.Workspace = class Workspace {
                 }
             }
         }
+    }
+
+    hasElements() {
+        return Object.keys(this.#elementsById).length > 0;
     }
 
     findElementById(id) {
@@ -441,6 +464,18 @@ structurizr.Workspace = class Workspace {
         }
     }
 
+    hasViews() {
+        return this.#views.length > 0;
+    }
+
+    hasStyles() {
+        return this.#workspace.views.configuration.styles.elements.length > 0 || this.#workspace.views.configuration.styles.relationships.length > 0;
+    }
+
+    getBranding() {
+        return this.#workspace.views.configuration.branding;
+    }
+    
     findViewByKey(key) {
         var view = undefined;
         this.#views.forEach(function(v) {
