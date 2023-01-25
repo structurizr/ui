@@ -472,10 +472,22 @@ structurizr.Workspace = class Workspace {
         return this.#workspace.views.configuration.styles.elements.length > 0 || this.#workspace.views.configuration.styles.relationships.length > 0;
     }
 
+    findElementStyleByTag(tag) {
+        var style = undefined;
+
+        this.#workspace.views.configuration.styles.elements.forEach(function(elementStyle) {
+            if (elementStyle.tag === tag) {
+                style = elementStyle;
+            }
+        })
+
+        return style;
+    }
+
     getBranding() {
         return this.#workspace.views.configuration.branding;
     }
-    
+
     findViewByKey(key) {
         var view = undefined;
         this.#views.forEach(function(v) {

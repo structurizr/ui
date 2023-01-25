@@ -208,6 +208,37 @@ QUnit.test("Workspace.hasStyles() returns true when there are some relationship 
     assert.equal(workspace.hasStyles(), true);
 });
 
+QUnit.test("Workspace.findElementStyleByTag() returns undefined when there is no element style", function( assert ) {
+    var workspace = new structurizr.Workspace({});
+    assert.equal(workspace.findElementStyleByTag('Element'), undefined);
+});
+
+QUnit.test("Workspace.findElementStyleByTag() returns the specified element style", function( assert ) {
+    var workspace = new structurizr.Workspace(
+        {
+             views: {
+                configuration: {
+                    styles: {
+                        elements: [
+                            {
+                                tag: 'Element',
+                                background: '#ffffff'
+                            }
+                        ],
+                        relationships: []
+                    }
+                }
+             } 
+        }
+    );
+    assert.deepEqual(workspace.findElementStyleByTag('Element'),
+    {
+        "tag": "Element",
+        "background": "#ffffff"
+    }
+    );
+});
+
 QUnit.test("Workspace.getBranding() returns the default branding when no branding has been defined", function( assert ) {
     var workspace = new structurizr.Workspace({});
     assert.deepEqual(workspace.getBranding(),
