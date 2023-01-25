@@ -1,6 +1,7 @@
 h1 {
     font-size: 50px;
     font-weight: normal;
+    margin-top: 20px;
 }
 h2 {
     margin-top: 100px;
@@ -53,6 +54,14 @@ pre {
     border-radius: 4px;
 }
 
+#documentationNavigationDropDown {
+
+}
+
+#documentationHeader {
+    text-align: center;
+}
+
 #documentationContent a {
     text-decoration: underline;
 }
@@ -64,4 +73,13 @@ pre {
 
 .navigationItemSeparator {
     margin-bottom: 40px;
+}
+
+#brandingLogoInContent {
+    max-height: 70px;
+    margin-top: 20px;
+}
+
+.label-version {
+    font-size: 10px;
 }

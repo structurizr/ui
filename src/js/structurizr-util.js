@@ -88,8 +88,9 @@ structurizr.util.atob = function(encoded) {
 };
 
 structurizr.util.exportWorkspace = function(id, json) {
+    const jsonAsString = JSON.stringify(json, null, '    ');
     const filename = 'structurizr-' + id + '-workspace.json';
-    structurizr.util.downloadFile(json, "text/plain;charset=utf-8", filename);
+    structurizr.util.downloadFile(jsonAsString, "text/plain;charset=utf-8", filename);
 };
 
 
