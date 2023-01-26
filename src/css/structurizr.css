@@ -121,7 +121,7 @@ h6 {
     font-size: 14px;
 }
 .workspaceMetaData {
-    font-size: 10px;
+    font-size: 11px;
     color: gray;
 }
 a:hover {
@@ -463,12 +463,24 @@ mark {
     margin-bottom: 2px;
 }
 
+.icon-lg {
+    width: 36px;
+    height: 36px;
+    margin: 2px 2px 4px 0;
+}
+
 .glyphicon-xl {
     width: 40px;
     height: 40px;
 }
 
 .glyphicon-xxl {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.icon-xxl {
     width: 50px;
     height: 50px;
     margin-bottom: 10px;
@@ -488,9 +500,15 @@ mark {
 .glyphicon-h1 {
     width: 50px;
     height: 50px;
-    vertical-align: middle;
-    line-height: 1.1;
-    margin-bottom: 10px;
+    vertical-align: bottom;
+}
+
+.icon-h1 {
+    width: 45px;
+    height: 45px;
+    vertical-align: bottom;
+    line-height: 1;
+    margin-bottom: 0px;
 }
 
 .glyphicon-h2 {
