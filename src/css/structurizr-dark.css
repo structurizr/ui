@@ -31,6 +31,10 @@
         background: #85BBF0;
     }
 
+    .img-thumbnail, .thumbnail {
+        background: #111111;
+    }
+
     .glyphicon-xs {
         filter: invert(1.0);
     }
@@ -60,6 +64,38 @@
     }
 
     .glyphicon-h2 {
+        filter: invert(1.0);
+    }
+
+    .icon-xs {
+        filter: invert(1.0);
+    }
+
+    .icon-sm {
+        filter: invert(1.0);
+    }
+
+    .icon-md {
+        filter: invert(1.0);
+    }
+
+    .icon-lg {
+        filter: invert(1.0);
+    }
+
+    .icon-xl {
+        filter: invert(1.0);
+    }
+
+    .icon-xxl {
+        filter: invert(1.0);
+    }
+
+    .icon-h1 {
+        filter: invert(1.0);
+    }
+
+    .icon-h2 {
         filter: invert(1.0);
     }
 
