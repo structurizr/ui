@@ -75,9 +75,8 @@ pre {
     margin-bottom: 40px;
 }
 
-#brandingLogoInContent {
-    max-height: 70px;
-    margin-top: 20px;
+#documentationHeader .brandingLogo {
+    max-height: 100px;
 }
 
 .label-version {
