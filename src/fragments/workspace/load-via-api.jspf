@@ -1,4 +1,9 @@
 <script nonce="${scriptNonce}">
+    var username = "${user.username}";
+    <c:if test="${collaborationEnabled eq true}">
+    username = 'Collaboration Session';
+    </c:if>
+
     structurizr.autoSave = false;
     var structurizrEncryptionStrategy;
     const structurizrApiClient = new structurizr.io.StructurizrApiClient(
@@ -6,7 +11,7 @@
         "${workspace.id}",
         "${workspace.apiKey}",
         "${workspace.apiSecret}",
-        "${user.username}"
+        username
     );
 
     structurizrApiClient.getWorkspace(
@@ -61,11 +66,7 @@
             }
         };
 
-        putWorkspaceViaApi(callback);
-    };
-
-    function putWorkspaceViaApi(callback) {
-        var workspace = Structurizr.workspace.cloneWorkspaceAndRemoveUnnecessaryElements();
+        const workspace = Structurizr.workspace.cloneWorkspaceAndRemoveUnnecessaryElements();
 
         if (structurizrEncryptionStrategy) {
             try {
@@ -76,12 +77,12 @@
                 }
             } catch (e) {
                 console.error(e);
-                alert("Workspace " + id + " could not be saved - please try again or contact raise a ticket via https://structurizr.com/help");
+                alert("Workspace " + id + " could not be saved - " + e);
             }
         } else {
             structurizrApiClient.putWorkspace(workspace, callback);
         }
 
         Structurizr.workspace.setUnsavedChanges(false);
-    }
+    };
 </script>
