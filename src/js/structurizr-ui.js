@@ -396,3 +396,42 @@ structurizr.ui.getViewName = function(view) {
     return '';
 }
 
+structurizr.ui.isFullScreenEnabled = function() {
+    return document.fullscreenEnabled || document.webkitFullscreenEnabled || document.mozFullScreenEnabled || document.msFullscreenEnabled;
+};
+
+structurizr.ui.isFullScreen = function() {
+    return document.enterFullScreen || document.mozFullScreen || document.webkitIsFullScreen || document.msFullscreenElement;
+};
+
+structurizr.ui.enterFullScreen = function(domId) {
+    if (domId === undefined) {
+        domId = 'content';
+    }
+
+    if (this.isFullScreenEnabled()) {
+        var content = document.getElementById(domId);
+        if (content.requestFullscreen) {
+            content.requestFullscreen();
+        } else if (content.webkitRequestFullscreen) {
+            content.webkitRequestFullscreen();
+        } else if (content.mozRequestFullScreen) {
+            content.mozRequestFullScreen();
+        } else if (content.msRequestFullscreen) {
+            content.msRequestFullscreen();
+        }
+    }
+};
+
+structurizr.ui.exitFullScreen = function() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+    }
+};
+
