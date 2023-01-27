@@ -32,6 +32,7 @@
 
     function loadWorkspaceFromParent() {
         Structurizr.workspace = parent.Structurizr.workspace;
+        structurizr.workspace = parent.structurizr.workspace;
 
         try {
             workspaceLoaded();
