@@ -1,0 +1,348 @@
+<style>
+    #tooltip {
+        font-size: 14px;
+        color: #000000;
+        background: #eeeeee;
+        padding: 10px;
+        margin: 20px;
+        position: absolute;
+        z-index: 10;
+        opacity: 0.98;
+        border: 2px #666666 solid;
+        border-radius: 5px;
+        width: 33%;
+        max-width: 33%;
+        overflow: hidden;
+    }
+    #tooltipName {
+        font-size: 20px;
+        font-weight: normal;
+    }
+    #tooltipParent {
+        font-size: 8px;
+    }
+    #tooltipMetadata {
+        font-size: 10px;
+    }
+    #tooltipType {
+        font-size: 10px;
+    }
+    #tooltipDescription {
+        font-size: 12px;
+        margin-top: 10px;
+    }
+    #tooltipTags {
+        margin-top: 10px;
+        font-size: 10px;
+    }
+    #tooltipProperties {
+        margin-top: 15px;
+        font-size: 10px;
+    }
+    #tooltipUrl {
+        margin-top: 10px;
+        font-size: 10px;
+    }
+    #tooltip .tag {
+        border-width: 1px;
+        border-style: solid;
+        padding: 3px 3px 3px 3px;
+        margin: 3px 3px 3px 0;
+        border-radius: 6px;
+        white-space: nowrap;
+        display: inline-block;
+    }
+</style>
+
+<style media="print">
+    #tooltip {
+        display: none;
+    }
+</style>
+
+<div id="tooltip" class="hidden">
+    <div id="tooltipName"></div>
+    <div id="tooltipParent"></div>
+    <div id="tooltipMetadata"></div>
+    <div id="tooltipType"></div>
+    <div id="tooltipDescription"></div>
+    <div id="tooltipTags"></div>
+    <div id="tooltipProperties"></div>
+    <div id="tooltipUrl"></div>
+    <div id="tooltipAdditionalContent"></div>
+</div>
+
+<script nonce="${scriptNonce}">
+    structurizr.ui.Tooltip = function() {
+        var visible = false;
+
+        var tooltip = $('#tooltip');
+        var tooltipName = $('#tooltipName');
+        var tooltipParent = $('#tooltipParent');
+        var tooltipType = $('#tooltipType');
+        var tooltipDescription = $('#tooltipDescription');
+        var tooltipMetadata = $('#tooltipMetadata');
+        var tooltipTags = $('#tooltipTags');
+        var tooltipProperties = $('#tooltipProperties');
+        var tooltipUrl = $('#tooltipUrl');
+        var tooltipAdditionalContent = $('#tooltipAdditionalContent');
+
+        this.reposition = function(x, y) {
+            var windowWidth = window.innerWidth;
+            var windowHeight = window.innerHeight;
+            var tooltipWidth = tooltip.outerWidth(true);
+            var tooltipHeight = tooltip.outerHeight(true);
+
+            if ((x + tooltipWidth) < windowWidth) {
+                // do nothing
+            } else {
+                x = x - tooltipWidth;
+            }
+
+            if ((y + tooltipHeight) < windowHeight) {
+                // do nothing
+            } else {
+                y = y - tooltipHeight;
+            }
+
+            tooltip.css({left: Math.max(0, x), top: Math.max(0, y)});
+        };
+
+        this.hide = function() {
+            tooltip.addClass("hidden");
+            visible = false;
+        };
+
+        function show() {
+            tooltip.removeClass("hidden");
+            visible = true;
+        }
+
+        this.showTooltip = function(name, description, metadata, background, color) {
+            tooltipName.html(structurizr.util.escapeHtml(name));
+            tooltipDescription.html(structurizr.util.escapeHtml(description));
+            tooltipMetadata.html(structurizr.util.escapeHtml(metadata));
+
+            tooltip.css("background", background);
+            tooltip.css("border-color", structurizr.util.shadeColor(background, -20));
+            tooltip.css("color", color);
+            tooltip.css('border-style', 'solid');
+
+            show();
+            this.reposition(0, 0);
+        };
+
+        this.showTooltipForElement = function(element, style, x, y, additionalContent) {
+            if (element === undefined) {
+                return;
+            }
+
+            tooltipName.html(structurizr.util.escapeHtml(element.name));
+            tooltipDescription.html(element.description ? structurizr.util.escapeHtml(element.description).replaceAll('\n', '<br />') : '');
+
+            if (element.type === 'Code') {
+                tooltipMetadata.text('(Code)');
+            } else {
+                tooltipMetadata.text('[' + structurizr.workspace.getTerminologyFor(element) + ']');
+            }
+
+            if (element.parentId) {
+                var parentElement = structurizr.workspace.findElementById(element.parentId);
+                tooltipParent.text('from ' + parentElement.name + ' [' + structurizr.workspace.getTerminologyFor(parentElement) + ']');
+            } else {
+                tooltipParent.text('');
+            }
+
+            var tagsHtml = '';
+            var tags = structurizr.workspace.getAllTagsForElement(element);
+            if (tags) {
+                var tagsAsArray = tags.split(",");
+
+                tagsHtml += '<div class="smaller">';
+                tagsAsArray.forEach(function(tag) {
+                    if (tag !== undefined) {
+                        tag = tag.trim();
+                        if (tag.length > 0) {
+                            tagsHtml += '<span class="tag">';
+                            tagsHtml += structurizr.util.escapeHtml(tag);
+                            tagsHtml += '</span>';
+                        }
+                    }
+                });
+                tagsHtml += '</div>';
+            }
+            tooltipTags.html(tagsHtml);
+
+            var propertiesHtml = '';
+            var properties = structurizr.workspace.getAllPropertiesForElement(element);
+            if (Object.keys(properties).length > 0) {
+                propertiesHtml += '<div class="smaller">';
+                propertiesHtml += '<p>Properties:</p>';
+                propertiesHtml += '<ul>';
+                Object.keys(properties).forEach(function (key) {
+                    propertiesHtml += '<li>';
+                    propertiesHtml += (structurizr.util.escapeHtml(key) + ' = ' + structurizr.util.escapeHtml(properties[key]));
+                    propertiesHtml += '</li>';
+                });
+                propertiesHtml += '</ul>';
+                propertiesHtml += '</div>'
+            }
+            tooltipProperties.html(propertiesHtml);
+
+            var urlHtml = '';
+            var url = structurizr.workspace.getUrlForElement(element);
+            if (url && url.trim().length > 0) {
+                urlHtml += '<div class="smaller">';
+                urlHtml += '<p>URL: ';
+                urlHtml += '<a href="' + structurizr.util.escapeHtml(url) + '" target="_blank">' + structurizr.util.escapeHtml(url) + '</a>';
+                urlHtml += '</p>';
+                urlHtml += '</div>';
+            }
+            tooltipUrl.html(urlHtml);
+
+            if (additionalContent !== undefined) {
+                tooltipAdditionalContent.html(additionalContent);
+            } else {
+                tooltipAdditionalContent.html('');
+            }
+
+            show();
+            this.reposition(x, y);
+
+            if (style) {
+                tooltip.css("background", style.background);
+                tooltip.css("border-color", style.stroke);
+                tooltip.css("color", style.color);
+                if (style.borderStyle === 'Dashed') {
+                    tooltip.css('border-style', 'dashed');
+                } else if (style.borderStyle === 'Dotted') {
+                    tooltip.css('border-style', 'dotted');
+                } else {
+                    tooltip.css('border-style', 'solid');
+                }
+
+                $('#tooltip .tag').css("border-color", style.color);
+                $('#tooltipUrl a').css("color", '#ffffff');
+                $('#tooltip hr').css("border-color", style.stroke);
+            } else {
+                tooltip.css("background", '#ffffff');
+                tooltip.css("border-color", '#000000');
+                tooltip.css("color", '#000000');
+                tooltip.css('border-style', 'solid');
+                $('#tooltip .tag').css("border-color", '#000000');
+                $('#tooltip hr').css("border-color", '#000000');
+            }
+        };
+
+        this.showTooltipForRelationship = function(relationship, relationshipInView, style, x, y, additionalContent, darkMode) {
+            if (relationship === undefined) {
+                return;
+            }
+
+            if (relationshipInView === undefined) {
+                relationshipInView = {};
+            }
+
+            var relationshipSummary = relationshipInView.description;
+            if (relationshipSummary === undefined) {
+                relationshipSummary = relationship.description;
+            }
+            if (relationshipSummary === undefined || relationshipSummary.length === 0) {
+                relationshipSummary = '';
+            }
+
+            tooltipName.text((relationshipInView.order ? relationshipInView.order + ': ' : '') + relationshipSummary);
+            tooltipParent.html('');
+            tooltipMetadata.text('[' + structurizr.workspace.getTerminologyFor(relationship) + ']');
+
+            if (darkMode === undefined) {
+                darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+
+            tooltip.css("background", (darkMode === true ? '#111111' : '#ffffff'));
+            var color = style.color;
+            if (color === undefined) {
+                color = (darkMode === true ? '#eeeeee' : '#777777');
+            }
+            tooltip.css("border-color", color);
+            tooltip.css("color", color);
+            $('#tooltip .tag').css("border-color", color);
+            $('#tooltip hr').css("border-color", color);
+
+            tooltip.css('border-style', style.lineStyle);
+
+            var description = '';
+            description += '<p style="font-weight: bold">';
+            description += structurizr.util.escapeHtml(structurizr.workspace.findElementById(relationship.sourceId).name);
+            description += ' <span style="color: gray;">--</span> ';
+            description += structurizr.util.escapeHtml(relationshipSummary);
+            description += ' <span style="color: gray;">-&gt;</span> ';
+            description += structurizr.util.escapeHtml(structurizr.workspace.findElementById(relationship.destinationId).name);
+            description += '</p>';
+            tooltipDescription.html(description);
+
+            var tagsHtml = '';
+            var tags = structurizr.workspace.getAllTagsForRelationship(relationship);
+            if (tags) {
+                var tagsAsArray = tags.split(",");
+
+                tagsHtml += '<div class="smaller">';
+                tagsAsArray.forEach(function(tag) {
+                    if (tag !== undefined) {
+                        tag = tag.trim();
+                        if (tag.length > 0) {
+                            tagsHtml += '<span class="tag">';
+                            tagsHtml += structurizr.util.escapeHtml(tag);
+                            tagsHtml += '</span>';
+                        }
+                    }
+                });
+                tagsHtml += '</div>';
+            }
+            tooltipTags.html(tagsHtml);
+
+            var propertiesHtml = '';
+            var properties = structurizr.workspace.getAllPropertiesForRelationship(relationship);
+            if (Object.keys(properties).length > 0) {
+                propertiesHtml += '<div class="smaller">';
+                propertiesHtml += '<p>Properties:</p>';
+                propertiesHtml += '<ul>';
+                Object.keys(properties).forEach(function (key) {
+                    propertiesHtml += '<li>';
+                    propertiesHtml += (structurizr.util.escapeHtml(key) + ' = ' + structurizr.util.escapeHtml(properties[key]));
+                    propertiesHtml += '</li>';
+                });
+                propertiesHtml += '</ul>';
+                propertiesHtml += '</div>'
+            }
+            tooltipProperties.html(propertiesHtml);
+
+            var urlHtml = '';
+            var url = structurizr.workspace.getUrlForRelationship(relationship);
+            if (url && url.trim().length > 0) {
+                urlHtml += '<div class="smaller">';
+                urlHtml += '<p>URL: ';
+                urlHtml += '<a href="' + structurizr.util.escapeHtml(url) + '" target="_blank">' + structurizr.util.escapeHtml(url) + '</a>';
+                urlHtml += '</p>';
+                urlHtml += '</div>';
+            }
+            tooltipUrl.html(urlHtml);
+
+            if (additionalContent !== undefined) {
+                tooltipAdditionalContent.html(additionalContent);
+            } else {
+                tooltipAdditionalContent.html('');
+            }
+
+            show();
+            this.reposition(x, y);
+        }
+
+        this.isVisible = function() {
+            return visible;
+        }
+
+    };
+
+    const tooltip = new structurizr.ui.Tooltip();
+</script>

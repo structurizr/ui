@@ -303,19 +303,73 @@ structurizr.Workspace = class Workspace {
 
         if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE) {
             // we also need to prepend the set of tags of the software system
-            const softwareSystem = Structurizr.workspace.findElement(element.softwareSystemId);
+            const softwareSystem = this.findElementById(element.softwareSystemId);
             if (softwareSystem && softwareSystem.tags) {
                 tags = (softwareSystem.tags + ',' + tags);
             }
         } else if (element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE) {
             // we also need to prepend the set of tags of the container
-            const container = Structurizr.workspace.findElement(element.containerId);
+            const container = this.findElementById(element.containerId);
             if (container && container.tags) {
                 tags = (container.tags + ',' + tags);
             }
         }
 
         return tags;
+    }
+
+    getAllPropertiesForElement(element) {
+        var properties = {};
+
+        if (element.properties) {
+            properties = element.properties;
+        }
+
+        if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE) {
+            // we also need to add the properties from the base element
+            var softwareSystem = Structurizr.workspace.findElement(element.softwareSystemId);
+            if (softwareSystem && softwareSystem.properties) {
+                Object.keys(softwareSystem.properties).forEach(function(key) {
+                    if (!properties[key]) {
+                        properties[key] = softwareSystem.properties[key];
+                    }
+                });
+            }
+        } else if (element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE) {
+            // we also need to prepend the set of properties of the container
+            var container = Structurizr.workspace.findElement(element.containerId);
+            if (container && container.properties) {
+                Object.keys(container.properties).forEach(function(key) {
+                    if (!properties[key]) {
+                        properties[key] = container.properties[key];
+                    }
+                });
+            }
+        }
+
+        return properties;
+    }
+
+    getUrlForElement(element) {
+        var url = element.url;
+
+        if (url === undefined || url.trim().length === 0) {
+            if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE) {
+                // perhaps use the URL from the base element
+                var softwareSystem = this.findElementById(element.softwareSystemId);
+                if (softwareSystem) {
+                    url = softwareSystem.url;
+                }
+            } else if (element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE) {
+                // perhaps use the URL from the base element
+                var container = this.findElementById(element.containerId);
+                if (container) {
+                    url = container.url;
+                }
+            }
+        }
+
+        return url;
     }
 
     getAllTagsForRelationship(relationship) {
@@ -327,7 +381,7 @@ structurizr.Workspace = class Workspace {
         var linkedRelationshipId = relationship.linkedRelationshipId;
         while (linkedRelationshipId !== undefined) {
             // we also need to prepend the set of tags of the linked relationship
-            var linkedRelationship = this.findRelationship(linkedRelationshipId);
+            var linkedRelationship = this.findRelationshipById(linkedRelationshipId);
             if (linkedRelationship && linkedRelationship.tags) {
                 tags = linkedRelationship.tags + ',' + tags;
             }
@@ -336,6 +390,48 @@ structurizr.Workspace = class Workspace {
         }
 
         return tags;
+    }
+
+    getAllPropertiesForRelationship(relationship) {
+        var properties = {};
+
+        if (relationship.properties) {
+            properties = relationship.properties;
+        }
+
+        // we also need to add the properties from the linked relationship(s)
+        var linkedRelationshipId = relationship.linkedRelationshipId;
+        while (linkedRelationshipId !== undefined) {
+            var linkedRelationship = this.findRelationshipById(linkedRelationshipId);
+            if (linkedRelationship && linkedRelationship.properties) {
+                Object.keys(linkedRelationship.properties).forEach(function(key) {
+                    if (!properties[key]) {
+                        properties[key] = linkedRelationship.properties[key];
+                    }
+                });
+            }
+
+            linkedRelationshipId = linkedRelationship.linkedRelationshipId;
+        }
+
+        return properties;
+    }
+
+    getUrlForRelationship(relationship) {
+        var url = relationship.url;
+
+        // use the URL from the linked relationship(s) if necessary
+        var linkedRelationshipId = relationship.linkedRelationshipId;
+        while ((url === undefined || url.trim().length === 0) && linkedRelationshipId !== undefined) {
+            var linkedRelationship = this.findRelationshipById(linkedRelationshipId);
+            if (linkedRelationship) {
+                url = linkedRelationship.url;
+            }
+
+            linkedRelationshipId = linkedRelationship.linkedRelationshipId;
+        }
+
+        return url;
     }
 
     #registerRelationship(relationship) {
