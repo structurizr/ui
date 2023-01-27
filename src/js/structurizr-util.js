@@ -93,7 +93,11 @@ structurizr.util.exportWorkspace = function(id, json) {
     structurizr.util.downloadFile(jsonAsString, "text/plain;charset=utf-8", filename);
 };
 
-
+structurizr.util.copyAttributeIfSpecified = function(source, destination, name) {
+    if (source.hasOwnProperty(name)) {
+        destination[name] = source[name];
+    }
+};
 
 if (!String.prototype.startsWith) {
     String.prototype.startsWith = function(searchString, position){

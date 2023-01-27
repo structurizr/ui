@@ -298,6 +298,46 @@ structurizr.Workspace = class Workspace {
         return this.#elementsById[id];
     }
 
+    getAllTagsForElement(element) {
+        var tags = (element.tags ? element.tags : '');
+
+        if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE) {
+            // we also need to prepend the set of tags of the software system
+            const softwareSystem = Structurizr.workspace.findElement(element.softwareSystemId);
+            if (softwareSystem && softwareSystem.tags) {
+                tags = (softwareSystem.tags + ',' + tags);
+            }
+        } else if (element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE) {
+            // we also need to prepend the set of tags of the container
+            const container = Structurizr.workspace.findElement(element.containerId);
+            if (container && container.tags) {
+                tags = (container.tags + ',' + tags);
+            }
+        }
+
+        return tags;
+    }
+
+    getAllTagsForRelationship(relationship) {
+        var tags = '';
+        if (relationship.tags) {
+            tags = relationship.tags;
+        }
+
+        var linkedRelationshipId = relationship.linkedRelationshipId;
+        while (linkedRelationshipId !== undefined) {
+            // we also need to prepend the set of tags of the linked relationship
+            var linkedRelationship = this.findRelationship(linkedRelationshipId);
+            if (linkedRelationship && linkedRelationship.tags) {
+                tags = linkedRelationship.tags + ',' + tags;
+            }
+
+            linkedRelationshipId = linkedRelationship.linkedRelationshipId;
+        }
+
+        return tags;
+    }
+
     #registerRelationship(relationship) {
         this.#relationshipsById[relationship.id] = relationship;
         this.#sortProperties(relationship);
