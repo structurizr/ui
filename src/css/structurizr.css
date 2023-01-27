@@ -508,7 +508,7 @@ mark {
     height: 45px;
     vertical-align: bottom;
     line-height: 1;
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .glyphicon-h2 {
@@ -518,6 +518,14 @@ mark {
     line-height: 1.1;
     margin-bottom: 4px;
 }
+
+.icon-h2 {
+    width: 32px;
+    height: 32px;
+    vertical-align: bottom;
+    margin-bottom: 4px;
+}
+
 hr {
     border-top: 1px solid #ddd;
 }
