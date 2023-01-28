@@ -217,7 +217,7 @@ structurizr.Workspace = class Workspace {
 
         if (deploymentNode.children) {
             this.#sortArrayByNameAscending(deploymentNode.children);
-            for (var i = 0; i < deploymentNode.children; i++) {
+            for (var i = 0; i < deploymentNode.children.length; i++) {
                 const child = deploymentNode.children[i];
                 this.#registerDeploymentNode(child, deploymentNode);
             }
@@ -231,6 +231,7 @@ structurizr.Workspace = class Workspace {
                 const softwareSystem = this.findElementById(softwareSystemInstance.softwareSystemId);
                 softwareSystemInstance.name = softwareSystem.name;
                 softwareSystemInstance.description = softwareSystem.description;
+                softwareSystemInstance.parentId = undefined;
 
                 if (softwareSystemInstance.environment === undefined) {
                     softwareSystemInstance.environment = deploymentNode.environment;
@@ -249,13 +250,13 @@ structurizr.Workspace = class Workspace {
                 containerInstance.name = container.name;
                 containerInstance.description = container.description;
                 containerInstance.technology = container.technology;
-                containerInstance.parentId = deploymentNode.id;
+                containerInstance.parentId = container.parentId;
 
                 if (containerInstance.environment === undefined) {
                     containerInstance.environment = deploymentNode.environment;
                 }
 
-                this.#registerElement(containerInstance, "ContainerInstance");
+                this.#registerElement(containerInstance, structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE);
             }
         } else {
             deploymentNode.containerInstances = [];
