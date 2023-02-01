@@ -145,7 +145,7 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
 
     #getPath() {
         if (this.#apiUrl === '/api') {
-            return window.location.origin + this.#apiUrl;
+            return this.#apiUrl;
         } else {
             var path = this.#apiUrl;
             if (path.slice(-1) === "/") { // String.endsWith() doesn't work on IE
