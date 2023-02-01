@@ -465,7 +465,7 @@
     }, false);
 </script>
 
-<%@ include file="/WEB-INF/fragments/decision-log-graph.jspf" %>
+<%@ include file="/WEB-INF/fragments/decisions/graph.jspf" %>
 
 <c:choose>
     <c:when test="${not empty workspaceAsJson}">
