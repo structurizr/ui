@@ -771,7 +771,7 @@ structurizr.Workspace = class Workspace {
                 };
 
                 if (view.type === 'Filtered') {
-                    var baseView = this.getViewByKey(view.baseViewKey);
+                    var baseView = this.findViewByKey(view.baseViewKey);
 
                     obj.viewTypeOrder = viewTypeOrders.indexOf(baseView.type);
                     obj.element = this.#findElementForView(baseView);
