@@ -39,10 +39,10 @@
                         Include diagram title, description, and metadata
                     </label>
 
-                    <label style="margin-right: 20px">
-                        <input type="checkbox" id="exportSVGInteractive" />
-                        Interactive <span class="smaller">(includes double-click handlers, see <a href="https://structurizr.com/help/html-export" target="_blank">Single HTML page export, for offline use</a> for more details)</span>
-                    </label>
+<%--                    <label style="margin-right: 20px">--%>
+<%--                        <input type="checkbox" id="exportSVGInteractive" />--%>
+<%--                        Interactive <span class="smaller">(includes double-click handlers, see <a href="https://structurizr.com/help/html-export" target="_blank">Single HTML page export, for offline use</a> for more details)</span>--%>
+<%--                    </label>--%>
 
                     <label>
                         <input type="checkbox" id="exportSVGDownload" />
