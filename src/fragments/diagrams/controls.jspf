@@ -1,0 +1,117 @@
+<div class="form-inline <c:if test="${embed eq true}">hidden</c:if>" style="margin-bottom: 8px">
+    <div class="form-group">
+        <div class="btn-group">
+            <c:if test="${structurizrConfiguration.type ne 'lite'}">
+            <c:choose>
+                <c:when test="${authenticated eq true}">
+                    <button class="btn btn-default" title="Return to dashboard" onclick="window.location.href='/dashboard'"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/house.svg" class="icon-btn" /></button>
+                </c:when>
+                <c:otherwise>
+                    <button class="btn btn-default" title="Return to home page" onclick="window.location.href='/'"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/house.svg" class="icon-btn" /></button>
+                </c:otherwise>
+            </c:choose>
+            <button id="workspaceSummaryButton" class="btn btn-default" title="Workspace summary" onclick="window.location.href='${urlPrefix}${urlSuffix}'"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/folder.svg" class="icon-btn" /></button>
+            </c:if>
+            <c:if test="${structurizrConfiguration.type eq 'lite'}">
+            <button class="btn btn-default" title="Home" onclick="window.location.href='/'"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/house.svg" class="icon-btn" /></button>
+            </c:if>
+            <button class="btn btn-default" id="documentationButton" title="Documentation" onclick="openDocumentation()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/book.svg" class="icon-btn" /></button>
+            <button class="btn btn-default" id="decisionLogButton" title="Decision log" onclick="openDecisions()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/journal-text.svg" class="icon-btn" /></button>
+            <button class="btn btn-default backButton" title="Go back to the last viewed diagram [b]" onclick="back()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/arrow-90deg-left.svg" class="icon-btn" /></button>
+        </div>
+
+        <div class="btn-group">
+            <c:if test="${embed eq false}">
+            <button class="btn btn-default" title="Diagram key [i]" onclick="showKey()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/info-circle.svg" class="icon-btn" /></button>
+            <button class="btn btn-default diagramTooltipOnButton" title="Diagram tooltips on [t]" onclick="toggleTooltip()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/chat-square-text.svg" class="icon-btn" /></button>
+            <button class="btn btn-default hidden diagramTooltipOffButton" title="Diagram tooltips off [t]" onclick="toggleTooltip()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/chat-square-text-fill.svg" class="icon-btn" /></button>
+            <button class="btn btn-default" id="tagsOnButton" title="Tags" onclick="openTagsModal()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/tags.svg" class="icon-btn" /></button>
+            <button class="btn btn-default hidden" id="tagsOffButton" title="Tags" onclick="openTagsModal()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/tags-fill.svg" class="icon-btn" /></button>
+            <button class="btn btn-default hidden" id="perspectivesOnButton" title="Perspectives" onclick="openPerspectivesModal()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/binoculars.svg" class="icon-btn" /></button>
+            <button class="btn btn-default hidden" id="perspectivesOffButton" title="Perspectives" onclick="openPerspectivesModal()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/binoculars-fill.svg" class="icon-btn" /></button>
+            <button id="showDiagramScopeOnButton" class="btn btn-default hidden" title="Toggle diagram scope on" onclick="showDiagramScope(true)"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/pin-map.svg" class="icon-btn" /></button>
+            <button id="showDiagramScopeOffButton" class="btn btn-default hidden" title="Toggle diagram scope off" onclick="showDiagramScope(false)"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/pin-map-fill.svg" class="icon-btn" /></button>
+            <button class="btn btn-default hidden" id="explorationsButton" title="Explore" onclick="window.location.href='${urlPrefix}/explore${urlSuffix}'"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/diagram-3.svg" class="icon-btn" /></button>
+            <button class="btn btn-default" id="darkModeOnButton" title="Dark mode on" onclick="toggleDarkMode()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon.svg" class="icon-btn" /></button>
+            <button class="btn btn-default hidden" id="darkModeOffButton" title="Dark mode off" onclick="toggleDarkMode()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon-fill.svg" class="icon-btn" /></button>
+            </c:if>
+            <button class="btn btn-default" title="Export diagram and key/legend to PNG" onclick="exportToPNG()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/filetype-png.svg" class="icon-btn" /></button>
+            <button class="btn btn-default" id="exportSvgButton" title="Export diagram and key to SVG" onclick="exportToSVG()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/filetype-svg.svg" class="icon-btn" /></button>
+            <button class="btn btn-default" title="Export diagrams to an offline HTML page" onclick="exportDiagramsToOfflineHtmlPage();"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/filetype-html.svg" class="icon-btn" /></button>
+
+            <c:if test="${structurizrConfiguration.type ne 'lite'}">
+            <button class="btn btn-default" id="embedDiagramButton" title="Embed" data-toggle="modal" data-target="#embedModal"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/code-slash.svg" class="icon-btn" /></button>
+            </c:if>
+
+            <c:if test="${not empty sharingUrlPrefix}">
+            <button class="btn btn-default" title="Share" onclick="window.open('${sharingUrlPrefix}/diagrams#' + structurizr.diagram.getCurrentViewOrFilter().key);"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/share.svg" class="icon-btn" /></button>
+            </c:if>
+            <c:if test="${createReviews eq true}">
+            <button id="createReviewButton" class="btn btn-default" title="Create review" onclick="createReview()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/chat.svg" class="icon-btn" /></button>
+            </c:if>
+            <button class="btn btn-default" id="helpButton" title="Help"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/question-circle.svg" class="icon-btn" /></button>
+        </div>
+
+        <script nonce="${scriptNonce}">$('#helpButton').bind('click', function() { window.open('https://structurizr.com/help/diagrams'); });</script>
+
+        <c:if test="${workspace.editable}">
+        <div class="btn-group">
+            <button class="btn btn-default" id="saveButton" title="Save workspace" onclick="saveWorkspace();" disabled="true" style="text-shadow: none"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/folder-check.svg" class="icon-btn icon-white" /></button>
+            <c:if test="${workspace.locked}">
+            <button id="exitAndUnlockWorkspaceButton" class="btn btn-primary" title="Close diagram editor" onclick="window.location.href='${urlPrefix}/diagrams'" style="text-shadow: none"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/x-circle.svg" class="icon-btn icon-white" /></button>
+            </c:if>
+        </div>
+        </c:if>
+
+        <c:if test="${includeEditButton eq true}">
+        <div id="editDiagramButton" class="btn-group">
+            <button class="btn btn-primary" title="Edit diagram" onclick="window.location.href='/workspace/${workspace.id}/diagram-editor${urlSuffix}#' + window.location.hash.substring(1)"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/pencil.svg" class="icon-btn icon-white" /></button>
+        </div>
+        </c:if>
+    </div>
+</div>
+
+<c:if test="${workspace.editable}">
+<div class="form-inline" style="margin-top: 8px;">
+    <div class="form-group">
+        <span id="diagramEditButtons">
+
+        <select id="pageSize" class="form-control" style="font-size: 12px;">
+            <option id="none" value="none">Canvas size - Custom</option>
+            <c:forEach var="paperSize" items="${paperSizes}">
+            <option id="${paperSize}" value="${paperSize.width}x${paperSize.height} %>">${paperSize.name} - ${paperSize.orientation}</option>
+            </c:forEach>
+        </select>
+
+        <div class="btn-group">
+            <button class="btn btn-default" id="pageSizeDecreaseButton" title="Decrease canvas size" onclick="structurizr.diagram.decreasePageSize(event)"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/file-earmark-minus.svg" class="icon-btn" /></button>
+            <button class="btn btn-default" id="pageSizeAutoButton" title="Auto canvas size" onclick="structurizr.diagram.autoPageSize()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/file-earmark-diff.svg" class="icon-btn" /></button>
+            <button class="btn btn-default" id="pageSizeIncreaseButton" title="Increase canvas size" onclick="structurizr.diagram.increasePageSize(event)"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/file-earmark-plus.svg" class="icon-btn" /></button>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Align left" onclick="structurizr.diagram.alignSelectedElementsLeft()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/align-start.svg" class="icon-btn" /></button>
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Align centre" onclick="structurizr.diagram.alignSelectedElementsVerticalCentre()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/align-center.svg" class="icon-btn" /></button>
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Align right" onclick="structurizr.diagram.alignSelectedElementsRight()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/align-end.svg" class="icon-btn" /></button>
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Distribute horizontally" onclick="structurizr.diagram.distributeSelectedElementsHorizontally()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/distribute-horizontal.svg" class="icon-btn" /></button>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Align top" onclick="structurizr.diagram.alignSelectedElementsTop()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/align-top.svg" class="icon-btn" /></button>
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Align middle" onclick="structurizr.diagram.alignSelectedElementsHorizontalCentre()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/align-middle.svg" class="icon-btn" /></button>
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Align bottom" onclick="structurizr.diagram.alignSelectedElementsBottom()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/align-bottom.svg" class="icon-btn" /></button>
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Distribute vertically" onclick="structurizr.diagram.distributeSelectedElementsVertically()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/distribute-vertical.svg" class="icon-btn" /></button>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-default" title="Centre diagram or selected elements" onclick="structurizr.diagram.centreDiagramOrSelectedElements()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/grid.svg" class="icon-btn" /></button>
+            <button class="btn btn-default" id="autoLayoutButton" title="Auto-layout" onclick="openAutoLayoutModal()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/magic.svg" class="icon-btn" /></button>
+            <button class="btn btn-default" id="magnetButton" title="Bring elements back onto the diagram" onclick="structurizr.diagram.gatherElementsOnCanvas()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/magnet.svg" class="icon-btn" /></button>
+            <button class="btn btn-default" id="undoButton" disabled="disabled" title="Undo layout changes [u]" onclick="structurizr.diagram.undo()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/arrow-counterclockwise.svg" class="icon-btn" /></button>
+        </div>
+
+        </span>
+        <span id="diagramNotEditableMessage" class="smaller hidden" style="margin-left: 10px">This diagram is not editable because automatic layout is enabled - see <a href="https://structurizr.com/help/auto-layout" target="_blank">Help - Automatic layout</a> for more details.</span>
+    </div>
+</div>
+</c:if>

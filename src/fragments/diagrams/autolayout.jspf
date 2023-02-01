@@ -1,0 +1,153 @@
+<div class="modal fade" id="autoLayoutModal" tabindex="-1" role="dialog" aria-labelledby="autoLayoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title">Auto-layout</h2>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" for="autoLayoutImplementation">Implementation</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="autoLayoutImplementation">
+                                <option value="dagre">Dagre</option>
+                                <c:if test="${structurizrConfiguration.graphvizEnabled eq true && workspace.clientEncrypted eq false}">
+                                <option value="graphviz">Graphviz</option>
+                                </c:if>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="autoLayoutRankDirectionFormGroup" class="form-group">
+                        <label class="control-label col-sm-4" for="autoLayoutRankDirection">Direction</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="autoLayoutRankDirection">
+                                <option value="TB">Top to bottom</option>
+                                <option value="BT">Bottom to top</option>
+                                <option value="LR">Left to right</option>
+                                <option value="RL">Right to left</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="autoLayoutResizePageFormGroup" class="form-group">
+                        <label class="control-label col-sm-4" for="autoLayoutResizePage">Resize page</label>
+                        <div class="col-sm-8">
+                            <input type="checkbox" id="autoLayoutResizePage" checked="checked" />
+                        </div>
+                    </div>
+
+                    <div id="autoLayoutVerticesFormGroup" class="form-group">
+                        <label class="control-label col-sm-4" for="autoLayoutVertices">Vertices</label>
+                        <div class="col-sm-8">
+                            <input type="checkbox" id="autoLayoutVertices" />
+                        </div>
+                    </div>
+
+                    <div id="autoLayoutMarginFormGroup" class="form-group">
+                        <label class="control-label col-sm-4" for="autoLayoutMargin">Margin</label>
+                        <div class="col-sm-8">
+                            <input type="number" id="autoLayoutMargin" value="400" /> (pixels)
+                        </div>
+                    </div>
+
+                    <div id="autoLayoutRankSeparationFormGroup" class="form-group">
+                        <label class="control-label col-sm-4" for="autoLayoutRankSeparation">Rank separation</label>
+                        <div class="col-sm-8">
+                            <input type="number" id="autoLayoutRankSeparation" value="300" /> (pixels)
+                        </div>
+                    </div>
+
+                    <div id="autoLayoutNodeSeparationFormGroup" class="form-group">
+                        <label class="control-label col-sm-4" for="autoLayoutNodeSeparation">Node separation</label>
+                        <div class="col-sm-8">
+                            <input type="number" id="autoLayoutNodeSeparation" value="300" /> (pixels)
+                        </div>
+                    </div>
+
+                    <div id="autoLayoutEdgeSeparationFormGroup" class="form-group">
+                        <label class="control-label col-sm-4" for="autoLayoutEdgeSeparation">Edge separation</label>
+                        <div class="col-sm-8">
+                            <input type="number" id="autoLayoutEdgeSeparation" value="300" /> (pixels)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="closeAutoLayoutModal()">Cancel</button>
+                <button type="button" class="btn btn-default" onclick="runAutoLayout()">Auto-layout</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script nonce="${scriptNonce}">
+
+    function initAutoLayout() {
+        $('#autoLayoutImplementation').change(function () {
+            var implementation = $(this).val();
+            if (implementation === 'graphviz') {
+                showOptionsForGraphviz();
+            } else {
+                showOptionsForDagre();
+            }
+        });
+    }
+
+    function showOptionsForGraphviz() {
+        $('#autoLayoutVerticesFormGroup').addClass('hidden');
+        $('#autoLayoutEdgeSeparationFormGroup').addClass('hidden');
+    }
+
+    function showOptionsForDagre() {
+        $('#autoLayoutVerticesFormGroup').removeClass('hidden');
+        $('#autoLayoutEdgeSeparationFormGroup').removeClass('hidden');
+    }
+
+    <c:if test="${structurizrConfiguration.graphvizEnabled eq true && workspace.clientEncrypted eq false}">
+        $('#autoLayoutImplementation').val('graphviz');
+        showOptionsForGraphviz();
+    </c:if>
+
+    function openAutoLayoutModal() {
+        $('#autoLayoutModal').modal();
+    }
+
+    function closeAutoLayoutModal() {
+        $('#autoLayoutModal').modal('hide');
+    }
+
+    function runAutoLayout() {
+        closeAutoLayoutModal();
+
+        const implementation = $('#autoLayoutImplementation').val();
+
+        if (implementation === 'dagre') {
+            structurizr.diagram.runDagre(
+                $('#autoLayoutRankDirection').val(),
+                $('#autoLayoutRankSeparation').val(),
+                $('#autoLayoutNodeSeparation').val(),
+                $('#autoLayoutEdgeSeparation').val(),
+                $('#autoLayoutVertices').is(':checked'),
+                $('#autoLayoutMargin').val(),
+                $('#autoLayoutResizePage').is(':checked')
+            )
+        } else {
+            runGraphvizForView(
+                $('#autoLayoutRankDirection').val(),
+                $('#autoLayoutRankSeparation').val(),
+                $('#autoLayoutNodeSeparation').val(),
+                $('#autoLayoutEdgeSeparation').val(),
+                $('#autoLayoutVertices').is(':checked'),
+                $('#autoLayoutMargin').val(),
+                $('#autoLayoutResizePage').is(':checked'),
+                function() {
+                    structurizr.diagram.refresh();
+                }
+            );
+        }
+    }
+</script>

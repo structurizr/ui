@@ -838,6 +838,16 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
         }
 
+        if (!editable) {
+            $('.connection-wrap').css(
+                {
+                    'pointer-events': 'visiblePainted',
+                    'cursor': 'auto'
+                }
+            );
+            $('.marker-vertices').css('display', 'none');
+        }
+
         diagramKey = createDiagramKey();
 
         Object.keys(groupsById).forEach(function(key) {
@@ -3666,12 +3676,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 link.set('vertices', relationshipInView.vertices);
             }
 
-            link.on('change:vertices', function () {
-                fireWorkspaceChangedEvent();
-
+            link.on('change:vertices', function (event) {
                 var vertices = link.get('vertices');
                 if (vertices) {
                     link.relationshipInView.vertices = vertices;
+                    fireWorkspaceChangedEvent();
                 }
             });
 
@@ -5551,7 +5560,9 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     this.addVertex = function() {
-        highlightedLink.addVertex({ x: currentX, y: currentY });
+        if (editable) {
+            highlightedLink.addVertex({x: currentX, y: currentY});
+        }
     };
 
     this.moveSelectedElementsLeft = function() {
@@ -6017,12 +6028,14 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 }
             } else {
                 // a link has been clicked
-                previousPositions = getCurrentLinkPositions([cell.model]);
+                if (editable) {
+                    previousPositions = getCurrentLinkPositions([cell.model]);
+                }
             }
         });
 
         paper.on('cell:pointerup', function (cell, evt, x, y) {
-            if (previousPositions) {
+            if (previousPositions && previousPositions.length > 0) {
                 if (!cell.getConnectionLength) {
                     previousPositions.forEach(function (previousPosition) {
                         if (previousPosition.element === cell.model) {
@@ -6064,6 +6077,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 if (lasso) {
                     lasso.mousemove(lassoMouseMove);
                 }
+            } else {
+                parentElement.focus();
             }
         });
 

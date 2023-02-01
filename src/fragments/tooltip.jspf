@@ -75,6 +75,7 @@
 <script nonce="${scriptNonce}">
     structurizr.ui.Tooltip = function() {
         var visible = false;
+        var enabled = false;
 
         var tooltip = $('#tooltip');
         var tooltipName = $('#tooltipName');
@@ -107,6 +108,19 @@
 
             tooltip.css({left: Math.max(0, x), top: Math.max(0, y)});
         };
+
+        this.isEnabled = function() {
+            return enabled;
+        }
+
+        this.enable = function() {
+            enabled = true;
+        }
+
+        this.disable = function() {
+            enabled = false;
+            this.hide();
+        }
 
         this.hide = function() {
             tooltip.addClass("hidden");
@@ -155,22 +169,18 @@
 
             var tagsHtml = '';
             var tags = structurizr.workspace.getAllTagsForElement(element);
-            if (tags) {
-                var tagsAsArray = tags.split(",");
-
-                tagsHtml += '<div class="smaller">';
-                tagsAsArray.forEach(function(tag) {
-                    if (tag !== undefined) {
-                        tag = tag.trim();
-                        if (tag.length > 0) {
-                            tagsHtml += '<span class="tag">';
-                            tagsHtml += structurizr.util.escapeHtml(tag);
-                            tagsHtml += '</span>';
-                        }
+            tagsHtml += '<div class="smaller">';
+            tags.forEach(function(tag) {
+                if (tag !== undefined) {
+                    tag = tag.trim();
+                    if (tag.length > 0) {
+                        tagsHtml += '<span class="tag">';
+                        tagsHtml += structurizr.util.escapeHtml(tag);
+                        tagsHtml += '</span>';
                     }
-                });
-                tagsHtml += '</div>';
-            }
+                }
+            });
+            tagsHtml += '</div>';
             tooltipTags.html(tagsHtml);
 
             var propertiesHtml = '';
@@ -190,7 +200,7 @@
             tooltipProperties.html(propertiesHtml);
 
             var urlHtml = '';
-            var url = structurizr.workspace.getUrlForElement(element);
+            var url = element.url;
             if (url && url.trim().length > 0) {
                 urlHtml += '<div class="smaller">';
                 urlHtml += '<p>URL: ';
@@ -283,22 +293,18 @@
 
             var tagsHtml = '';
             var tags = structurizr.workspace.getAllTagsForRelationship(relationship);
-            if (tags) {
-                var tagsAsArray = tags.split(",");
-
-                tagsHtml += '<div class="smaller">';
-                tagsAsArray.forEach(function(tag) {
-                    if (tag !== undefined) {
-                        tag = tag.trim();
-                        if (tag.length > 0) {
-                            tagsHtml += '<span class="tag">';
-                            tagsHtml += structurizr.util.escapeHtml(tag);
-                            tagsHtml += '</span>';
-                        }
+            tagsHtml += '<div class="smaller">';
+            tags.forEach(function(tag) {
+                if (tag !== undefined) {
+                    tag = tag.trim();
+                    if (tag.length > 0) {
+                        tagsHtml += '<span class="tag">';
+                        tagsHtml += structurizr.util.escapeHtml(tag);
+                        tagsHtml += '</span>';
                     }
-                });
-                tagsHtml += '</div>';
-            }
+                }
+            });
+            tagsHtml += '</div>';
             tooltipTags.html(tagsHtml);
 
             var propertiesHtml = '';
@@ -318,7 +324,7 @@
             tooltipProperties.html(propertiesHtml);
 
             var urlHtml = '';
-            var url = structurizr.workspace.getUrlForRelationship(relationship);
+            var url = relationship.url;
             if (url && url.trim().length > 0) {
                 urlHtml += '<div class="smaller">';
                 urlHtml += '<p>URL: ';

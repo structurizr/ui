@@ -30,19 +30,19 @@
         }
     );
 
-    Structurizr.saveWorkspace = function(refresh) {
+    structurizr.saveWorkspace = function(refresh) {
         if (structurizr.autoSave === false) {
             progressMessage.show('<p>Saving workspace...</p>');
         }
         $('#exitAndUnlockWorkspaceButton').prop('disabled', 'disabled');
 
-        var callback = function(response) {
+        const callback = function(response) {
             progressMessage.hide();
             $('#exitAndUnlockWorkspaceButton').prop('disabled', '');
 
             if (response.success === true) {
                 if (refresh === true) {
-                    var indexOfVersionParameter = window.location.href.indexOf('?version=');
+                    const indexOfVersionParameter = window.location.href.indexOf('?version=');
                     if (indexOfVersionParameter > -1) {
                         window.location.href = window.location.href.substr(0, indexOfVersionParameter);
                     } else {
@@ -51,10 +51,6 @@
                 }
             } else {
                 $('#exitAndUnlockWorkspaceButton').prop('disabled', 'disabled');
-            }
-
-            if (window.workspaceSaved !== undefined) {
-                workspaceSaved(response.success);
             }
 
             try {
@@ -66,14 +62,14 @@
             }
         };
 
-        const workspace = Structurizr.workspace.cloneWorkspaceAndRemoveUnnecessaryElements();
+        const workspace = structurizr.workspace.getJson();
+        workspace.views = structurizr.workspace.views;
 
         if (structurizrEncryptionStrategy) {
             try {
-                var encryptedWorkspace = structurizrEncryptionStrategy.encrypt(workspace);
+                const encryptedWorkspace = structurizrEncryptionStrategy.encrypt(workspace);
                 if (encryptedWorkspace) {
                     structurizrApiClient.putWorkspace(encryptedWorkspace, callback);
-                    Structurizr.workspace.setUnsavedChanges(false);
                 }
             } catch (e) {
                 console.error(e);
@@ -82,7 +78,5 @@
         } else {
             structurizrApiClient.putWorkspace(workspace, callback);
         }
-
-        Structurizr.workspace.setUnsavedChanges(false);
     };
 </script>

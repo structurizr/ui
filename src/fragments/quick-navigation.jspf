@@ -33,7 +33,7 @@
             $(document).keydown(function (e) {
                 const spaceKeyCode = 32;
 
-                if (e.which === spaceKeyCode && self.#isEnabled() === true && !self.#isOpen() && (e.target.tagName.toLowerCase() !== 'input' && e.target.tagName.toLowerCase() !== 'textarea')) {
+                if (e.which === spaceKeyCode && self.#isEnabled() === true && !self.isOpen() && (e.target.tagName.toLowerCase() !== 'input' && e.target.tagName.toLowerCase() !== 'textarea')) {
                     e.preventDefault();
                     self.#open();
                 }
@@ -153,7 +153,7 @@
             this.#onOpenCallback = callback;
         }
 
-        #isOpen() {
+        isOpen() {
             return this.#modal.is(':visible');
         }
 

@@ -1,27 +1,19 @@
 <script src="${structurizrConfiguration.cdnUrl}/js/crypto-js-4.1.1.min.js"></script>
 
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-client${structurizrConfiguration.versionSuffix}.js"></script>
-<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-legacy${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-workspace${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-encryption${structurizrConfiguration.versionSuffix}.js"></script>
-<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-color${structurizrConfiguration.versionSuffix}.js"></script>
 
 <script nonce="${scriptNonce}">
     function loadWorkspace(json) {
-        try {
-        Structurizr.workspace = new Structurizr.Workspace(json);
-        Structurizr.workspace.setOpen(${workspace.open});
-        Structurizr.workspace.setShareable(${workspace.shareable});
-        } catch (err) {
-            console.log(err);
-        }
-
         structurizr.workspace = new structurizr.Workspace(json);
 
         try {
             workspaceLoaded();
         } catch (err) {
-            logError('Error loading workspace', window.href, 1, err);
+            if (window.logError) {
+                logError('Error loading workspace', window.href, 1, err);
+            }
             console.log(err);
 
             if (progressMessage !== undefined) {
@@ -31,7 +23,6 @@
     }
 
     function loadWorkspaceFromParent() {
-        Structurizr.workspace = parent.Structurizr.workspace;
         structurizr.workspace = parent.structurizr.workspace;
 
         try {
