@@ -1,4 +1,5 @@
-structurizr.ui.applyBranding = function(branding) {
+structurizr.ui.applyBranding = function() {
+    var branding = structurizr.workspace.views.configuration.branding;
     if (branding.font.url) {
         const head = document.head;
         const link = document.createElement('link');
@@ -26,6 +27,81 @@ structurizr.ui.applyBranding = function(branding) {
 }
 
 structurizr.ui.themes = [];
+structurizr.ui.ignoredImages = [];
+
+structurizr.ui.loadThemes = function(callback) {
+    structurizr.workspace.views.configuration.themes.forEach(function(theme) {
+        structurizr.ui.loadTheme(theme);
+    });
+
+    setTimeout(function() {
+        structurizr.ui.waitForThemesToLoad(callback);
+    }, 100);
+}
+
+structurizr.ui.waitForThemesToLoad = function(callback) {
+    if (structurizr.ui.themes.length < structurizr.workspace.views.configuration.themes.length) {
+        setTimeout(function() {
+            structurizr.ui.waitForThemesToLoad(callback);
+        }, 100);
+    } else {
+        callback();
+    }
+}
+
+structurizr.ui.loadTheme = function(url) {
+    $.get(url, undefined, function(data) {
+        try {
+            const theme = JSON.parse(data);
+            if (theme !== undefined) {
+                const baseUrl = url.substring(0, url.lastIndexOf('/') + 1);
+
+                if (theme.elements === undefined) {
+                    theme.elements = [];
+                }
+                if (theme.relationships === undefined) {
+                    theme.relationships = [];
+                }
+
+                for (var i = 0; i < theme.elements.length; i++) {
+                    const style = theme.elements[i];
+                    if (style.icon) {
+                        if (style.icon.indexOf('http') > -1) {
+                            // okay, image served over HTTP
+                        } else if (style.icon.indexOf('data:image') > -1) {
+                            // also okay, data URI
+                        } else {
+                            // convert the relative icon filename into a full URL
+                            style.icon = baseUrl + style.icon;
+                        }
+                    }
+                }
+            }
+
+            structurizr.ui.themes.push(
+                {
+                    elements: theme.elements,
+                    relationships: theme.relationships
+                }
+            );
+        } catch (e) {
+            console.log('Could not load theme from ' + url);
+            console.log(e);
+        }
+    }, 'text')
+        .fail(function(xhr, textStatus, errorThrown) {
+            const errorMessage = 'Could not load theme from ' + url + '; error ' + xhr.status + ' (' + xhr.statusText + ')';
+            console.log(errorMessage);
+            alert(errorMessage);
+
+            structurizr.ui.themes.push(
+                {
+                    elements: [],
+                    relationships: []
+                }
+            );
+        });
+};
 
 structurizr.ui.ElementStyle = function(width, height, background, color, fontSize, shape, icon, border, stroke, strokeWidth, opacity, metadata, description) {
     this.width = width;
@@ -114,7 +190,7 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
 
         // (1) add workspace styles that are not defined in the theme
         // (2) override the styles defined in the theme where necessary
-        structurizr.workspace.getViews().configuration.styles.elements.forEach(function(elementStyleFromWorkspace) {
+        structurizr.workspace.views.configuration.styles.elements.forEach(function(elementStyleFromWorkspace) {
             const tag = elementStyleFromWorkspace.tag;
             var elementStyle = elementStylesMap[tag];
 
@@ -138,7 +214,7 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
             }
         });
     } else {
-        structurizr.workspace.getViews().configuration.styles.elements.forEach(function(elementStyleFromWorkspace) {
+        structurizr.workspace.views.configuration.styles.elements.forEach(function(elementStyleFromWorkspace) {
             const tag = elementStyleFromWorkspace.tag;
             elementStylesMap[tag] = elementStyleFromWorkspace;
         });
@@ -162,9 +238,8 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
     style.tags = ['Element'];
 
     const tags = structurizr.workspace.getAllTagsForElement(element);
-    var tagsAsArray = tags.split(",");
-    for (var i = 0; i < tagsAsArray.length; i++) {
-        const tag = tagsAsArray[i].trim();
+    for (var i = 0; i < tags.length; i++) {
+        const tag = tags[i].trim();
         var elementStyle = elementStylesMap[tag];
         if (elementStyle) {
             if (elementStyle.width !== undefined || elementStyle.height !== undefined) {
@@ -183,10 +258,10 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
             style.copyStyleAttributeIfSpecified(elementStyle, 'opacity');
             style.copyStyleAttributeIfSpecified(elementStyle, 'metadata');
             style.copyStyleAttributeIfSpecified(elementStyle, 'description');
-            style.tag = tagsAsArray[i].trim();
+            style.tag = tag;
 
-            if (style.tags.indexOf(tagsAsArray[i].trim()) === -1) {
-                style.tags.push(tagsAsArray[i].trim());
+            if (style.tags.indexOf(tag) === -1) {
+                style.tags.push(tag);
             }
         }
     }
@@ -226,6 +301,10 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
         style.height = 400;
     }
 
+    if (style.icon && structurizr.ui.ignoredImages.indexOf(style.icon) > -1) {
+        style.icon = undefined;
+    }
+
     return style;
 };
 
@@ -256,7 +335,7 @@ structurizr.ui.findRelationshipStyle = function(relationship, darkMode) {
 
         // (1) add workspace styles that are not defined in the theme
         // (2) override the styles defined in the theme where necessary
-        structurizr.workspace.getViews().configuration.styles.relationships.forEach(function(relationshipStyleFromWorkspace) {
+        structurizr.workspace.views.configuration.styles.relationships.forEach(function(relationshipStyleFromWorkspace) {
             const tag = relationshipStyleFromWorkspace.tag;
             var relationshipStyle = relationshipStylesMap[tag];
 
@@ -277,7 +356,7 @@ structurizr.ui.findRelationshipStyle = function(relationship, darkMode) {
             }
         });
     } else {
-        structurizr.workspace.getViews().configuration.styles.relationships.forEach(function(relationshipStyleFromWorkspace) {
+        structurizr.workspace.views.configuration.styles.relationships.forEach(function(relationshipStyleFromWorkspace) {
             const tag = relationshipStyleFromWorkspace.tag;
             relationshipStylesMap[tag] = relationshipStyleFromWorkspace;
         });
@@ -294,26 +373,23 @@ structurizr.ui.findRelationshipStyle = function(relationship, darkMode) {
         defaultStyle.opacity);
     style.tags = [ "Relationship" ];
 
-    var definedTags = structurizr.workspace.getAllTagsForRelationship(relationship);
-    if (definedTags) {
-        var tags = definedTags.split(",");
-        for (var i = 0; i < tags.length; i++) {
-            var relationshipStyle = relationshipStylesMap[tags[i].trim()];
-            if (relationshipStyle) {
-                style.copyStyleAttributeIfSpecified(relationshipStyle, 'thickness');
-                style.copyStyleAttributeIfSpecified(relationshipStyle, 'color');
-                style.copyStyleAttributeIfSpecified(relationshipStyle, 'dashed');
-                style.copyStyleAttributeIfSpecified(relationshipStyle, 'style');
-                style.copyStyleAttributeIfSpecified(relationshipStyle, 'routing');
-                style.copyStyleAttributeIfSpecified(relationshipStyle, 'fontSize');
-                style.copyStyleAttributeIfSpecified(relationshipStyle, 'width');
-                style.copyStyleAttributeIfSpecified(relationshipStyle, 'position');
-                style.copyStyleAttributeIfSpecified(relationshipStyle, 'opacity');
-                style.tag = tags[i].trim();
+    const tags = structurizr.workspace.getAllTagsForRelationship(relationship);
+    for (var i = 0; i < tags.length; i++) {
+        var relationshipStyle = relationshipStylesMap[tags[i].trim()];
+        if (relationshipStyle) {
+            style.copyStyleAttributeIfSpecified(relationshipStyle, 'thickness');
+            style.copyStyleAttributeIfSpecified(relationshipStyle, 'color');
+            style.copyStyleAttributeIfSpecified(relationshipStyle, 'dashed');
+            style.copyStyleAttributeIfSpecified(relationshipStyle, 'style');
+            style.copyStyleAttributeIfSpecified(relationshipStyle, 'routing');
+            style.copyStyleAttributeIfSpecified(relationshipStyle, 'fontSize');
+            style.copyStyleAttributeIfSpecified(relationshipStyle, 'width');
+            style.copyStyleAttributeIfSpecified(relationshipStyle, 'position');
+            style.copyStyleAttributeIfSpecified(relationshipStyle, 'opacity');
+            style.tag = tags[i].trim();
 
-                if (style.tags.indexOf(tags[i].trim()) === -1) {
-                    style.tags.push(tags[i].trim());
-                }
+            if (style.tags.indexOf(tags[i].trim()) === -1) {
+                style.tags.push(tags[i].trim());
             }
         }
     }
@@ -352,7 +428,7 @@ structurizr.ui.getViewName = function(view) {
         return '[Custom] ' + ((view.title && view.title.trim().length > 0) ? view.title : 'Untitled');
 
     } else if (view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE) {
-        const enterprise = structurizr.workspace.getModel().enterprise;
+        const enterprise = structurizr.workspace.model.enterprise;
         return '[System Landscape]' + (enterprise ? ' ' + enterprise.name : '');
 
     } else if (view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE) {
@@ -395,6 +471,54 @@ structurizr.ui.getViewName = function(view) {
 
     return '';
 }
+
+structurizr.ui.openingMetadataSymbols = {
+    SquareBrackets: '[',
+    RoundBrackets: '(',
+    CurlyBrackets: '{',
+    AngleBrackets: '<',
+    DoubleAngleBrackets: '<<',
+    None: ''
+};
+
+structurizr.ui.closingMetadataSymbols = {
+    SquareBrackets: ']',
+    RoundBrackets: ')',
+    CurlyBrackets: '}',
+    AngleBrackets: '>',
+    DoubleAngleBrackets: '>>',
+    None: ''
+};
+
+structurizr.ui.getMetadataForElement = function(element, includeTechnology) {
+    const openingSymbol = structurizr.ui.openingMetadataSymbols[structurizr.workspace.views.configuration.metadataSymbols];
+    const closingSymbol = structurizr.ui.closingMetadataSymbols[structurizr.workspace.views.configuration.metadataSymbols];
+
+    if (element.type === structurizr.constants.CUSTOM_ELEMENT_TYPE) {
+        if (element.metadata && element.metadata.length > 0) {
+            return openingSymbol + element.metadata + closingSymbol;
+        } else {
+            return '';
+        }
+    } else {
+        if (includeTechnology === true && element.technology) {
+            return openingSymbol + structurizr.workspace.getTerminologyFor(element) + ": " + element.technology + closingSymbol;
+        }
+
+        return openingSymbol + structurizr.workspace.getTerminologyFor(element) + closingSymbol;
+    }
+};
+
+structurizr.ui.getMetadataForRelationship = function(relationship) {
+    if (relationship.technology) {
+        const openingSymbol = structurizr.ui.openingMetadataSymbols[structurizr.workspace.views.configuration.metadataSymbols];
+        const closingSymbol = structurizr.ui.closingMetadataSymbols[structurizr.workspace.views.configuration.metadataSymbols];
+
+        return openingSymbol + relationship.technology + closingSymbol;
+    } else {
+        return '';
+    }
+};
 
 structurizr.ui.isFullScreenEnabled = function() {
     return document.fullscreenEnabled || document.webkitFullscreenEnabled || document.mozFullScreenEnabled || document.msFullscreenEnabled;

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="../src/js/jquery-3.6.3.min.js"></script>
+
+    <script src="../src/js/lodash-4.17.21.js"></script>
+    <script src="../src/js/backbone-1.4.1.js"></script>
+    <script type="text/javascript" src="../src/js/joint-3.6.5.js"></script>
+    <script type="text/javascript" src="../src/js/canvg-1.5.4.js"></script>
+
+    <script type="text/javascript" src="../src/js/structurizr.js"></script>
+    <script type="text/javascript" src="../src/js/structurizr-util.js"></script>
+    <script type="text/javascript" src="../src/js/structurizr-ui.js"></script>
+    <script type="text/javascript" src="../src/js/structurizr-workspace.js"></script>
+    <script type="text/javascript" src="../src/js/structurizr-diagram.js"></script>
+
+    <link href="../src/css/joint-3.6.5.css" rel="stylesheet" media="screen" />
+    <link href="../src/css/structurizr-diagram.css" rel="stylesheet" media="screen" />
+
+    <style>
+    body {
+        font-family: Arial;
+    }
+    </style>
+</head>
+<body>
+    <div id="diagram" style="width: 1000px; height: 600px;"></div>
+    <img id="thumbnail" style="max-width: 200px"></div>
+</body>
+</html>
+
+<script>
+    var diagram;
+    $.ajax({url: 'https://raw.githubusercontent.com/structurizr/ui/main/examples/big-bank-plc.json',
+    success: function(data){
+        structurizr.workspace = new structurizr.Workspace(JSON.parse(data));
+
+        diagram = new structurizr.ui.Diagram('diagram', false, function() {
+            diagram.onViewChanged(viewChanged);
+            diagram.changeView('Containers');
+        });
+    }});
+
+    function viewChanged() {
+        diagram.exportCurrentThumbnailToPNG(function(thumbnail) {
+            $('#thumbnail').attr('src', thumbnail);
+        });
+    }
+</script>

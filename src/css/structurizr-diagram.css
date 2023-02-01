@@ -1,0 +1,35 @@
+.structurizrDiagramViewport {
+    background: gray;
+    text-align: center;
+    margin: 0 auto 0 auto;
+    padding: 0;
+    border-style: none;
+    overflow: scroll;
+}
+
+.structurizrDiagramCanvas {
+    border-style: none;
+    background: white;
+    padding: 0;
+    margin: auto;
+}
+
+.structurizrElement .highlightedElement {
+    stroke-width: 5px;
+    stroke: #777777;
+    stroke-dasharray: 10 10;
+}
+
+.joint-element * {
+    vector-effect: none;
+}
+
+.joint-link.joint-theme-default .marker-vertex {
+    fill: #1168BD;
+    r: 25px;
+}
+
+.joint-link.joint-theme-default .marker-vertex:hover {
+    fill: #08427B;
+    r: 25px;
+}

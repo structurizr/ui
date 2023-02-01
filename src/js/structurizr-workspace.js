@@ -2,6 +2,16 @@
 structurizr.Workspace = class Workspace {
 
     #json;
+
+    id;
+    name;
+    description;
+    properties;
+    lastModifiedDate;
+    model;
+    documentation;
+    views;
+
     #workspace;
     #elementsById = {};
     #relationshipsById = {};
@@ -12,50 +22,41 @@ structurizr.Workspace = class Workspace {
         this.#workspace = JSON.parse(JSON.stringify(json));
 
         this.#initWorkspace();
+        this.id = this.#workspace.id;
+        this.name = this.#workspace.name;
+        this.description = this.#workspace.description;
+        this.lastModifiedDate = this.#workspace.lastModifiedDate;
+        this.version = this.#workspace.version;
+
         this.#initDocumentation(this.#workspace);
+        this.documentation = this.#workspace.documentation;
+
         this.#initModel();
+        this.model = this.#workspace.model;
+
         this.#initViews();
+        this.views = this.#workspace.views;
     }
 
     getJson() {
         return JSON.parse(JSON.stringify(this.#json));
     }
 
-    getId() {
-        return this.#workspace.id !== undefined ? this.#workspace.id : -1;
-    }
-
-    getName() {
-        return this.#workspace.name ? this.#workspace.name : "";
-    };
-
-    getDescription() {
-        return this.#workspace.description ? this.#workspace.description : "";
-    };
-
-    getLastModifiedDate() {
-        return this.#workspace.lastModifiedDate;
-    };
-
     getProperty(name) {
         return this.#workspace.properties[name];
     }
 
-    getDocumentation() {
-        return this.#workspace.documentation;
-    }
-
-    getModel() {
-        return this.#workspace.model;
-    }
-
-    getViews() {
-        return this.#workspace.views;
-    }
-
     #initWorkspace() {
+        if (this.#workspace.id === undefined) {
+            this.#workspace.id = -1;
+        }
+
         if (this.#workspace.properties === undefined) {
             this.#workspace.properties = {};
+        }
+
+        if (this.#workspace.lastModifiedDate === undefined) {
+            this.#workspace.lastModifiedDate = new Date().toISOString();
         }
     }
 
@@ -231,6 +232,9 @@ structurizr.Workspace = class Workspace {
                 const softwareSystem = this.findElementById(softwareSystemInstance.softwareSystemId);
                 softwareSystemInstance.name = softwareSystem.name;
                 softwareSystemInstance.description = softwareSystem.description;
+                if (softwareSystemInstance.url === undefined) {
+                    softwareSystemInstance.url = softwareSystem.url;
+                }
                 softwareSystemInstance.parentId = undefined;
 
                 if (softwareSystemInstance.environment === undefined) {
@@ -250,6 +254,9 @@ structurizr.Workspace = class Workspace {
                 containerInstance.name = container.name;
                 containerInstance.description = container.description;
                 containerInstance.technology = container.technology;
+                if (containerInstance.url === undefined) {
+                    containerInstance.url = container.url;
+                }
                 containerInstance.parentId = container.parentId;
 
                 if (containerInstance.environment === undefined) {
@@ -281,12 +288,25 @@ structurizr.Workspace = class Workspace {
             element.type = type;
 
             this.#elementsById[element.id] = element;
-            this.#sortProperties(element);
 
             if (element.relationships) {
                 for (var i = 0; i < element.relationships.length; i++) {
                     this.#registerRelationship(element.relationships[i]);
                 }
+            }
+
+            if (element.url && element.url.trim().length === 0) {
+                element.url = undefined;
+            }
+
+            if (element.properties === undefined) {
+                element.properties = {};
+            } else {
+                this.#sortProperties(element);
+            }
+
+            if (element.perspectives === undefined) {
+                element.perspectives = [];
             }
         }
     }
@@ -298,6 +318,40 @@ structurizr.Workspace = class Workspace {
     findElementById(id) {
         return this.#elementsById[id];
     }
+
+    getTags() {
+        const self = this;
+        const tags = [];
+
+        Object.keys(this.#elementsById).forEach(function(id) {
+            const element = self.#elementsById[id];
+            if (element.tags) {
+                element.tags.split(',').forEach(function (tag) {
+                    tag = structurizr.util.trim(tag);
+
+                    if (tag.length > 0 && tags.indexOf(tag) === -1) {
+                        tags.push(tag);
+                    }
+                });
+            }
+        });
+
+        Object.keys(this.#relationshipsById).forEach(function(id) {
+            const relationship = self.#relationshipsById[id];
+            if (relationship.tags) {
+                relationship.tags.split(',').forEach(function (tag) {
+                    tag = structurizr.util.trim(tag);
+
+                    if (tag.length > 0 && tags.indexOf(tag) === -1) {
+                        tags.push(tag);
+                    }
+                });
+            }
+        });
+
+        tags.sort();
+        return tags;
+    };
 
     getAllTagsForElement(element) {
         var tags = (element.tags ? element.tags : '');
@@ -316,7 +370,7 @@ structurizr.Workspace = class Workspace {
             }
         }
 
-        return tags;
+        return tags.split(",");
     }
 
     getAllPropertiesForElement(element) {
@@ -328,7 +382,7 @@ structurizr.Workspace = class Workspace {
 
         if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE) {
             // we also need to add the properties from the base element
-            var softwareSystem = Structurizr.workspace.findElement(element.softwareSystemId);
+            var softwareSystem = this.findElementById(element.softwareSystemId);
             if (softwareSystem && softwareSystem.properties) {
                 Object.keys(softwareSystem.properties).forEach(function(key) {
                     if (!properties[key]) {
@@ -338,7 +392,7 @@ structurizr.Workspace = class Workspace {
             }
         } else if (element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE) {
             // we also need to prepend the set of properties of the container
-            var container = Structurizr.workspace.findElement(element.containerId);
+            var container = this.findElementById(element.containerId);
             if (container && container.properties) {
                 Object.keys(container.properties).forEach(function(key) {
                     if (!properties[key]) {
@@ -349,28 +403,6 @@ structurizr.Workspace = class Workspace {
         }
 
         return properties;
-    }
-
-    getUrlForElement(element) {
-        var url = element.url;
-
-        if (url === undefined || url.trim().length === 0) {
-            if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE) {
-                // perhaps use the URL from the base element
-                var softwareSystem = this.findElementById(element.softwareSystemId);
-                if (softwareSystem) {
-                    url = softwareSystem.url;
-                }
-            } else if (element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE) {
-                // perhaps use the URL from the base element
-                var container = this.findElementById(element.containerId);
-                if (container) {
-                    url = container.url;
-                }
-            }
-        }
-
-        return url;
     }
 
     getAllTagsForRelationship(relationship) {
@@ -390,7 +422,7 @@ structurizr.Workspace = class Workspace {
             linkedRelationshipId = linkedRelationship.linkedRelationshipId;
         }
 
-        return tags;
+        return tags.split(',');
     }
 
     getAllPropertiesForRelationship(relationship) {
@@ -418,30 +450,66 @@ structurizr.Workspace = class Workspace {
         return properties;
     }
 
-    getUrlForRelationship(relationship) {
-        var url = relationship.url;
+    #registerRelationship(relationship) {
+        this.#relationshipsById[relationship.id] = relationship;
 
         // use the URL from the linked relationship(s) if necessary
         var linkedRelationshipId = relationship.linkedRelationshipId;
-        while ((url === undefined || url.trim().length === 0) && linkedRelationshipId !== undefined) {
+        while ((relationship.url === undefined || relationship.url.trim().length === 0) && linkedRelationshipId !== undefined) {
             var linkedRelationship = this.findRelationshipById(linkedRelationshipId);
             if (linkedRelationship) {
-                url = linkedRelationship.url;
+                relationship.url = linkedRelationship.url;
+                linkedRelationshipId = linkedRelationship.linkedRelationshipId;
+            } else {
+                linkedRelationshipId = undefined;
             }
-
-            linkedRelationshipId = linkedRelationship.linkedRelationshipId;
         }
 
-        return url;
-    }
+        if (relationship.url && relationship.url.trim().length === 0) {
+            relationship.url = undefined;
+        }
 
-    #registerRelationship(relationship) {
-        this.#relationshipsById[relationship.id] = relationship;
-        this.#sortProperties(relationship);
+        if (relationship.properties === undefined) {
+            relationship.properties = {};
+        } else {
+            this.#sortProperties(relationship);
+        }
+
+        if (relationship.perspectives === undefined) {
+            relationship.perspectives = [];
+        }
     }
 
     findRelationshipById(id) {
         return this.#relationshipsById[id];
+    }
+
+    getPerspectiveNames() {
+        const self = this;
+        const names = [];
+
+        Object.keys(this.#elementsById).forEach(function(id) {
+            const element = self.#elementsById[id];
+            element.perspectives.forEach(function(perspective) {
+                const name = structurizr.util.trim(perspective.name);
+                if (name.indexOf(name) === -1) {
+                    name.push(name);
+                }
+            });
+        });
+
+        Object.keys(this.#relationshipsById).forEach(function(id) {
+            const relationship = self.#relationshipsById[id];
+            relationship.perspectives.forEach(function(perspective) {
+                const name = structurizr.util.trim(perspective.name);
+                if (name.indexOf(name) === -1) {
+                    name.push(name);
+                }
+            });
+        });
+
+        names.sort();
+        return names;
     }
 
     #initViews() {
@@ -540,6 +608,10 @@ structurizr.Workspace = class Workspace {
             this.#workspace.views.configuration = {};
         }
 
+        if (this.#workspace.views.configuration.properties === undefined) {
+            this.#workspace.views.configuration.properties = {};
+        }
+
         if (this.#workspace.views.configuration.styles === undefined) {
             this.#workspace.views.configuration.styles = {};
         }
@@ -552,14 +624,18 @@ structurizr.Workspace = class Workspace {
             this.#workspace.views.configuration.styles.relationships = [];
         }
 
+        if (this.#workspace.views.configuration.metadataSymbols === undefined) {
+            this.#workspace.views.configuration.metadataSymbols = 'SquareBrackets';
+        }
+
         if (this.#workspace.views.configuration.branding === undefined) {
             this.#workspace.views.configuration.branding = {};
         }
 
         if (this.#workspace.views.configuration.branding.font === undefined) {
             this.#workspace.views.configuration.branding.font = {
-                name: 'Open Sans',
-                url: undefined
+                name: structurizr.constants.DEFAULT_FONT_NAME,
+                url: structurizr.constants.DEFAULT_FONT_URL
             }
         }
 
@@ -570,10 +646,16 @@ structurizr.Workspace = class Workspace {
         if (this.#workspace.views.configuration.themes === undefined) {
             this.#workspace.views.configuration.themes = [];
         }
+
+        this.#sortViews();
     }
 
     #registerView(view) {
         this.#views.push(view);
+
+        if (view.description === undefined) {
+            view.description = '';
+        }
 
         if (view.type !== structurizr.constants.FILTERED_VIEW_TYPE) {
             if (view.elements === undefined) {
@@ -603,6 +685,220 @@ structurizr.Workspace = class Workspace {
 
     hasViews() {
         return this.#views.length > 0;
+    }
+
+    getViews() {
+        return this.#views;
+    }
+
+    findSystemContextViewsForSoftwareSystem(softwareSystemId) {
+        const views = [];
+
+        for (var i = 0; i < this.#views.length; i++) {
+            var view = this.#views[i];
+
+            if (view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE && view.softwareSystemId === softwareSystemId) {
+                views.push(view);
+            } else if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
+                var baseView = this.findViewByKey(view.baseKey);
+                if (baseView.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE && baseView.softwareSystemId === softwareSystemId) {
+                    views.push(view);
+                }
+            }
+        }
+
+        return views;
+    };
+
+    findContainerViewsForSoftwareSystem(softwareSystemId) {
+        const views = [];
+
+        for (var i = 0; i < this.#views.length; i++) {
+            var view = this.#views[i];
+
+            if (view.type === structurizr.constants.CONTAINER_VIEW_TYPE && view.softwareSystemId === softwareSystemId) {
+                views.push(view);
+            } else if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
+                var baseView = this.findViewByKey(view.baseKey);
+                if (baseView.type === structurizr.constants.CONTAINER_VIEW_TYPE && baseView.softwareSystemId === softwareSystemId) {
+                    views.push(view);
+                }
+            }
+        }
+
+        return views;
+    };
+
+    findComponentViewsForContainer(containerId) {
+        const views = [];
+
+        for (var i = 0; i < this.#views.length; i++) {
+            var view = this.#views[i];
+
+            if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE && view.containerId === containerId) {
+                views.push(view);
+            } else if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
+                var baseView = this.findViewByKey(view.baseKey);
+                if (baseView.type === structurizr.constants.COMPONENT_VIEW_TYPE && baseView.containerId === containerId) {
+                    views.push(view);
+                }
+            }
+        }
+
+        return views;
+    };
+
+    #sortViews() {
+        var listOfViews = [];
+        var filters = [];
+
+        var viewTypeOrders = [ 'SystemLandscape', 'SystemContext', 'Container', 'Component', 'Dynamic', 'Deployment' ];
+        var elementTypeOrders = [ '*', 'SoftwareSystem', 'Container' ];
+
+        this.#views.forEach(function(view) {
+            if (view.type === "Filtered") {
+                filters.push(view.baseViewKey);
+            }
+        });
+
+        for (var i = 0; i < this.#views.length; i++) {
+            const view = this.#views[i];
+
+            if (filters.indexOf(view.key) === -1) {
+                var obj = {
+                    view: view,
+                    key: view.key,
+                };
+
+                if (view.type === 'Filtered') {
+                    var baseView = this.getViewByKey(view.baseViewKey);
+
+                    obj.viewTypeOrder = viewTypeOrders.indexOf(baseView.type);
+                    obj.element = this.#findElementForView(baseView);
+                } else {
+                    obj.viewTypeOrder = viewTypeOrders.indexOf(view.type);
+                    obj.element = this.#findElementForView(view);
+                }
+
+                if (obj.element) {
+                    obj.elementTypeOrder = elementTypeOrders.indexOf(obj.element.type);
+                    obj.scope = obj.element.canonicalName;
+
+                    if (obj.element.parentId) {
+                        obj.softwareSystem = this.findElementById(obj.element.parentId);
+                    } else {
+                        obj.softwareSystem = obj.element;
+                    }
+                } else {
+                    obj.elementTypeOrder = elementTypeOrders.indexOf('*');
+                    obj.scope = '/';
+                }
+
+                listOfViews.push(obj);
+            }
+        }
+
+        try {
+            if (this.#workspace.views.configuration.viewSortOrder === 'Key' || (this.#workspace.views.configuration.properties && this.#workspace.views.configuration.properties['structurizr.sort'] === 'key')) {
+                listOfViews.sort(function (a, b) {
+                    return a.key.localeCompare(b.key);
+                });
+            } else if (this.#workspace.views.configuration.viewSortOrder === 'Type' || (this.#workspace.views.configuration.properties && this.#workspace.views.configuration.properties['structurizr.sort'] === 'type')) {
+                listOfViews.sort(function (a, b) {
+                    return (a.viewTypeOrder + a.scope + a.key).localeCompare(b.viewTypeOrder + b.scope + b.key);
+                });
+            } else if (this.#workspace.views.configuration.properties && this.#workspace.views.configuration.properties['structurizr.sort'] === 'created') {
+                listOfViews.sort(function (a, b) {
+                    return a.view.order - b.view.order;
+                });
+            } else {
+                listOfViews.sort(function (a, b) {
+                    if (a.softwareSystem === undefined && b.softwareSystem !== undefined) {
+                        return -1;
+                    }
+
+                    if (b.softwareSystem === undefined && a.softwareSystem !== undefined) {
+                        return 1;
+                    }
+
+                    if (a.softwareSystem === undefined && b.softwareSystem === undefined) {
+                        return (a.viewTypeOrder + a.key).localeCompare(b.viewTypeOrder + b.key);
+                    }
+
+                    if (a.softwareSystem.name.localeCompare(b.softwareSystem.name) === 0) {
+                        return (a.viewTypeOrder + '.' + a.elementTypeOrder + '.' + a.scope + a.key).localeCompare(b.viewTypeOrder + '.' + b.elementTypeOrder + '.' + b.scope + b.key);
+                    } else {
+                        return a.softwareSystem.name.localeCompare(b.softwareSystem.name);
+                    }
+                });
+            }
+        } catch (err) {
+            console.log(err);
+        }
+
+        this.#views = listOfViews.map(function(v) {
+            return v.view;
+        });
+    };
+
+    #findElementForView(view) {
+        if (view.type === 'SystemLandscape') {
+            return undefined;
+        } else if (view.type === 'SystemContext') {
+            return this.findElementById(view.softwareSystemId);
+        } else if (view.type === 'Container') {
+            return this.findElementById(view.softwareSystemId);
+        } else if (view.type === 'Component') {
+            return this.findElementById(view.containerId);
+        } else if (view.type === 'Dynamic') {
+            if (view.elementId !== undefined) {
+                return this.findElementById(view.elementId);
+            } else {
+                return undefined;
+            }
+        } else if (view.type === 'Deployment') {
+            if (view.softwareSystemId !== undefined) {
+                return this.findElementById(view.softwareSystemId);
+            } else {
+                return undefined;
+            }
+        }
+    }
+
+    copyLayoutFrom(views, viewKey) {
+        if (views === undefined) {
+            return;
+        }
+
+        this.#copyLayoutFromViews(views.customViews, viewKey);
+        this.#copyLayoutFromViews(views.systemLandscapeViews, viewKey);
+        this.#copyLayoutFromViews(views.systemContextViews, viewKey);
+        this.#copyLayoutFromViews(views.containerViews, viewKey);
+        this.#copyLayoutFromViews(views.componentViews, viewKey);
+        this.#copyLayoutFromViews(views.dynamicViews, viewKey);
+        this.#copyLayoutFromViews(views.deploymentViews, viewKey);
+    }
+
+    #copyLayoutFromViews(views, viewKey) {
+        if (views !== undefined) {
+            for (var i = 0; i < views.length; i++) {
+                const v = views[i];
+
+                if (viewKey === undefined || viewKey === v.key) {
+                    var view = this.findViewByKey(v.key);
+                    view.elements = v.elements;
+                    view.relationships = v.relationships;
+
+                    if (v.paperSize) {
+                        view.paperSize = v.paperSize;
+                    }
+
+                    if (v.dimensions) {
+                        view.dimensions = v.dimensions;
+                    }
+                }
+            }
+        }
     }
 
     hasStyles() {

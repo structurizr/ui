@@ -3,7 +3,7 @@
 // - diagrams from the workspace (as iframe embeds)
 structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix) {
 
-    var images = workspace.getDocumentation().images;
+    var images = workspace.documentation.images;
     var embedIndex = 0;
 
     var md = window.markdownit();
@@ -95,7 +95,7 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix)
         if (view) {
             // embed the specified diagram
             var id = 'structurizrEmbed' + (++embedIndex);
-            var embedUrl = '/embed' + '?workspace=' + workspace.getId() + '&view=' + encodeURIComponent(diagramIdentifier) + '&perspective=' + encodeURIComponent(perspective) + '&type=' + type + '&iframe=' + id + '&urlPrefix=' + urlPrefix + '&urlSuffix=' + encodeURIComponent(urlSuffix);
+            var embedUrl = '/embed' + '?workspace=' + workspace.id + '&view=' + encodeURIComponent(diagramIdentifier) + '&perspective=' + encodeURIComponent(perspective) + '&type=' + type + '&iframe=' + id + '&urlPrefix=' + urlPrefix + '&urlSuffix=' + encodeURIComponent(urlSuffix);
 
             return '<div style="text-align: center"><iframe id="' + id + '" class="structurizrEmbed thumbnail" src="' + embedUrl + '" width="100%" height="' + (window.innerHeight * 0.85) + 'px" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>' + '</div>';
         } else {
@@ -105,13 +105,13 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix)
 
     function renderImage(name, alt) {
         // if the image is a workspace diagram PNG, replace it with the embedded version
-        var regex = new RegExp(host + '/workspace/' + workspace.getId() + '/diagrams/(.*?).png');
+        var regex = new RegExp(host + '/workspace/' + workspace.id + '/diagrams/(.*?).png');
         var match = regex.exec(name);
         if (match && match[1]) {
             return renderEmbeddedDiagram(match[1]);
         }
 
-        regex = new RegExp(host + '/workspace/' + workspace.getId() + '/[0-9a-zA-Z-]{36}/diagrams/(.*?).png');
+        regex = new RegExp(host + '/workspace/' + workspace.id + '/[0-9a-zA-Z-]{36}/diagrams/(.*?).png');
         match = regex.exec(name);
         if (match && match[1]) {
             return renderEmbeddedDiagram(match[1]);

@@ -78,29 +78,6 @@ h6 {
     width: 48px;
 }
 
-#diagramContainer {
-    background: gray;
-    margin: 0;
-    padding: 0;
-    border-style: none;
-}
-
-#diagramViewport {
-    background: gray;
-    text-align: center;
-    margin: 0 auto 0 auto;
-    padding: 0;
-    border-style: none;
-    overflow: scroll;
-}
-
-#diagramCanvas {
-    border-style: none;
-    background: white;
-    padding: 0;
-    margin: auto;
-}
-
 .form-signin {
   max-width: 330px;
   padding: 15px;

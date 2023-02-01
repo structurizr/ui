@@ -79,6 +79,14 @@ structurizr.util.escapeHtml = function(html) {
         .replace(/'/g, "&#039;");
 };
 
+structurizr.util.trim = function(s) {
+    if (s === undefined || s === null) {
+        return '';
+    } else {
+        return s.trim();
+    }
+};
+
 structurizr.util.btoa = function(plain) {
     return CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(plain));
 };
@@ -97,6 +105,25 @@ structurizr.util.copyAttributeIfSpecified = function(source, destination, name) 
     if (source.hasOwnProperty(name)) {
         destination[name] = source[name];
     }
+};
+
+structurizr.util.shadeColor = function(color, percentAsInteger, darkMode) {
+    if (darkMode === true) {
+        percentAsInteger = -percentAsInteger;
+    }
+
+    var percent = 0;
+    if (percentAsInteger === 0) {
+        percent = 0;
+    } else {
+        if (percentAsInteger > 90) {
+            percent = 0.9; // let's cap how much we shade the colour, so it doesn't become white
+        } else {
+            percent = percentAsInteger / 100;
+        }
+    }
+    const f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
+    return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
 };
 
 if (!String.prototype.startsWith) {
