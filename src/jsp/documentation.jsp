@@ -183,7 +183,7 @@
 
             if (requestedScope === WORKSPACE_SCOPE) {
                 sections = structurizr.workspace.documentation.sections;
-                $('#documentationScopeName').html(structurizr.util.escapeHtml(structurizr.workspace.getName()));
+                $('#documentationScopeName').html(structurizr.util.escapeHtml(structurizr.workspace.name));
             }
         }
 
@@ -353,11 +353,11 @@
                 scope = WORKSPACE_SCOPE;
                 const uri = '${urlPrefix}/documentation${urlSuffix}';
 
-                documentationNavigation.append('<div class="documentationNavigationLink documentationNavigationHeading"><a href="' + uri + '">' + structurizr.util.escapeHtml(structurizr.workspace.getName()) + '</a></div>');
+                documentationNavigation.append('<div class="documentationNavigationLink documentationNavigationHeading"><a href="' + uri + '">' + structurizr.util.escapeHtml(structurizr.workspace.name) + '</a></div>');
                 documentationNavigationDropDown.append(
-                    $('<option></option>').val(uri).html('[Workspace]' + structurizr.util.escapeHtml(structurizr.workspace.getName()))
+                    $('<option></option>').val(uri).html('[Workspace]' + structurizr.util.escapeHtml(structurizr.workspace.name))
                 );
-                quickNavigation.addItem('[Workspace] ' + structurizr.util.escapeHtml(structurizr.workspace.getName()), uri);
+                quickNavigation.addItem('[Workspace] ' + structurizr.util.escapeHtml(structurizr.workspace.name), uri);
             } else {
                 var element = structurizr.workspace.findElementById(elementId);
                 if (element !== undefined) {
@@ -562,7 +562,7 @@
                 setTimeout(exportDocumentation, 100);
             } else {
                 var originalContent = document.getElementById("documentationContent").innerHTML;
-                exportWindow.document.title = "Structurizr - " + structurizr.workspace.getName();
+                exportWindow.document.title = "Structurizr - " + structurizr.workspace.name;
                 exportWindow.document.getElementById('brandingStyles').innerHTML = document.getElementById('brandingStyles').innerHTML;
                 exportWindow.document.getElementById('documentationHeader').innerHTML = document.getElementById('documentationHeader').innerHTML;
 
@@ -573,8 +573,8 @@
                         var embeddedDiagramDiv = exportWindow.document.createElement("div");
                         embeddedDiagramDiv.className = 'img-thumbnail';
 
-                        var svgMarkupForDiagram = iframe.contentWindow.structurizr.diagram.convertCurrentDiagramToSVG(index, false);
-                        var svgMarkupForDiagramKey = iframe.contentWindow.structurizr.diagram.convertCurrentDiagramKeyToSVG(index);
+                        var svgMarkupForDiagram = iframe.contentWindow.structurizr.diagram.exportCurrentDiagramToSVG(true, false);
+                        var svgMarkupForDiagramKey = iframe.contentWindow.structurizr.diagram.exportCurrentDiagramKeyToSVG();
 
                         var parentDiv = iframe.parentNode;
                         embeddedDiagramDiv.innerHTML = svgMarkupForDiagram + '<div class="diagramKey">' + svgMarkupForDiagramKey + '</div>';

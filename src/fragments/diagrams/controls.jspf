@@ -37,7 +37,7 @@
             </c:if>
             <button class="btn btn-default" title="Export diagram and key/legend to PNG" onclick="exportToPNG()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/filetype-png.svg" class="icon-btn" /></button>
             <button class="btn btn-default" id="exportSvgButton" title="Export diagram and key to SVG" onclick="exportToSVG()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/filetype-svg.svg" class="icon-btn" /></button>
-            <button class="btn btn-default" title="Export diagrams to an offline HTML page" onclick="exportDiagramsToOfflineHtmlPage();"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/filetype-html.svg" class="icon-btn" /></button>
+<%--            <button class="btn btn-default" title="Export diagrams to an offline HTML page" onclick="exportDiagramsToOfflineHtmlPage();"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/filetype-html.svg" class="icon-btn" /></button>--%>
 
             <c:if test="${structurizrConfiguration.type ne 'lite'}">
             <button class="btn btn-default" id="embedDiagramButton" title="Embed" data-toggle="modal" data-target="#embedModal"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/code-slash.svg" class="icon-btn" /></button>
