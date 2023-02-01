@@ -412,7 +412,7 @@ structurizr.ui.getTitleForView = function(view) {
     }
 
     if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
-        var baseView = structurizr.workspace.getViewByKey(view.baseViewKey);
+        var baseView = structurizr.workspace.findViewByKey(view.baseViewKey);
         return this.getTitleForView(baseView);
     }
 

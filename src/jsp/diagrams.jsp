@@ -182,6 +182,9 @@
         var result = false;
 
         views.forEach(function(view) {
+            if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
+                view = structurizr.workspace.findViewByKey(view.baseViewKey);
+            }
             if (view.automaticLayout && view.automaticLayout.implementation === 'Graphviz') {
                 result = true;
             }
@@ -300,7 +303,7 @@
     }
 
     function viewChanged(key) {
-        $('.modal').modal('hide');
+        $('#keyModal').modal('hide');
 
         const view = structurizr.workspace.findViewByKey(key);
 
@@ -762,7 +765,6 @@
 
         var view = structurizr.workspace.findViewByKey(diagramIdentifier);
         if (!view) {
-            console.log('A view with the key ' + diagramIdentifier + ' does not exist - showing the first view instead.');
             view = views[0];
         }
 

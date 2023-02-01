@@ -15,7 +15,8 @@ structurizr.Workspace = class Workspace {
     #workspace;
     #elementsById = {};
     #relationshipsById = {};
-    #views = [];
+    #allViews = [];
+    #views = []
 
     constructor(json) {
         this.#json = json;
@@ -651,23 +652,21 @@ structurizr.Workspace = class Workspace {
     }
 
     #registerView(view) {
-        this.#views.push(view);
+        this.#allViews.push(view);
 
         if (view.description === undefined) {
             view.description = '';
         }
 
-        if (view.type !== structurizr.constants.FILTERED_VIEW_TYPE) {
-            if (view.elements === undefined) {
-                view.elements = [];
-            }
-
-            if (view.relationships === undefined) {
-                view.relationships = [];
-            }
+        if (view.elements === undefined) {
+            view.elements = [];
         }
 
-        if (view.type !== structurizr.constants.FILTERED_VIEW_TYPE && view.type !== structurizr.constants.DYNAMIC_VIEW_TYPE) {
+        if (view.relationships === undefined) {
+            view.relationships = [];
+        }
+
+        if (view.type !== structurizr.constants.DYNAMIC_VIEW_TYPE) {
             if (view.animations === undefined) {
                 view.animations = [];
             }
@@ -700,7 +699,7 @@ structurizr.Workspace = class Workspace {
             if (view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE && view.softwareSystemId === softwareSystemId) {
                 views.push(view);
             } else if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
-                var baseView = this.findViewByKey(view.baseKey);
+                var baseView = this.findViewByKey(view.baseViewKey);
                 if (baseView.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE && baseView.softwareSystemId === softwareSystemId) {
                     views.push(view);
                 }
@@ -719,7 +718,7 @@ structurizr.Workspace = class Workspace {
             if (view.type === structurizr.constants.CONTAINER_VIEW_TYPE && view.softwareSystemId === softwareSystemId) {
                 views.push(view);
             } else if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
-                var baseView = this.findViewByKey(view.baseKey);
+                var baseView = this.findViewByKey(view.baseViewKey);
                 if (baseView.type === structurizr.constants.CONTAINER_VIEW_TYPE && baseView.softwareSystemId === softwareSystemId) {
                     views.push(view);
                 }
@@ -738,7 +737,7 @@ structurizr.Workspace = class Workspace {
             if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE && view.containerId === containerId) {
                 views.push(view);
             } else if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
-                var baseView = this.findViewByKey(view.baseKey);
+                var baseView = this.findViewByKey(view.baseViewKey);
                 if (baseView.type === structurizr.constants.COMPONENT_VIEW_TYPE && baseView.containerId === containerId) {
                     views.push(view);
                 }
@@ -755,14 +754,14 @@ structurizr.Workspace = class Workspace {
         var viewTypeOrders = [ 'SystemLandscape', 'SystemContext', 'Container', 'Component', 'Dynamic', 'Deployment' ];
         var elementTypeOrders = [ '*', 'SoftwareSystem', 'Container' ];
 
-        this.#views.forEach(function(view) {
-            if (view.type === "Filtered") {
+        this.#allViews.forEach(function(view) {
+            if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
                 filters.push(view.baseViewKey);
             }
         });
 
-        for (var i = 0; i < this.#views.length; i++) {
-            const view = this.#views[i];
+        for (var i = 0; i < this.#allViews.length; i++) {
+            const view = this.#allViews[i];
 
             if (filters.indexOf(view.key) === -1) {
                 var obj = {
@@ -889,6 +888,14 @@ structurizr.Workspace = class Workspace {
                     view.elements = v.elements;
                     view.relationships = v.relationships;
 
+                    if (view.elements === undefined) {
+                        view.elements = [];
+                    }
+
+                    if (view.relationships === undefined) {
+                        view.relationships = [];
+                    }
+
                     if (v.paperSize) {
                         view.paperSize = v.paperSize;
                     }
@@ -923,7 +930,7 @@ structurizr.Workspace = class Workspace {
 
     findViewByKey(key) {
         var view = undefined;
-        this.#views.forEach(function(v) {
+        this.#allViews.forEach(function(v) {
             if (v.key === key) {
                 view = v;
             }
