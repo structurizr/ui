@@ -14,7 +14,7 @@
 <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
 <%@ include file="/WEB-INF/fragments/quick-navigation.jspf" %>
 
-<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/d3-4.9.1.min.js"></script>
+<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/d3-7.8.2.min.js"></script>
 
 <style id="brandingStyles"></style>
 
@@ -67,6 +67,7 @@
 
 <script nonce="${scriptNonce}">
     const requestedScope = '${scope}';
+    structurizr.constants.DEFAULT_FONT_NAME = "Open Sans";
 
     const elementsWithDecisions = [];
     var decisions = [];
@@ -102,7 +103,7 @@
 
             window.onhashchange = show;
 
-            $('#lastModifiedDate').html(new Date(structurizr.workspace.getLastModifiedDate()).toLocaleString(undefined,
+            $('#lastModifiedDate').html(new Date(structurizr.workspace.lastModifiedDate).toLocaleString(undefined,
                 {
                     weekday: 'long',
                     year:'numeric',
@@ -117,24 +118,24 @@
             showNoDecisionsPage();
         }
 
-        structurizr.ui.applyBranding(structurizr.workspace.getViews().configuration.branding);
+        structurizr.ui.applyBranding();
         $('#brandingLogoAnchor').attr('href', '${urlPrefix}');
         progressMessage.hide();
     }
 
     function init() {
-        if (structurizr.workspace.getDocumentation().decisions.length > 0) {
+        if (structurizr.workspace.documentation.decisions.length > 0) {
             const elementId = '*';
             if (elementsWithDecisions.indexOf(elementId) === -1) {
                 elementsWithDecisions.push(elementId);
             }
 
             if (requestedScope === '*') {
-                decisions = structurizr.workspace.getDocumentation().decisions;
+                decisions = structurizr.workspace.documentation.decisions;
             }
         }
 
-        structurizr.workspace.getModel().softwareSystems.forEach(function(softwareSystem) {
+        structurizr.workspace.model.softwareSystems.forEach(function(softwareSystem) {
             if (softwareSystem.documentation.decisions.length > 0) {
                 const elementId = softwareSystem.id;
                 if (elementsWithDecisions.indexOf(elementId) === -1) {

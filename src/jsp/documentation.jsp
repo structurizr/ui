@@ -85,6 +85,8 @@
 
 <script nonce="${scriptNonce}">
     const requestedScope = '${scope}';
+    structurizr.constants.DEFAULT_FONT_NAME = "Open Sans";
+
     const documentationNavigation = $('#documentationNavigation');
     const documentationNavigationDropDown = $('#documentationNavigationDropDown');
     const documentationNavigationDropDownPanel = $('#documentationNavigationDropDownPanel');
@@ -153,7 +155,7 @@
                 resize();
             });
 
-            $('#lastModifiedDate').html(new Date(structurizr.workspace.getLastModifiedDate()).toLocaleString(undefined,
+            $('#lastModifiedDate').html(new Date(structurizr.workspace.lastModifiedDate).toLocaleString(undefined,
                 {
                     weekday: 'long',
                     year:'numeric',
@@ -170,22 +172,22 @@
             showNoDocumentationPage();
         }
 
-        structurizr.ui.applyBranding(structurizr.workspace.getViews().configuration.branding);
+        structurizr.ui.applyBranding();
         $('#brandingLogoAnchor').attr('href', '${urlPrefix}');
         progressMessage.hide();
     }
 
     function init() {
-        if (structurizr.workspace.getDocumentation().sections.length > 0) {
+        if (structurizr.workspace.documentation.sections.length > 0) {
             elementsWithDocumentation.push(WORKSPACE_SCOPE);
 
             if (requestedScope === WORKSPACE_SCOPE) {
-                sections = structurizr.workspace.getDocumentation().sections;
+                sections = structurizr.workspace.documentation.sections;
                 $('#documentationScopeName').html(structurizr.util.escapeHtml(structurizr.workspace.getName()));
             }
         }
 
-        structurizr.workspace.getModel().softwareSystems.forEach(function(softwareSystem) {
+        structurizr.workspace.model.softwareSystems.forEach(function(softwareSystem) {
             if (softwareSystem.documentation.sections.length > 0) {
                 elementsWithDocumentation.push(softwareSystem.id);
 
@@ -571,8 +573,8 @@
                         var embeddedDiagramDiv = exportWindow.document.createElement("div");
                         embeddedDiagramDiv.className = 'img-thumbnail';
 
-                        var svgMarkupForDiagram = iframe.contentWindow.Structurizr.diagram.convertCurrentDiagramToSVG(index, false);
-                        var svgMarkupForDiagramKey = iframe.contentWindow.Structurizr.diagram.convertCurrentDiagramKeyToSVG(index);
+                        var svgMarkupForDiagram = iframe.contentWindow.structurizr.diagram.convertCurrentDiagramToSVG(index, false);
+                        var svgMarkupForDiagramKey = iframe.contentWindow.structurizr.diagram.convertCurrentDiagramKeyToSVG(index);
 
                         var parentDiv = iframe.parentNode;
                         embeddedDiagramDiv.innerHTML = svgMarkupForDiagram + '<div class="diagramKey">' + svgMarkupForDiagramKey + '</div>';
@@ -585,7 +587,7 @@
 
                 documentationContentDiv.innerHTML = document.getElementById("documentationContent").innerHTML;
 
-                const branding = structurizr.workspace.getViews().configuration.branding;
+                const branding = structurizr.workspace.views.configuration.branding;
                 if (branding.font.url) {
                     const head = exportWindow.document.head;
                     const link = exportWindow.document.createElement('link');
@@ -602,7 +604,7 @@
                     exportWindow.close();
                 } else {
                     const content = exportWindow.document.documentElement.outerHTML;
-                    structurizr.util.downloadFile(content, "text/html;charset=utf-8", 'structurizr-' + structurizr.workspace.getId() + '-documentation.html');
+                    structurizr.util.downloadFile(content, "text/html;charset=utf-8", 'structurizr-' + structurizr.workspace.id + '-documentation.html');
                     exportWindow.close();
                 }
 
