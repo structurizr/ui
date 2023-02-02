@@ -33,19 +33,11 @@ structurizr.scripting.DiagramScripting = function(diagram) {
             options.includeMetadata = true;
         }
 
-        if (options.interactive === undefined) {
-            options.interactive = false;
-        }
-
-        return diagram.exportCurrentDiagramToSVG(options.includeMetadata, options.interactive);
+        return diagram.exportCurrentDiagramToSVG(options.includeMetadata);
     };
 
     this.exportCurrentDiagramKeyToSVG = function() {
         return diagram.exportCurrentDiagramKeyToSVG();
-    };
-
-    this.exportDiagramsToOfflineHTMLPage = function(callback) {
-        exportDiagramsToOfflineHtmlPage(callback);
     };
 
     this.getViews = function() {

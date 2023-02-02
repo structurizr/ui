@@ -39,11 +39,6 @@
                         Include diagram title, description, and metadata
                     </label>
 
-<%--                    <label style="margin-right: 20px">--%>
-<%--                        <input type="checkbox" id="exportSVGInteractive" />--%>
-<%--                        Interactive <span class="smaller">(includes double-click handlers, see <a href="https://structurizr.com/help/html-export" target="_blank">Single HTML page export, for offline use</a> for more details)</span>--%>
-<%--                    </label>--%>
-
                     <label>
                         <input type="checkbox" id="exportSVGDownload" />
                         Automatically download
@@ -119,10 +114,9 @@
 
         if (exportFormat === 'svg') {
             const includeMetadata = $('#exportSVGDiagramMetadata').is(':checked') === true;
-            const interactive = $('#exportSVGInteractive').is(':checked') === true;
             const download = $('#exportSVGDownload').is(':checked') === true;
 
-            exportDiagramsToSVG([ currentView.key ], includeMetadata, interactive, download, currentView.key);
+            exportDiagramsToSVG([ currentView.key ], includeMetadata, download, currentView.key);
         } else {
             const includeMetadata = $('#exportPNGDiagramMetadata').is(':checked') === true;
             const includeAnimationSteps = $('#exportPNGAnimationSteps').is(':checked') === true;
@@ -148,10 +142,9 @@
         if (selectedValues) {
             if (exportFormat === 'svg') {
                 const includeMetadata = $('#exportSVGDiagramMetadata').is(':checked') === true;
-                const interactive = $('#exportSVGInteractive').is(':checked') === true;
                 const download = $('#exportSVGDownload').is(':checked') === true;
 
-                exportDiagramsToSVG(selectedValues, includeMetadata, interactive, download, currentView.key);
+                exportDiagramsToSVG(selectedValues, includeMetadata, download, currentView.key);
             } else {
                 const includeMetadata = $('#exportPNGDiagramMetadata').is(':checked') === true;
                 const includeAnimationSteps = $('#exportPNGAnimationSteps').is(':checked') === true;
@@ -177,10 +170,9 @@
         if (selectedValues) {
             if (exportFormat === 'svg') {
                 const includeMetadata = $('#exportSVGDiagramMetadata').is(':checked') === true;
-                const interactive = $('#exportSVGInteractive').is(':checked') === true;
                 const download = $('#exportSVGDownload').is(':checked') === true;
 
-                exportDiagramsToSVG(selectedValues, includeMetadata, interactive, download, currentView.key);
+                exportDiagramsToSVG(selectedValues, includeMetadata, download, currentView.key);
             } else {
                 const includeMetadata = $('#exportPNGDiagramMetadata').is(':checked') === true;
                 const includeAnimationSteps = $('#exportPNGAnimationSteps').is(':checked') === true;
@@ -317,17 +309,17 @@
         // });
     }
 
-    function exportDiagramsToSVG(viewsToExport, includeDiagramMetadata, interactive, download, originalViewKey) {
+    function exportDiagramsToSVG(viewsToExport, includeDiagramMetadata, download, originalViewKey) {
         if (viewsToExport && viewsToExport.length > 0) {
             const viewToExport = viewsToExport[0];
             structurizr.diagram.changeView(viewToExport, function () {
-                var diagramAsSVG = structurizr.diagram.exportCurrentDiagramToSVG(includeDiagramMetadata, interactive);
+                var diagramAsSVG = structurizr.diagram.exportCurrentDiagramToSVG(includeDiagramMetadata);
                 var diagramKeyAsSVG = structurizr.diagram.exportCurrentDiagramKeyToSVG();
 
                 addExportedSVGToPage(diagramAsSVG, diagramKeyAsSVG, download);
 
                 viewsToExport.splice(0, 1);
-                exportDiagramsToSVG(viewsToExport, includeDiagramMetadata, interactive, download, originalViewKey);
+                exportDiagramsToSVG(viewsToExport, includeDiagramMetadata, download, originalViewKey);
             });
         } else {
             structurizr.diagram.changeView(originalViewKey);
@@ -472,89 +464,4 @@
         $('#exportModal').modal();
     }
 
-    function exportDiagramsToOfflineHtmlPage(callback) {
-        var exportWindow = window.open('/static/html/offline-diagrams.html');
-        var originalView = structurizr.diagram.getCurrentView();
-
-        var exportDiagrams = function() {
-            var diagramDropDown = exportWindow.document.getElementById('diagramDropDown');
-            var diagramsDiv = exportWindow.document.getElementById('diagrams');
-
-            if (!diagramDropDown) {
-                setTimeout(exportDiagrams, 100);
-            } else {
-                exportWindow.document.title = "Structurizr - " + structurizr.workspace.name;
-
-                var head = exportWindow.document.head;
-                var branding = structurizr.workspace.views.configuration.branding;
-                if (branding.font.url) {
-                    var link = exportWindow.document.createElement('link');
-
-                    link.type = 'text/css';
-                    link.rel = 'stylesheet';
-                    link.href = branding.font.url;
-
-                    head.appendChild(link);
-                }
-
-                var styles = exportWindow.document.createElement('style');
-                var background = '#ffffff';
-                if (structurizr.diagram.isDarkMode()) {
-                    background = '#111111';
-                }
-                styles.appendChild(document.createTextNode('body { background: ' + background + '; }'));
-                head.appendChild(styles);
-
-                views.forEach(function(view) {
-                    const option = exportWindow.document.createElement("option");
-                    option.text = structurizr.ui.getViewName(view);
-                    option.value = view.key;
-                    diagramDropDown.add(option);
-                });
-
-                exportView(diagramsDiv, views, 0);
-            }
-        };
-
-        function exportView(diagramsDiv, listOfViews, viewId) {
-            var view = listOfViews[viewId];
-
-            structurizr.diagram.changeView(view.key, function() {
-                var svgMarkupForDiagram = structurizr.diagram.exportCurrentDiagramToSVG(true, true);
-                var svgMarkupForDiagramKey = structurizr.diagram.exportCurrentDiagramKeyToSVG();
-
-                var div = exportWindow.document.createElement("div");
-                div.id = 'diagram' + viewId;
-                if (viewId === 0) {
-                    div.className = 'diagram';
-                } else {
-                    div.className = 'diagram hidden';
-                }
-                div.innerHTML = svgMarkupForDiagram + '<div class="diagramKey">' + svgMarkupForDiagramKey + '</div>';
-
-                diagramsDiv.appendChild(div);
-
-                if ((viewId + 1) < listOfViews.length) {
-                    exportView(diagramsDiv, listOfViews, viewId + 1);
-                } else {
-                    if (callback) {
-                        callback(exportWindow.document.documentElement.outerHTML);
-                        exportWindow.close();
-                    } else {
-                        var content = exportWindow.document.documentElement.outerHTML;
-                        structurizr.util.downloadFile(content, "text/html;charset=utf-8", 'structurizr-' + structurizr.workspace.id + '-diagrams.html');
-                        exportWindow.close();
-                    }
-
-                    structurizr.diagram.changeView(originalView.key);
-                }
-            });
-        }
-
-        if (window.navigator.userAgent.indexOf("Edge") > -1) {
-            exportDiagrams();
-        } else {
-            exportWindow.addEventListener("load", exportDiagrams);
-        }
-    }
 </script>

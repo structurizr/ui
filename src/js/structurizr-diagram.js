@@ -4876,7 +4876,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function convertSvgToPng(includeDiagramMetadata, crop, callback) {
-        var svgMarkup = self.exportCurrentDiagramToSVG(includeDiagramMetadata, false);
+        var svgMarkup = self.exportCurrentDiagramToSVG(includeDiagramMetadata);
 
         var exportedWidth = diagramWidth;
         var exportedHeight = diagramHeight;
@@ -4934,7 +4934,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
     }
 
-    this.exportCurrentDiagramToSVG = function(includeDiagramMetadata, interactive) {
+    this.exportCurrentDiagramToSVG = function(includeDiagramMetadata) {
         var currentScale = scale;
         this.zoomTo(1.0);
 
@@ -4942,9 +4942,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             $(".structurizrMetadata").attr('display', 'none');
         }
 
-        if (interactive === false) {
-            $(".structurizrNavigation").attr('display', 'none');
-        }
+        $(".structurizrNavigation").attr('display', 'none');
 
         var svgMarkup = getSvgOfCurrentDiagram();
         svgMarkup = svgMarkup.substring(svgMarkup.indexOf(">") +1 );
@@ -4958,14 +4956,9 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         svgMarkup = svgMarkup.replace(/data-type="[\w.]*"/g, '');
         svgMarkup = svgMarkup.replace(/model-id="[\w\d-]*"/g, '');
 
-        // unless it's not interactive
-        if (interactive === false) {
-            svgMarkup = svgMarkup.replace(/cursor: default !important/g, '');
-            svgMarkup = svgMarkup.replace(/cursor: pointer !important/g, '');
-            svgMarkup = svgMarkup.replace(/cursor: zoom-in !important/g, '');
-
-            svgMarkup = svgMarkup.replace(/ondblclick=".+?"/g, '');
-        }
+        svgMarkup = svgMarkup.replace(/cursor: default !important/g, '');
+        svgMarkup = svgMarkup.replace(/cursor: pointer !important/g, '');
+        svgMarkup = svgMarkup.replace(/cursor: zoom-in !important/g, '');
 
         svgMarkup = svgMarkup.replace(/&nbsp;/g, ' ');
 
