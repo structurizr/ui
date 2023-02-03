@@ -155,7 +155,7 @@ structurizr.ui.RelationshipStyle = function(thickness, color, dashed, routing, f
 structurizr.ui.findElementStyle = function(element, darkMode) {
     const defaultElementStyle = new structurizr.ui.ElementStyle(450, 300, '#dddddd', '#000000', 24, 'Box', undefined, 'Solid', undefined, 2, 100, true, true);
     const defaultElementStyleForDeploymentNode = new structurizr.ui.ElementStyle(450, 300, '#ffffff', '#000000', 24, 'Box', undefined, 'Solid', '#888888', 1, 100, true, true);
-    const defaultBoundaryStyle = new structurizr.ui.ElementStyle(undefined, undefined, undefined, undefined, 24, undefined, undefined, undefined, undefined, 1, undefined, true, true);
+    const defaultBoundaryStyle = new structurizr.ui.ElementStyle(undefined, undefined, undefined, undefined, 24, undefined, undefined, undefined, undefined, 1, 100, true, true);
 
     var defaultStyle;
     var defaultSizeInUse = true;
