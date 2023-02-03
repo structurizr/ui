@@ -233,7 +233,10 @@
 
     function getMinimalJson() {
         const workspace = structurizr.workspace.getJson();
-        delete workspace.properties['structurizr.dsl'];
+
+        if (workspace.properties) {
+            delete workspace.properties['structurizr.dsl'];
+        }
         delete workspace.documentation;
 
         if (workspace.model.softwareSystems) {
