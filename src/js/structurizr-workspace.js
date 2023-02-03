@@ -52,6 +52,14 @@ structurizr.Workspace = class Workspace {
             this.#workspace.id = -1;
         }
 
+        if (this.#workspace.name === undefined) {
+            this.#workspace.name = '';
+        }
+
+        if (this.#workspace.description === undefined) {
+            this.#workspace.description = '';
+        }
+
         if (this.#workspace.properties === undefined) {
             this.#workspace.properties = {};
         }
@@ -922,10 +930,6 @@ structurizr.Workspace = class Workspace {
         })
 
         return style;
-    }
-
-    getBranding() {
-        return this.#workspace.views.configuration.branding;
     }
 
     findViewByKey(key) {

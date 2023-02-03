@@ -1,28 +1,30 @@
 QUnit.test("Workspace() initialises an empty JSON document", function( assert ) {
     var workspace = new structurizr.Workspace({});
 
-    assert.deepEqual(workspace.getDocumentation(), {
+    assert.deepEqual(workspace.documentation, {
         "decisions": [],
         "images": [],
         "sections": []      
     });
 
-    assert.deepEqual(workspace.getModel(), {
+    assert.deepEqual(workspace.model, {
         "customElements": [],
         "deploymentNodes": [],
         "people": [],
         "softwareSystems": []        
     });
 
-    assert.deepEqual(workspace.getViews(), {
+    assert.deepEqual(workspace.views, {
         "componentViews": [],
         "configuration": {
           "branding": {
             "font": {
-              "name": "Open Sans",
+              "name": "Arial",
               "url": undefined
             }
           },
+          "metadataSymbols": "SquareBrackets",
+          "properties": {},
           "styles": {
             "elements": [],
             "relationships": []
@@ -37,38 +39,38 @@ QUnit.test("Workspace() initialises an empty JSON document", function( assert ) 
         "filteredViews": [],
         "systemContextViews": [],
         "systemLandscapeViews": []
-    });
+      });
 });
 
 
-QUnit.test("Workspace.getId() returns -1 when there is no ID", function( assert ) {
+QUnit.test("Workspace.id returns -1 when there is no ID", function( assert ) {
     var workspace = new structurizr.Workspace({});
-    assert.equal(workspace.getId(), -1);
+    assert.equal(workspace.id, -1);
 });
 
-QUnit.test("Workspace.getId() returns the ID", function( assert ) {
+QUnit.test("Workspace.id returns the ID", function( assert ) {
     var workspace = new structurizr.Workspace({ id: 123 });
-    assert.equal(workspace.getId(), 123);
+    assert.equal(workspace.id, 123);
 });
 
-QUnit.test("Workspace.getName() returns an empty string when there is no name", function( assert ) {
+QUnit.test("Workspace.name returns an empty string when there is no name", function( assert ) {
     var workspace = new structurizr.Workspace({});
-    assert.equal(workspace.getName(), "");
+    assert.equal(workspace.name, "");
 });
 
-QUnit.test("Workspace.getName() returns the name", function( assert ) {
+QUnit.test("Workspace.name returns the name", function( assert ) {
     var workspace = new structurizr.Workspace({ name: "Name" });
-    assert.equal(workspace.getName(), "Name");
+    assert.equal(workspace.name, "Name");
 });
 
-QUnit.test("Workspace.getDescription() returns an empty string when there is no description", function( assert ) {
+QUnit.test("Workspace.description returns an empty string when there is no description", function( assert ) {
     var workspace = new structurizr.Workspace({});
-    assert.equal(workspace.getDescription(), "");
+    assert.equal(workspace.description, "");
 });
 
-QUnit.test("Workspace.getDescription() returns the description", function( assert ) {
+QUnit.test("Workspace.description returns the description", function( assert ) {
     var workspace = new structurizr.Workspace({ description: "Description" });
-    assert.equal(workspace.getDescription(), "Description");
+    assert.equal(workspace.description, "Description");
 });
 
 QUnit.test("Workspace.getProperty() returns undefined when the property doesn't exist", function( assert ) {
@@ -134,7 +136,9 @@ QUnit.test("Workspace.findElementById() returns the specified element", function
         "id": "2",
         "name": "User 2",
         "parentId": undefined,
-        "type": "Person"
+        "type": "Person",
+        "perspectives": [],
+        "properties": {}
     });
 });
 
@@ -239,12 +243,12 @@ QUnit.test("Workspace.findElementStyleByTag() returns the specified element styl
     );
 });
 
-QUnit.test("Workspace.getBranding() returns the default branding when no branding has been defined", function( assert ) {
+QUnit.test("Workspace.views.configuration.branding returns the default branding when no branding has been defined", function( assert ) {
     var workspace = new structurizr.Workspace({});
-    assert.deepEqual(workspace.getBranding(),
+    assert.deepEqual(workspace.views.configuration.branding,
     {
         "font": {
-            "name": "Open Sans",
+            "name": "Arial",
             "url": undefined
         }
     }
@@ -274,7 +278,8 @@ QUnit.test("Workspace.findViewByKey() returns the specified custom view", functi
             "type": "Custom",
             "elements": [],
             "relationships": [],
-            "animations": []
+            "animations": [],
+            "description": ""
           }
     );
 });
@@ -297,7 +302,8 @@ QUnit.test("Workspace.findViewByKey() returns the specified system landscape vie
             "type": "SystemLandscape",
             "elements": [],
             "relationships": [],
-            "animations": []
+            "animations": [],
+            "description": ""
           }
     );
 });
@@ -320,7 +326,8 @@ QUnit.test("Workspace.findViewByKey() returns the specified system context view"
             "type": "SystemContext",
             "elements": [],
             "relationships": [],
-            "animations": []
+            "animations": [],
+            "description": ""
           }
     );
 });
@@ -343,7 +350,8 @@ QUnit.test("Workspace.findViewByKey() returns the specified container view", fun
             "type": "Container",
             "elements": [],
             "relationships": [],
-            "animations": []
+            "animations": [],
+            "description": ""
           }
     );
 });
@@ -366,7 +374,8 @@ QUnit.test("Workspace.findViewByKey() returns the specified component view", fun
             "type": "Component",
             "elements": [],
             "relationships": [],
-            "animations": []
+            "animations": [],
+            "description": ""
           }
     );
 });
@@ -388,7 +397,8 @@ QUnit.test("Workspace.findViewByKey() returns the specified dynamic view", funct
             "key": "key",
             "type": "Dynamic",
             "elements": [],
-            "relationships": []
+            "relationships": [],
+            "description": ""
           }
     );
 });
@@ -412,7 +422,8 @@ QUnit.test("Workspace.findViewByKey() returns the specified deployment view", fu
             "environment": "Default",
             "elements": [],
             "relationships": [],
-            "animations": []
+            "animations": [],
+            "description": ""
           }
     );
 });
@@ -421,9 +432,15 @@ QUnit.test("Workspace.findViewByKey() returns the specified filtered view", func
     var workspace = new structurizr.Workspace(
         {
              views: {
+                systemLandscapeViews: [
+                    {
+                        key: 'base'
+                    }
+                ],
                 filteredViews: [
                     {
-                        key: 'key'
+                        key: 'key',
+                        baseViewKey: 'base'
                     }
                 ]
              } 
@@ -431,7 +448,12 @@ QUnit.test("Workspace.findViewByKey() returns the specified filtered view", func
     );
     assert.deepEqual(workspace.findViewByKey('key'),
         {
+            "animations": [],
+            "baseViewKey": "base",
+            "description": "",
+            "elements": [],
             "key": "key",
+            "relationships": [],
             "type": "Filtered"
         }
     );
