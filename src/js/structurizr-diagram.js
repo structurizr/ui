@@ -3795,59 +3795,98 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function createBoundary(name, metadata, type, element) {
-        var configuration;
+        var elementStyle;
+
         var defaultColours = defaultBoundaryColoursLight;
-        var colour;
+        if (darkMode === true) {
+            defaultColours = defaultBoundaryColoursDark;
+        }
+        var textColor;
+        var stroke;
         var icon;
         var strokeWidth = 2;
         var dashArray = '20,20';
 
-        if (darkMode === true) {
-            defaultColours = defaultBoundaryColoursDark;
+        if (type === 'Group') {
+            dashArray = '5,5'; // dotted line
+            elementStyle = structurizr.ui.findElementStyle( { type: 'Boundary', tags: 'Group, Group:' + name });
+            icon = elementStyle.icon;
+            strokeWidth = elementStyle.strokeWidth;
+
+            stroke = elementStyle.stroke;
+            if (stroke === undefined) {
+                // fallback to the colour property
+                stroke = elementStyle.color;
+            }
+            if (stroke === undefined) {
+                // use the default colour for groups
+                stroke = defaultColours[type];
+            }
+
+            textColor = elementStyle.color;
+            if (textColor === undefined) {
+                // use the default colour for groups
+                textColor = defaultColours[type];
+            }
+
+            // and apply opacity
+            textColor = structurizr.util.shadeColor(textColor, 100 - elementStyle.opacity, darkMode);
+            stroke = structurizr.util.shadeColor(stroke, 100-elementStyle.opacity, darkMode);
+        } else {
+            if (type === 'Enterprise') {
+                elementStyle = structurizr.ui.findElementStyle({type: 'Boundary', tags: 'Boundary, Boundary:Enterprise'});
+                icon = elementStyle.icon;
+                strokeWidth = elementStyle.strokeWidth;
+
+                stroke = elementStyle.stroke;
+                if (stroke === undefined) {
+                    stroke = elementStyle.color;
+                }
+                if (stroke === undefined) {
+                    stroke = defaultColours[type];
+                }
+
+                textColor = elementStyle.color;
+                if (textColor === undefined) {
+                    textColor = defaultColours[type];
+                }
+
+
+            } else if (element !== undefined) {
+                elementStyle = structurizr.ui.findElementStyle({
+                    type: 'Boundary',
+                    tags: 'Boundary, Boundary:' + element.type
+                });
+                const elementStyleForBoundaryElement = structurizr.ui.findElementStyle(element);
+                strokeWidth = elementStyle.strokeWidth;
+
+                icon = elementStyle.icon;
+                if (icon === undefined) {
+                    icon = elementStyleForBoundaryElement.icon;
+                }
+
+                stroke = elementStyle.stroke;
+                if (stroke === undefined) {
+                    stroke = elementStyle.color;
+                }
+                if (stroke === undefined) {
+                    stroke = elementStyleForBoundaryElement.stroke;
+                }
+
+                textColor = elementStyle.color;
+                if (textColor === undefined) {
+                    textColor = elementStyleForBoundaryElement.stroke;
+                }
+            }
+
+            textColor = structurizr.util.shadeColor(textColor, 100 - elementStyle.opacity, darkMode);
+            stroke = structurizr.util.shadeColor(stroke, 100 - elementStyle.opacity, darkMode);
         }
 
-        if (type === 'Enterprise') {
-            configuration = structurizr.ui.findElementStyle( { type: 'Boundary', tags: 'Boundary, Boundary:Enterprise'} );
-            colour = configuration.color;
-            icon = configuration.icon;
-            strokeWidth = configuration.strokeWidth;
-
-            if (colour === undefined) {
-                // use the default colour
-                colour = defaultColours[type];
-            }
-        } else if (type === 'Group') {
-            dashArray = '5,5';
-            configuration = structurizr.ui.findElementStyle( { type: 'Boundary', tags: 'Group, Group:' + name });
-            colour = configuration.color;
-            icon = configuration.icon;
-            strokeWidth = configuration.strokeWidth;
-
-            if (colour === undefined) {
-                // use the default colour
-                colour = defaultColours[type];
-            }
-        } else if (element !== undefined) {
-            configuration = structurizr.ui.findElementStyle(element);
-            var style = structurizr.ui.findElementStyle( { type: 'Boundary', tags: 'Boundary, Boundary:' + element.type} );
-            colour = style.color;
-            icon = style.icon;
-            strokeWidth = configuration.strokeWidth;
-
-            if (colour === undefined) {
-                // use the stroke of the element
-                colour = structurizr.util.shadeColor(configuration.stroke, 100 - configuration.opacity, darkMode);
-            }
-
-            if (icon === undefined) {
-                icon = configuration.icon;
-            }
-        }
-
-        var heightOfIcon = configuration.fontSize;
+        var heightOfIcon = elementStyle.fontSize;
         if (metadata !== undefined) {
             heightOfIcon = heightOfIcon * 2;
-            if (configuration !== undefined && configuration.metadata !== undefined && configuration.metadata === false) {
+            if (elementStyle !== undefined && elementStyle.metadata !== undefined && elementStyle.metadata === false) {
                 metadata = '';
             }
         } else {
@@ -3857,7 +3896,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var boundary = new structurizr.shapes.Boundary({
             attrs: {
                 '.structurizrBoundary': {
-                    stroke: colour,
+                    stroke: stroke,
                     fill: canvasColor,
                     'stroke-width': strokeWidth,
                     'stroke-dasharray': dashArray
@@ -3865,14 +3904,14 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrName': {
                     text: name,
                     'font-family': font.name,
-                    'font-size': configuration.fontSize + 'px',
-                    fill: colour
+                    'font-size': elementStyle.fontSize + 'px',
+                    fill: textColor
                 },
                 '.structurizrMetaData': {
                     text: metadata,
                     'font-family': font.name,
-                    'font-size': configuration.fontSize + metaDataFontSizeDifference + 'px',
-                    fill: colour
+                    'font-size': elementStyle.fontSize + metaDataFontSizeDifference + 'px',
+                    fill: textColor
                 }
             }
         });
@@ -3882,10 +3921,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         boundary._computedStyle = {};
         boundary._computedStyle.background = canvasColor;
-        boundary._computedStyle.color = colour;
+        boundary._computedStyle.color = textColor;
         boundary._computedStyle.borderStyle = 'Dashed';
-        boundary._computedStyle.stroke = colour;
-        boundary._computedStyle.fontSize = configuration.fontSize;
+        boundary._computedStyle.stroke = stroke;
+        boundary._computedStyle.fontSize = elementStyle.fontSize;
 
         if (icon) {
             var iconRatio = getImageRatio(icon);
@@ -3894,7 +3933,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             boundary.attributes.attrs['.structurizrIcon']['xlink:href'] = icon;
             boundary.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
             boundary.attributes.attrs['.structurizrIcon']['height'] = heightOfIcon;
-            boundary.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
+            boundary.attributes.attrs['.structurizrIcon']['opacity'] = (elementStyle.opacity/100);
             boundary._computedStyle.icon = icon;
         }
 
