@@ -322,12 +322,16 @@
         const editable = structurizr.diagram.isEditable();
         if (!editable) {
             $('#diagramEditButtons').addClass('hidden');
-            $('#editDiagramButton').addClass('hidden');
             $('#diagramNotEditableMessage').removeClass('hidden');
         } else {
             $('#diagramEditButtons').removeClass('hidden');
-            $('#editDiagramButton').removeClass('hidden');
             $('#diagramNotEditableMessage').addClass('hidden');
+        }
+
+        if (view.automaticLayout !== undefined) {
+            $('#editDiagramButton').addClass('hidden');
+        } else {
+            $('#editDiagramButton').removeClass('hidden');
         }
 
         structurizr.diagram.resize();
