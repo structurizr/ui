@@ -61,6 +61,10 @@ QUnit.test("structurizr.ui.findElementStyle() finds the element style when there
                         {
                             "tag": "Element",
                             "shape": "RoundedBox"
+                        },
+                        {
+                            "tag": "Person",
+                            "shape": "Person"
                         }
                     ]
                 }
@@ -160,7 +164,7 @@ QUnit.test("structurizr.ui.findRelationshipStyle() finds the relationship style"
     assert.deepEqual(relationshipStyle.tags, ['Relationship']);
 });
 
-QUnit.test("findRelationshipStyle_FindsTheRelationshipStyle_WhenThereIsATheme", function( assert ) {
+QUnit.test("structurizr.ui.findRelationshipStyle() finds the relationship style when there is a theme", function( assert ) {
     structurizr.workspace = new structurizr.Workspace({
         "model": {
             "softwareSystems": [
@@ -195,6 +199,10 @@ QUnit.test("findRelationshipStyle_FindsTheRelationshipStyle_WhenThereIsATheme", 
                         {
                             "tag": "Relationship",
                             "color": "#ff0000"
+                        },
+                        {
+                            "tag": "Async",
+                            "style": "dashed"
                         }
                     ]
                 }
