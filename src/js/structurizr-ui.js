@@ -339,7 +339,7 @@ structurizr.ui.findRelationshipStyle = function(relationship, darkMode) {
             const tag = relationshipStyleFromWorkspace.tag;
             var relationshipStyle = relationshipStylesMap[tag];
 
-            if (relationshipStylesMap === undefined) {
+            if (relationshipStyle === undefined) {
                 // the workspace has a relationship style defined for a tag that isn't in the theme, so add it
                 relationshipStylesMap[tag] = relationshipStyleFromWorkspace;
             } else {
