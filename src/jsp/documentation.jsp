@@ -303,6 +303,7 @@
             });
         }
 
+        assignSectionNumbers();
         renderNavigation();
 
         if (window.location.hash !== undefined) {
@@ -388,7 +389,7 @@
     }
 
     function renderNavigationForScope() {
-        $('#documentationContent h2, #documentationContent h3').each(function () {
+        $('.documentationSectionContent h2, .documentationSectionContent h3').each(function () {
             const tag = $(this).prop("tagName");
             var sectionTitle = $(this).text();
             const sectionNumber = sectionTitle.trim().split(' ')[0];
@@ -472,56 +473,62 @@
             const result = contentRenderer.render(section);
             const documentationContent = $('#documentationContent');
 
-            const sectionNumber = section.number;
-            const sectionTitle = section.title;
-            const headingAnchor = registerHeadingAnchor(sectionNumber, sectionTitle);
-
             var html = '';
             html += '<div class="documentationSection">';
-            html += '<a name="' + sectionNumber + '"></a>';
-            html += '<a name="' + structurizr.util.escapeHtml(headingAnchor) + '" class="headingAnchor"></a>';
-            html += '<h2 class="documentationSectionHeading">';
-            html += sectionNumber + ' ' + structurizr.util.escapeHtml(sectionTitle) + '</h2>';
-            html += '<div id="documentationSectionContent' + sectionNumber + '" class="documentationSectionContent">' + result + '</div>';
+            html += '<div class="documentationSectionContent">' + result + '</div>';
             html += '</div>';
             documentationContent.append(html);
-
-            $('#documentationSectionContent' + sectionNumber + ' h1, #documentationSectionContent' + sectionNumber + ' h2').each(function () {
-                $(this).remove();
-            });
-
-            var subSectionNumber = 0;
-            var subSubSectionNumber = 0;
-            $('#documentationSectionContent' + sectionNumber + ' h3, #documentationSectionContent' + sectionNumber + ' h4').each(function () {
-                var tag = $(this).prop("tagName");
-                var text = $(this).text();
-                var html = $(this).html();
-
-                if (tag === "H3") {
-                    subSectionNumber++;
-                    subSubSectionNumber = 0;
-
-                    const sectionNumber = section.number + '.' + subSectionNumber;
-                    const sectionTitle = text;
-                    const headingAnchor = registerHeadingAnchor(sectionNumber, sectionTitle);
-
-                    $('<a name="' + sectionNumber + '"/><a name="' + headingAnchor + '" class="headingAnchor" />').insertBefore(this);
-                    $(this).html(sectionNumber + ' ' + html);
-                } else if (tag === "H4") {
-                    subSubSectionNumber++;
-
-                    const sectionNumber = section.number + '.' + subSectionNumber + '.' + subSubSectionNumber;
-                    const sectionTitle = text;
-                    const headingAnchor = registerHeadingAnchor(sectionNumber, sectionTitle);
-
-                    $('<a name="' + sectionNumber + '"/><a name="' + headingAnchor + '" class="headingAnchor" />').insertBefore(this);
-                }
-            });
-
-            $('.sectionSelector').addClass('hidden');
         }
 
         return section;
+    }
+
+    function assignSectionNumbers() {
+        $('.documentationSectionContent h1').each(function () {
+            $(this).remove();
+        });
+
+        var sectionNumber = 0;
+        var subSectionNumber = 0;
+        var subSubSectionNumber = 0;
+        $('.documentationSectionContent h2, .documentationSectionContent h3, .documentationSectionContent h4').each(function () {
+            var tag = $(this).prop("tagName");
+            var text = $(this).text();
+            var html = $(this).html();
+
+            if (tag === "H2") {
+                sectionNumber++;
+                subSectionNumber = 0;
+                subSubSectionNumber = 0;
+
+                const sectionNumberToRender = sectionNumber;
+                const sectionTitle = text;
+                const headingAnchor = registerHeadingAnchor(sectionNumberToRender, sectionTitle);
+
+                $('<a name="' + sectionNumberToRender + '"/><a name="' + headingAnchor + '" class="headingAnchor" />').insertBefore(this);
+                $(this).html(sectionNumberToRender + ' ' + html);
+            } else if (tag === "H3") {
+                subSectionNumber++;
+                subSubSectionNumber = 0;
+
+                const sectionNumberToRender = sectionNumber + '.' + subSectionNumber;
+                const sectionTitle = text;
+                const headingAnchor = registerHeadingAnchor(sectionNumberToRender, sectionTitle);
+
+                $('<a name="' + sectionNumberToRender + '"/><a name="' + headingAnchor + '" class="headingAnchor" />').insertBefore(this);
+                $(this).html(sectionNumberToRender + ' ' + html);
+            } else if (tag === "H4") {
+                subSubSectionNumber++;
+
+                const sectionNumberToRender = sectionNumber + '.' + subSectionNumber + '.' + subSubSectionNumber;
+                const sectionTitle = text;
+                const headingAnchor = registerHeadingAnchor(sectionNumberToRender, sectionTitle);
+
+                $('<a name="' + sectionNumberToRender + '"/><a name="' + headingAnchor + '" class="headingAnchor" />').insertBefore(this);
+            }
+        });
+
+        $('.sectionSelector').addClass('hidden');
     }
 
     function changeDocumentation(evt) {
