@@ -251,6 +251,9 @@
             });
         }
 
+        // and copy across the current layout information
+        workspace.views = structurizr.workspace.views;
+
         return JSON.stringify(workspace, null, '    ');
     }
 
