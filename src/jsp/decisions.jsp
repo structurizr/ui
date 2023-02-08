@@ -206,11 +206,11 @@
             if (elementId === '*') {
                 scope = '*';
                 const uri = '${urlPrefix}/decisions${urlSuffix}';
-                documentationNavigation.append('<div class="decisionNavigationLink decisionNavigationHeading"><a href="' + uri + '">' + structurizr.util.escapeHtml(structurizr.workspace.getName()) + '</a></div>');
+                documentationNavigation.append('<div class="decisionNavigationLink decisionNavigationHeading"><a href="' + uri + '">' + structurizr.util.escapeHtml(structurizr.workspace.name) + '</a></div>');
                 decisionLogNavigationDropDown.append(
-                    $('<option></option>').val(uri).html('Workspace] ' + structurizr.util.escapeHtml(structurizr.workspace.getName()))
+                    $('<option></option>').val(uri).html('Workspace] ' + structurizr.util.escapeHtml(structurizr.workspace.name))
                 );
-                quickNavigation.addItem(structurizr.util.escapeHtml('Workspace] ' + structurizr.workspace.getName()), uri);
+                quickNavigation.addItem(structurizr.util.escapeHtml('Workspace] ' + structurizr.workspace.name), uri);
             } else {
                 var element = structurizr.workspace.findElementById(elementId);
                 scope = toScope(element);

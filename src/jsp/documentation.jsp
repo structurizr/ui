@@ -261,7 +261,7 @@
 
     function showNoDocumentationPage() {
         const documentationContent = $('#documentationContent');
-        $('#documentationScopeName').html(structurizr.util.escapeHtml(structurizr.workspace.getName()));
+        $('#documentationScopeName').html(structurizr.util.escapeHtml(structurizr.workspace.name));
         documentationContent.addClass('centered');
         documentationContent.css('margin-top', '100px');
         documentationContent.css('margin-bottom', '100px');
