@@ -297,13 +297,11 @@
         initControls();
         initKeyboardShortcuts();
 
-        // todo
-<%--        <c:if test="${structurizrConfiguration.type ne 'lite'}">--%>
-<%--        initReview();--%>
-<%--        <c:if test="${workspace.editable && workspace.ownerUserType.allowedToLockWorkspaces && not empty workspace.apiKey}">--%>
-<%--        new Structurizr.Lock(${workspace.id}, '${workspace.apiKey}', 'structurizr-web/${version.buildNumber}', false);--%>
-<%--        </c:if>--%>
-<%--        </c:if>--%>
+        <c:if test="${structurizrConfiguration.type ne 'lite'}">
+        <c:if test="${workspace.editable && workspace.ownerUserType.allowedToLockWorkspaces && not empty workspace.apiKey}">
+        new structurizr.Lock(${workspace.id}, '${workspace.apiKey}', 'structurizr-onpremises/${version.buildNumber}');
+        </c:if>
+        </c:if>
 
         progressMessage.hide();
     }
