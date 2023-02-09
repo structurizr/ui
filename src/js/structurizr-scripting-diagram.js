@@ -70,16 +70,4 @@ structurizr.scripting.DiagramScripting = function(diagram) {
         }
     };
 
-    var workspaceSavedCallback = undefined;
-
-    this.onWorkspaceSaved = function(callback) {
-        workspaceSavedCallback = callback;
-    };
-
-    this.workspaceSaved = function() {
-        if (workspaceSavedCallback) {
-            workspaceSavedCallback();
-        }
-    };
-
 };

@@ -52,14 +52,6 @@
             } else {
                 $('#exitAndUnlockWorkspaceButton').prop('disabled', 'disabled');
             }
-
-            try {
-                if (structurizr && structurizr.scripting) {
-                    structurizr.scripting.workspaceSaved();
-                }
-            } catch (err) {
-                console.log(err);
-            }
         };
 
         const workspace = structurizr.workspace.getJson();
