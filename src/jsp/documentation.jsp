@@ -525,6 +525,7 @@
                 const headingAnchor = registerHeadingAnchor(sectionNumberToRender, sectionTitle);
 
                 $('<a name="' + sectionNumberToRender + '"/><a name="' + headingAnchor + '" class="headingAnchor" />').insertBefore(this);
+                $(this).html(sectionNumberToRender + ' ' + html);
             }
         });
 
