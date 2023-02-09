@@ -36,6 +36,8 @@
     function clearPerspective(render) {
         $('#perspectivesList').val('');
         structurizr.diagram.clearPerspective();
+        tooltip.enable();
+        toggleTooltip();
 
         $('#perspectivesModal').modal('hide');
 
@@ -56,6 +58,8 @@
         var perspective = $('#perspectivesList').val();
         structurizr.diagram.changePerspective(perspective);
         structurizr.diagram.renderPerspectiveOrTagsFilter();
+        tooltip.disable();
+        toggleTooltip();
 
         $('#perspectivesModal').modal('hide');
         $('#perspectivesOnButton').addClass('hidden');

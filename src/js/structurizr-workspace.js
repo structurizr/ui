@@ -501,8 +501,8 @@ structurizr.Workspace = class Workspace {
             const element = self.#elementsById[id];
             element.perspectives.forEach(function(perspective) {
                 const name = structurizr.util.trim(perspective.name);
-                if (name.indexOf(name) === -1) {
-                    name.push(name);
+                if (names.indexOf(name) === -1) {
+                    names.push(name);
                 }
             });
         });
@@ -511,8 +511,8 @@ structurizr.Workspace = class Workspace {
             const relationship = self.#relationshipsById[id];
             relationship.perspectives.forEach(function(perspective) {
                 const name = structurizr.util.trim(perspective.name);
-                if (name.indexOf(name) === -1) {
-                    name.push(name);
+                if (names.indexOf(name) === -1) {
+                    names.push(name);
                 }
             });
         });

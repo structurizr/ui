@@ -458,3 +458,47 @@ QUnit.test("Workspace.findViewByKey() returns the specified filtered view", func
         }
     );
 });
+
+QUnit.test("Workspace.getPerspectiveNames() returns perspective names from elements and relationships", function( assert ) {
+    var workspace = new structurizr.Workspace({
+        model: {
+            softwareSystems: [
+                {
+                    id: '1',
+                    name: 'A',
+                    perspectives: [
+                        {
+                            name: 'Perspective 1',
+                            description: 'Description'
+                        }
+                    ],
+                    relationships: [
+                        {
+                            id: 3,
+                            sourceId: 1,
+                            destinationId: 2,
+                            perspectives: [
+                                {
+                                    name: 'Perspective 3',
+                                    description: 'Description'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: '2',
+                    name: 'B',
+                    perspectives: [
+                        {
+                            name: 'Perspective 2',
+                            description: 'Description'
+                        }
+                    ]
+                }
+            ]
+        }
+    });
+    assert.deepEqual(workspace.getPerspectiveNames(), ['Perspective 1', 'Perspective 2', 'Perspective 3']);
+});
+
