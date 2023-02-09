@@ -17,12 +17,7 @@ QUnit.test("Workspace() initialises an empty JSON document", function( assert ) 
     assert.deepEqual(workspace.views, {
         "componentViews": [],
         "configuration": {
-          "branding": {
-            "font": {
-              "name": "Arial",
-              "url": undefined
-            }
-          },
+          "branding": {},
           "metadataSymbols": "SquareBrackets",
           "properties": {},
           "styles": {
@@ -241,18 +236,6 @@ QUnit.test("Workspace.findElementStyleByTag() returns the specified element styl
         "background": "#ffffff"
     }
     );
-});
-
-QUnit.test("Workspace.views.configuration.branding returns the default branding when no branding has been defined", function( assert ) {
-    var workspace = new structurizr.Workspace({});
-    assert.deepEqual(workspace.views.configuration.branding,
-    {
-        "font": {
-            "name": "Arial",
-            "url": undefined
-        }
-    }
-      );
 });
 
 QUnit.test("Workspace.findViewByKey() returns undefined when the view does not exist", function( assert ) {

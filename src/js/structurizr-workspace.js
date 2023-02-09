@@ -641,13 +641,6 @@ structurizr.Workspace = class Workspace {
             this.#workspace.views.configuration.branding = {};
         }
 
-        if (this.#workspace.views.configuration.branding.font === undefined) {
-            this.#workspace.views.configuration.branding.font = {
-                name: structurizr.constants.DEFAULT_FONT_NAME,
-                url: structurizr.constants.DEFAULT_FONT_URL
-            }
-        }
-
         if (this.#workspace.views.configuration.terminology === undefined) {
             this.#workspace.views.configuration.terminology = {};
         }

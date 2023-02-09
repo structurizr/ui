@@ -1,7 +1,7 @@
 structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCallback) {
 
     const self = this;
-    const font = structurizr.workspace.views.configuration.branding.font;
+    const font = structurizr.ui.getBranding().font;
     const gridSize = 5;
     const defaultIconHeight = 80;
     const iconPadding = 10;
@@ -61,7 +61,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     var diagramTitle;
     var diagramDescription;
     var diagramMetadata;
-    var diagramMetadataVisible = true;
     var brandingLogo;
     var primaryBoundary;
     var primaryBoundaryElement;
@@ -204,8 +203,9 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
         });
 
-        if (structurizr.workspace.views.configuration.branding.logo) {
-            images.push(structurizr.workspace.views.configuration.branding.logo);
+        const branding = structurizr.ui.getBranding();
+        if (branding.logo) {
+            images.push(branding.logo);
         }
 
         return images;
@@ -3175,7 +3175,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         graph.addCell(diagramMetadata);
         diagramMetadata.toBack();
 
-        var branding = structurizr.workspace.views.configuration.branding;
+        var branding = structurizr.ui.getBranding();
         if (branding.logo) {
             brandingLogo = new structurizr.shapes.BrandingImage({
                 size: { width: getImageRatio(branding.logo) * 100, height: 100 },
@@ -3195,29 +3195,26 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function repositionDiagramMetadata() {
+        const verticalOffset = diagramHeight - 120;
         if (diagramTitle) {
             var x = 20;
+            const logoPadding = 40;
             if (brandingLogo) {
-                brandingLogo.set({ position: { x: 20, y: getDiagramTitleVerticalOffset() }});
-                x = brandingLogo.get('size').width + 40;
+                brandingLogo.set({ position: { x: 20, y: verticalOffset }});
+                x = brandingLogo.get('size').width + logoPadding;
             }
+
+            const titleHeight = 44;
+            const metadataHeight = 75;
 
             if (diagramDescription !== undefined) {
-                diagramTitle.set({ position: { x: x, y: getDiagramTitleVerticalOffset() }});
-                diagramDescription.set({position: {x: x, y: getDiagramTitleVerticalOffset() + 46}});
+                diagramTitle.set({ position: { x: x, y: verticalOffset }});
+                diagramDescription.set({position: {x: x, y: verticalOffset + titleHeight}});
             } else {
-                diagramTitle.set({ position: { x: x, y: getDiagramTitleVerticalOffset() + (75-46) }});
+                diagramTitle.set({ position: { x: x, y: verticalOffset + (metadataHeight-titleHeight) }});
             }
 
-            diagramMetadata.set({ position: { x: x, y: getDiagramTitleVerticalOffset() + 75 }});
-        }
-    }
-
-    function getDiagramTitleVerticalOffset() {
-        if (diagramMetadataVisible === true) {
-            return diagramHeight - 120;
-        } else {
-            return diagramHeight - 91;
+            diagramMetadata.set({ position: { x: x, y: verticalOffset + metadataHeight }});
         }
     }
 

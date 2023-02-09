@@ -1,5 +1,42 @@
+structurizr.ui.DEFAULT_FONT_NAME = "Arial";
+structurizr.ui.DEFAULT_FONT_URL = undefined;
+
+structurizr.ui.themes = [];
+structurizr.ui.ignoredImages = [];
+
+structurizr.ui.getBranding = function() {
+    const branding = {};
+
+    structurizr.ui.themes.forEach(function(theme) {
+        if (theme.logo !== undefined) {
+            branding.logo = theme.logo;
+        }
+
+        if (theme.font !== undefined) {
+            branding.font = theme.font;
+        }
+    })
+
+    if (structurizr.workspace.views.configuration.branding.logo !== undefined) {
+        branding.logo = structurizr.workspace.views.configuration.branding.logo;
+    }
+
+    if (structurizr.workspace.views.configuration.branding.font !== undefined) {
+        branding.font = structurizr.workspace.views.configuration.branding.font;
+    }
+
+    if (branding.font === undefined) {
+        branding.font = {
+            name: structurizr.ui.DEFAULT_FONT_NAME,
+            url: structurizr.ui.DEFAULT_FONT_URL
+        }
+    }
+
+    return branding;
+}
+
 structurizr.ui.applyBranding = function() {
-    var branding = structurizr.workspace.views.configuration.branding;
+    var branding = structurizr.ui.getBranding();
     if (branding.font.url) {
         const head = document.head;
         const link = document.createElement('link');
@@ -25,9 +62,6 @@ structurizr.ui.applyBranding = function() {
         brandingLogo.removeClass('hidden');
     }
 }
-
-structurizr.ui.themes = [];
-structurizr.ui.ignoredImages = [];
 
 structurizr.ui.loadThemes = function(callback) {
     structurizr.workspace.views.configuration.themes.forEach(function(theme) {
@@ -81,7 +115,9 @@ structurizr.ui.loadTheme = function(url) {
             structurizr.ui.themes.push(
                 {
                     elements: theme.elements,
-                    relationships: theme.relationships
+                    relationships: theme.relationships,
+                    logo: theme.logo,
+                    font: theme.font
                 }
             );
         } catch (e) {
@@ -558,4 +594,3 @@ structurizr.ui.exitFullScreen = function() {
         document.webkitExitFullscreen();
     }
 };
-

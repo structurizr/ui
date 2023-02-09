@@ -27,7 +27,5 @@ var structurizr = structurizr || {
 
         DEFAULT_DEPLOYMENT_ENVIRONMENT_NAME: "Default",
 
-        DEFAULT_FONT_NAME: "Arial",
-        DEFAULT_FONT_URL: undefined
     }
 };

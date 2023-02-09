@@ -151,7 +151,7 @@
     progressMessage.show('<p>Loading workspace...</p>');
 
     const DARK_MODE_COOKIE_NAME = 'structurizr.darkMode';
-    structurizr.constants.DEFAULT_FONT_NAME = "Open Sans";
+    structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
 
     var views;
     const viewKeys = [];

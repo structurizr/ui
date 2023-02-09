@@ -85,7 +85,7 @@
 
 <script nonce="${scriptNonce}">
     const requestedScope = '${scope}';
-    structurizr.constants.DEFAULT_FONT_NAME = "Open Sans";
+    structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
 
     const documentationNavigation = $('#documentationNavigation');
     const documentationNavigationDropDown = $('#documentationNavigationDropDown');
@@ -594,7 +594,7 @@
 
                 documentationContentDiv.innerHTML = document.getElementById("documentationContent").innerHTML;
 
-                const branding = structurizr.workspace.views.configuration.branding;
+                const branding = structurizr.ui.getBranding();
                 if (branding.font.url) {
                     const head = exportWindow.document.head;
                     const link = exportWindow.document.createElement('link');

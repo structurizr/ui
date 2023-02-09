@@ -334,3 +334,78 @@ QUnit.test("getTitleForView() returns the computed name of a component view", fu
     };
     assert.equal(structurizr.ui.getTitleForView(view), '[Component] Software System 1 - Container 1');
 });
+
+QUnit.test("structurizr.ui.getBranding() returns the default branding when no branding has been defined", function( assert ) {
+    structurizr.workspace = new structurizr.Workspace({});
+    assert.deepEqual(structurizr.ui.getBranding(),
+        {
+            "font": {
+                "name": "Arial",
+                "url": undefined
+            }
+        }
+    );
+});
+
+QUnit.test("structurizr.ui.getBranding() returns the workspace branding when specified", function( assert ) {
+    structurizr.workspace = new structurizr.Workspace({
+        views: {
+            configuration: {
+                branding: {
+                    logo: 'workspace-logo',
+                    font: {
+                        name: 'workspace-name',
+                        url: 'workspace-url'
+                    }
+                }
+            }
+        }
+    });
+    structurizr.ui.themes =
+        [
+            {
+                elements: [],
+                relationships: [],
+                logo: 'theme-logo',
+                font: {
+                    name: 'theme-name',
+                    url: 'theme-url'
+                }
+            }
+        ];
+    assert.deepEqual(structurizr.ui.getBranding(),
+        {
+            "logo": "workspace-logo",
+            "font": {
+                "name": "workspace-name",
+                "url": "workspace-url"
+            }
+        }
+    );
+});
+
+QUnit.test("structurizr.ui.getBranding() returns the theme branding when no workspace branding has been defined", function( assert ) {
+    structurizr.workspace = new structurizr.Workspace({});
+    structurizr.ui.themes =
+        [
+            {
+                elements: [],
+                relationships: [],
+                logo: 'theme-logo',
+                font: {
+                    name: 'theme-name',
+                    url: 'theme-url'
+                }
+            }
+        ];
+    assert.deepEqual(structurizr.ui.getBranding(),
+        {
+            "logo": "theme-logo",
+            "font": {
+                "name": "theme-name",
+                "url": "theme-url"
+            }
+        }
+    );
+});
+
