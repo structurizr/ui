@@ -47,7 +47,7 @@ structurizr.scripting.DiagramScripting = function(diagram) {
             views.push(
                 {
                     key: view.key,
-                    name: structurizr.ui.getViewName(view),
+                    name: structurizr.ui.getTitleForView(view),
                     description: view.description ? view.description : '',
                     type: view.type
                 }

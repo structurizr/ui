@@ -23,7 +23,7 @@
         if (views.length > 0) {
             views.forEach(function(view) {
                 navigationList.append(
-                    $('<option></option>').val(view.key).html(structurizr.ui.getViewName(view) + ' #' + view.key)
+                    $('<option></option>').val(view.key).html(structurizr.ui.getTitleForView(view) + ' (#' + view.key + ')')
                 );
             });
 

@@ -452,10 +452,10 @@ structurizr.ui.getTitleForView = function(view) {
         return this.getTitleForView(baseView);
     }
 
-    return this.getViewName(view);
+    return this.getDefaultViewName(view);
 };
 
-structurizr.ui.getViewName = function(view) {
+structurizr.ui.getDefaultViewName = function(view) {
     if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
         view = structurizr.workspace.findViewByKey(view.baseViewKey);
     }

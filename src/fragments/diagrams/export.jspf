@@ -74,7 +74,7 @@
 
         views.forEach(function(view) {
             viewList.append(
-                $('<option></option>').val(structurizr.util.escapeHtml(view.key)).html(structurizr.util.escapeHtml(structurizr.ui.getViewName(view)))
+                $('<option></option>').val(structurizr.util.escapeHtml(view.key)).html(structurizr.util.escapeHtml(structurizr.ui.getTitleForView(view)))
             );
         });
 

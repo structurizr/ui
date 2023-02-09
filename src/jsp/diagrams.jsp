@@ -472,7 +472,7 @@
         views.forEach(function(view) {
             viewKeys.push(view.key);
             var id = 'diagram' + index;
-            var title = structurizr.util.escapeHtml(structurizr.ui.getViewName(view));
+            var title = structurizr.util.escapeHtml(structurizr.ui.getTitleForView(view));
 
             html += '<div id="' + id + 'Thumbnail" class="diagramThumbnail centered small">';
 
@@ -510,7 +510,7 @@
 
         views.forEach(function(view) {
             viewsDropDown.append(
-                $('<option></option>').val(structurizr.util.escapeHtml(view.key)).html(structurizr.util.escapeHtml(structurizr.ui.getViewName(view)))
+                $('<option></option>').val(structurizr.util.escapeHtml(view.key)).html(structurizr.util.escapeHtml(structurizr.ui.getTitleForView(view)))
             );
         });
     }
@@ -789,7 +789,7 @@
 
                 var view = structurizr.workspace.findViewByKey(diagramIdentifier);
                 if (view) {
-                    progressMessage.show('<p>Rendering ' + structurizr.util.escapeHtml(structurizr.ui.getViewName(view)) + '</p><p style="font-size: 66%">(' + structurizr.util.escapeHtml(view.key) + ')</p>');
+                    progressMessage.show('<p>Rendering ' + structurizr.util.escapeHtml(structurizr.ui.getTitleForView(view)) + '</p><p style="font-size: 66%">(#' + structurizr.util.escapeHtml(view.key) + ')</p>');
 
                     setTimeout(function() {
                         structurizr.diagram.changeView(view.key, function() {
@@ -837,7 +837,7 @@
 
     function initQuickNavigation() {
         views.forEach(function(view) {
-            const title = structurizr.util.escapeHtml(structurizr.ui.getViewName(view));
+            const title = structurizr.util.escapeHtml(structurizr.ui.getTitleForView(view));
             quickNavigation.addItem(title + ' (#' + structurizr.util.escapeHtml(view.key) + ')', '${urlPrefix}/${quickNavigationPath}${urlSuffix}#' + structurizr.util.escapeHtml(view.key));
         });
 
