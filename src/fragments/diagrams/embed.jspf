@@ -1,0 +1,86 @@
+<div class="modal fade" id="embedModal" tabindex="-1" role="dialog" aria-labelledby="embedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title">iframe embed</h2>
+            </div>
+
+            <div id="diagramEmbed" class="modal-body">
+                <p>
+                    The code below allows you to embed your diagram(s) using a responsive iframe.
+                    See <a href="https://structurizr.com/help/embed-iframe" target="_blank">iframe embed</a> for more details, or
+                    <a href="https://structurizr.com/help/atlassian-confluence" target="_blank">Atlassian Confluence</a> for details of the pre-built macros.
+                </p>
+
+                <c:choose>
+                    <c:when test="${workspace.open}">
+                    <pre class="embedCode"><code id="embedCodeFragment" onclick="structurizr.util.selectText('embedCodeFragment')">&lt;iframe <b>id="myEmbeddedDiagram"</b> src="<span class="baseUrl"></span>/embed/${workspace.id}?diagram=<span class="diagramEmbedDiagramId"></span>&diagramSelector=<span class="diagramEmbedDiagramSelector">false</span>&<b>iframe=myEmbeddedDiagram</b>" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"&gt;&lt;/iframe&gt;
+
+&lt;script type="text/javascript" src="<span class="staticContentUrl"></span>/js/structurizr-embed.js"&gt;&lt;/script&gt;</code></pre>
+                    </c:when>
+                    <c:when test="${workspace.shareable}">
+                <pre class="embedCode"><code id="embedCodeFragment" onclick="structurizr.util.selectText('embedCodeFragment')">&lt;iframe <b>id="myEmbeddedDiagram"</b> src="<span class="baseUrl"></span>/embed/${workspace.id}/${workspace.sharingToken}?&diagram=<span class="diagramEmbedDiagramId"></span>&diagramSelector=<span class="diagramEmbedDiagramSelector">false</span>&<b>iframe=myEmbeddedDiagram</b>" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"&gt;&lt;/iframe&gt;
+
+&lt;script type="text/javascript" src="<span class="staticContentUrl"></span>/js/structurizr-embed.js"&gt;&lt;/script&gt;</code></pre>
+                    </c:when>
+                    <c:otherwise>
+                <pre class="embedCode"><code id="embedCodeFragment" onclick="structurizr.util.selectText('embedCodeFragment')">&lt;iframe <b>id="myEmbeddedDiagram"</b> src="<span class="baseUrl"></span>/embed/${workspace.id}?apiKey=${workspace.apiKey}&diagram=<span class="diagramEmbedDiagramId"></span>&diagramSelector=<span class="diagramEmbedDiagramSelector">false</span>&<b>iframe=myEmbeddedDiagram</b>" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"&gt;&lt;/iframe&gt;
+
+&lt;script type="text/javascript" src="<span class="staticContentUrl"></span>/js/structurizr-embed.js"&gt;&lt;/script&gt;</code></pre>
+                    </c:otherwise>
+                </c:choose>
+
+                <div>
+                    <label>Include diagram selector <input type="checkbox" id="diagramSelectorToggle" /></label>
+                </div>
+
+                <c:if test="${not workspace.open}">
+                    <div class="centered">
+                        <h3><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/exclamation-triangle.svg" class="icon-md" /> Warning</h3>
+                        This workspace is private, so the above embed code includes your workspace API key or sharing token
+                        - <b>it is not recommended to use the above embed code on the Internet</b>.
+                    </div>
+                </c:if>
+
+                <c:if test="${workspace.clientEncrypted}">
+                    <div class="centered">
+                        <h3><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/info-circle.svg" class="icon-md" /> Information</h3>
+                        This is a client-side encrypted workspace, so viewers will be prompted for the password when diagrams from this workspace are embedded in web pages.
+                    </div>
+                </c:if>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script nonce="${scriptNonce}">
+    $('#diagramSelectorToggle').click(function() {
+        var diagramSelectorHeight = 55;
+
+        if ($('#diagramSelectorToggle').is(':checked')) {
+            $('.diagramEmbedDiagramSelector').html('true');
+        } else {
+            $('.diagramEmbedDiagramSelector').html('false');
+        }
+    });
+
+    function initEmbed() {
+        const baseUrl = window.location.protocol + '//' + window.location.host;
+        $('.baseUrl').text(baseUrl);
+
+        var staticContentUrl = '${structurizrConfiguration.cdnUrl}';
+        if (staticContentUrl.indexOf("/") === 0) {
+            staticContentUrl = baseUrl + staticContentUrl;
+        }
+        $('.staticContentUrl').text(staticContentUrl);
+
+    }
+
+    function openEmbedModal() {
+        $('#embedModal').modal();
+    }
+</script>

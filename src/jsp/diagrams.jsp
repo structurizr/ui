@@ -138,6 +138,7 @@
 <%@ include file="/WEB-INF/fragments/quick-navigation.jspf" %>
 <%@ include file="/WEB-INF/fragments/tooltip.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/key.jspf" %>
+<%@ include file="/WEB-INF/fragments/diagrams/embed.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/export.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/navigation.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/perspectives.jspf" %>
@@ -279,6 +280,7 @@
         structurizr.diagram.onAnimationStarted(animationStarted);
         structurizr.diagram.onAnimationStopped(animationStopped);
 
+        initEmbed();
         initPerspectives();
         initTags();
         initAutoLayout();
