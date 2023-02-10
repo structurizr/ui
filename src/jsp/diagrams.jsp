@@ -378,7 +378,7 @@
 
         const explorationsButton = document.getElementById('explorationsButton');
         if (explorationsButton) {
-            if (view.type === 'Custom' || view.type === 'SystemLandscape' || view.type === 'SystemContext' || view.type === 'Container' || view.type === 'Component') {
+            if (view.type === structurizr.constants.CUSTOM_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE || view.type === structurizr.constants.CONTAINER_VIEW_TYPE || view.type === structurizr.constants.COMPONENT_VIEW_TYPE) {
                 explorationsButton.onclick = function () {
                     var queryString;
                     const urlPrefix = '${urlPrefix}';
@@ -391,6 +391,22 @@
                     }
                     queryString += ('view=' + encodeURIComponent(view.key));
                     window.open(urlPrefix + '/explore/graph' + queryString);
+                };
+
+                $('#explorationsButton').removeClass('hidden');
+            } else if (view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
+                explorationsButton.onclick = function () {
+                    var queryString;
+                    const urlPrefix = '${urlPrefix}';
+                    const urlSuffix = '${urlSuffix}';
+
+                    if (urlSuffix.length === 0) {
+                        queryString = '?';
+                    } else {
+                        queryString = (urlSuffix + '&');
+                    }
+                    queryString += ('view=' + encodeURIComponent(view.key));
+                    window.open(urlPrefix + '/explore/tree' + queryString);
                 };
 
                 $('#explorationsButton').removeClass('hidden');

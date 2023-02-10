@@ -9,7 +9,7 @@
 <div id="graphs" style="margin: 10px 50px 10px 50px; padding: 20px">
 
     <div class="centered form-inline">
-        <select id="graphSelector" class="form-control" onchange="showSelectedGraph()"></select>
+        <select id="graphSelector" class="hidden form-control" onchange="showSelectedGraph()"></select>
     </div>
 
 </div>
@@ -35,30 +35,48 @@
     }
 
     function init() {
-        graph(
-            'staticStructure',
-            'Static structure',
-            d3.hierarchy(getStaticStructureAsTreeStructure())
-        );
+        const viewKey = '${view}';
+        var view;
 
-        const deploymentEnvironments = [];
-        structurizr.workspace.model.deploymentNodes.forEach(function(deploymentNode) {
-            if (deploymentEnvironments.indexOf(deploymentNode.environment) === -1) {
-                deploymentEnvironments.push(deploymentNode.environment);
-            }
-        });
-        deploymentEnvironments.sort();
+        if (viewKey.length > 0) {
+            view = structurizr.workspace.findViewByKey(viewKey);
+        }
 
-        var counter = 1;
-        deploymentEnvironments.forEach(function(deploymentEnvironment) {
+        if (view !== undefined && view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
+            const deploymentEnvironment = view.environment;
             graph(
-                'deploymentEnvironment' + counter++,
+                'deploymentView',
                 'Deployment: ' + deploymentEnvironment,
-                d3.hierarchy(getDeploymentEnvironmentAsTreeStructure(deploymentEnvironment))
+                d3.hierarchy(getDeploymentEnvironmentAsTreeStructure(deploymentEnvironment, view))
             );
-        });
+            $('#deploymentView').removeClass('hidden');
+        } else {
+            graph(
+                'staticStructure',
+                'Static structure',
+                d3.hierarchy(getStaticStructureAsTreeStructure())
+            );
 
-        $('#staticStructure').removeClass('hidden');
+            const deploymentEnvironments = [];
+            structurizr.workspace.model.deploymentNodes.forEach(function (deploymentNode) {
+                if (deploymentEnvironments.indexOf(deploymentNode.environment) === -1) {
+                    deploymentEnvironments.push(deploymentNode.environment);
+                }
+            });
+            deploymentEnvironments.sort();
+
+            var counter = 1;
+            deploymentEnvironments.forEach(function (deploymentEnvironment) {
+                graph(
+                    'deploymentEnvironment' + counter++,
+                    'Deployment: ' + deploymentEnvironment,
+                    d3.hierarchy(getDeploymentEnvironmentAsTreeStructure(deploymentEnvironment))
+                );
+            });
+
+            $('#graphSelector').removeClass('hidden');
+            $('#staticStructure').removeClass('hidden');
+        }
 
         progressMessage.hide();
     }
@@ -276,12 +294,12 @@
         };
     }
 
-    function getDeploymentEnvironmentAsTreeStructure(environmentName) {
+    function getDeploymentEnvironmentAsTreeStructure(environmentName, view) {
         const deploymentNodes = [];
 
         structurizr.workspace.model.deploymentNodes.forEach(function(deploymentNode) {
-            if (deploymentNode.environment === environmentName) {
-                deploymentNodes.push(getDeploymentNodeAsTreeStructure(deploymentNode));
+            if (deploymentNode.environment === environmentName && inView(view, deploymentNode)) {
+                deploymentNodes.push(getDeploymentNodeAsTreeStructure(deploymentNode, view));
             }
 
         });
@@ -300,7 +318,15 @@
         };
     }
 
-    function getDeploymentNodeAsTreeStructure(deploymentNode) {
+    function inView(view, element) {
+        if (view === undefined) {
+            return true;
+        }
+
+        return view.elements.map(function(e) { return e.id; }).indexOf(element.id) > -1;
+    }
+
+    function getDeploymentNodeAsTreeStructure(deploymentNode, view) {
         const dn = {
             name: deploymentNode.name,
             element: deploymentNode,
@@ -311,40 +337,48 @@
 
         if (deploymentNode.children) {
             deploymentNode.children.forEach(function(child) {
-                dn.children.push(getDeploymentNodeAsTreeStructure(child));
+                if (inView(view, child)) {
+                    dn.children.push(getDeploymentNodeAsTreeStructure(child, view));
+                }
             });
         }
 
         if (deploymentNode.infrastructureNodes) {
             deploymentNode.infrastructureNodes.forEach(function(infrastructureNode) {
-                dn.children.push({
-                    name: infrastructureNode.name,
-                    element: infrastructureNode,
-                    type: structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE,
-                    style: structurizr.ui.findElementStyle(infrastructureNode)
-                });
+                if (inView(view, infrastructureNode)) {
+                    dn.children.push({
+                        name: infrastructureNode.name,
+                        element: infrastructureNode,
+                        type: structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE,
+                        style: structurizr.ui.findElementStyle(infrastructureNode)
+                    });
+                }
             });
         }
 
         if (deploymentNode.softwareSystemInstances) {
             deploymentNode.softwareSystemInstances.forEach(function(softwareSystemInstance) {
-                dn.children.push({
-                    name: softwareSystemInstance.name,
-                    element: softwareSystemInstance,
-                    type: structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE,
-                    style: structurizr.ui.findElementStyle(softwareSystemInstance)
-                });
+                if (inView(view, softwareSystemInstance)) {
+                    dn.children.push({
+                        name: softwareSystemInstance.name,
+                        element: softwareSystemInstance,
+                        type: structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE,
+                        style: structurizr.ui.findElementStyle(softwareSystemInstance)
+                    });
+                }
             });
         }
 
         if (deploymentNode.containerInstances) {
             deploymentNode.containerInstances.forEach(function(containerInstance) {
-                dn.children.push({
-                    name: containerInstance.name,
-                    element: containerInstance,
-                    type: structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE,
-                    style: structurizr.ui.findElementStyle(containerInstance)
-                });
+                if (inView(view, containerInstance)) {
+                    dn.children.push({
+                        name: containerInstance.name,
+                        element: containerInstance,
+                        type: structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE,
+                        style: structurizr.ui.findElementStyle(containerInstance)
+                    });
+                }
             });
         }
 
