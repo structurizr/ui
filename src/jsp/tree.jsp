@@ -37,17 +37,19 @@
     function init() {
         const viewKey = '${view}';
         var view;
+        var filter;
 
         if (viewKey.length > 0) {
             view = structurizr.workspace.findViewByKey(viewKey);
         }
 
         if (view !== undefined && view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
+            filter = view.elements.map(function(e) { return e.id; });
             const deploymentEnvironment = view.environment;
             graph(
                 'deploymentView',
                 'Deployment: ' + deploymentEnvironment,
-                d3.hierarchy(getDeploymentEnvironmentAsTreeStructure(deploymentEnvironment, view))
+                d3.hierarchy(getDeploymentEnvironmentAsTreeStructure(deploymentEnvironment, filter))
             );
             $('#deploymentView').removeClass('hidden');
         } else {
@@ -70,7 +72,7 @@
                 graph(
                     'deploymentEnvironment' + counter++,
                     'Deployment: ' + deploymentEnvironment,
-                    d3.hierarchy(getDeploymentEnvironmentAsTreeStructure(deploymentEnvironment))
+                    d3.hierarchy(getDeploymentEnvironmentAsTreeStructure(deploymentEnvironment, filter))
                 );
             });
 
@@ -174,16 +176,16 @@
             return d.data.style.icon !== undefined;
         }).append("image")
             .attr("width", function(d) {
-                return sizes[d.data.type];
+                return sizes[d.data.type]*1.5;
             })
             .attr("height", function(d) {
-                return sizes[d.data.type];
+                return sizes[d.data.type]*1.5;
             })
             .attr("x", function(d) {
-                return -(sizes[d.data.type]/2);
+                return -(sizes[d.data.type]*1.5)/2;
             })
             .attr("y", function(d) {
-                return -(sizes[d.data.type]/2);
+                return -(sizes[d.data.type]*1.5)/2;
             })
             .attr("href", function(d) {
                 return d.data.style.icon;
@@ -294,12 +296,12 @@
         };
     }
 
-    function getDeploymentEnvironmentAsTreeStructure(environmentName, view) {
+    function getDeploymentEnvironmentAsTreeStructure(environmentName, filter) {
         const deploymentNodes = [];
 
         structurizr.workspace.model.deploymentNodes.forEach(function(deploymentNode) {
-            if (deploymentNode.environment === environmentName && inView(view, deploymentNode)) {
-                deploymentNodes.push(getDeploymentNodeAsTreeStructure(deploymentNode, view));
+            if (deploymentNode.environment === environmentName && inFilter(deploymentNode, filter)) {
+                deploymentNodes.push(getDeploymentNodeAsTreeStructure(deploymentNode, filter));
             }
 
         });
@@ -318,15 +320,11 @@
         };
     }
 
-    function inView(view, element) {
-        if (view === undefined) {
-            return true;
-        }
-
-        return view.elements.map(function(e) { return e.id; }).indexOf(element.id) > -1;
+    function inFilter(element, filter) {
+        return (filter === undefined) || (filter.indexOf(element.id) > -1);
     }
 
-    function getDeploymentNodeAsTreeStructure(deploymentNode, view) {
+    function getDeploymentNodeAsTreeStructure(deploymentNode, filter) {
         const dn = {
             name: deploymentNode.name,
             element: deploymentNode,
@@ -337,15 +335,15 @@
 
         if (deploymentNode.children) {
             deploymentNode.children.forEach(function(child) {
-                if (inView(view, child)) {
-                    dn.children.push(getDeploymentNodeAsTreeStructure(child, view));
+                if (inFilter(child, filter)) {
+                    dn.children.push(getDeploymentNodeAsTreeStructure(child, filter));
                 }
             });
         }
 
         if (deploymentNode.infrastructureNodes) {
             deploymentNode.infrastructureNodes.forEach(function(infrastructureNode) {
-                if (inView(view, infrastructureNode)) {
+                if (inFilter(infrastructureNode, filter)) {
                     dn.children.push({
                         name: infrastructureNode.name,
                         element: infrastructureNode,
@@ -358,7 +356,7 @@
 
         if (deploymentNode.softwareSystemInstances) {
             deploymentNode.softwareSystemInstances.forEach(function(softwareSystemInstance) {
-                if (inView(view, softwareSystemInstance)) {
+                if (inFilter(softwareSystemInstance, filter)) {
                     dn.children.push({
                         name: softwareSystemInstance.name,
                         element: softwareSystemInstance,
@@ -371,7 +369,7 @@
 
         if (deploymentNode.containerInstances) {
             deploymentNode.containerInstances.forEach(function(containerInstance) {
-                if (inView(view, containerInstance)) {
+                if (inFilter(containerInstance, filter)) {
                     dn.children.push({
                         name: containerInstance.name,
                         element: containerInstance,

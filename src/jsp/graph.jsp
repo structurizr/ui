@@ -277,16 +277,16 @@
             return d.style.icon !== undefined;
         }).append("image")
             .attr("width", function(d) {
-                return nodeSizes[d.type];
+                return nodeSizes[d.type]*1.5;
             })
             .attr("height", function(d) {
-                return nodeSizes[d.type];
+                return nodeSizes[d.type]*1.5;
             })
             .attr("x", function(d) {
-                return -(nodeSizes[d.type]/2);
+                return -(nodeSizes[d.type]*1.5)/2;
             })
             .attr("y", function(d) {
-                return -(nodeSizes[d.type]/2);
+                return -(nodeSizes[d.type]*1.5)/2;
             })
             .attr("href", function(d) {
                 return d.style.icon;
