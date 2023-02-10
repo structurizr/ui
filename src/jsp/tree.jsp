@@ -6,22 +6,26 @@
 
 <%@ include file="/WEB-INF/fragments/tooltip.jspf" %>
 
-<div id="exploreTree" style="margin-left: 100px; margin-right: 100px;">
+<div id="graphs" style="margin: 10px 50px 10px 50px; padding: 20px">
+
+    <div class="centered form-inline">
+        <select id="graphSelector" class="form-control" onchange="showSelectedGraph()"></select>
+    </div>
+
 </div>
 
 <script nonce="${scriptNonce}">
-    const horizontalMargin = 100;
-    const width = window.innerWidth - horizontalMargin;
-    const dx = 100;
-    const dy = width / 4;
-    var tree, treeLink;
-
     const sizes = {
-        "Model": 24,
+        "Model": 20,
         "Person": 18,
         "SoftwareSystem": 18,
+        "SoftwareSystemInstance": 18,
         "Container": 14,
-        "Component": 10
+        "ContainerInstance": 14,
+        "Component": 10,
+        "DeploymentEnvironment": 20,
+        "DeploymentNode": 18,
+        "InfrastructureNode": 14
     };
 
     function workspaceLoaded() {
@@ -31,31 +35,63 @@
     }
 
     function init() {
-        tree = d3.tree().nodeSize([dx, dy]);
-        treeLink = d3.linkHorizontal().x(d => d.y).y(d => d.x);
-        $("#exploreTree").html(graph(d3.hierarchy(getModelAsTreeStructure())));
+        graph(
+            'staticStructure',
+            'Static structure',
+            d3.hierarchy(getStaticStructureAsTreeStructure())
+        );
+
+        const deploymentEnvironments = [];
+        structurizr.workspace.model.deploymentNodes.forEach(function(deploymentNode) {
+            if (deploymentEnvironments.indexOf(deploymentNode.environment) === -1) {
+                deploymentEnvironments.push(deploymentNode.environment);
+            }
+        });
+        deploymentEnvironments.sort();
+
+        var counter = 1;
+        deploymentEnvironments.forEach(function(deploymentEnvironment) {
+            graph(
+                'deploymentEnvironment' + counter++,
+                'Deployment: ' + deploymentEnvironment,
+                d3.hierarchy(getDeploymentEnvironmentAsTreeStructure(deploymentEnvironment))
+            );
+        });
+
+        $('#staticStructure').removeClass('hidden');
 
         progressMessage.hide();
     }
 
-    function graph(root) {
+    function graph(domId, label, root) {
+        const horizontalMargin = 50;
+        const width = window.innerWidth - horizontalMargin;
+        const dx = 100;
+        const dy = width / 5;
+        const tree = d3.tree().nodeSize([dx, dy]);
+        const treeLink = d3.linkHorizontal().x(d => d.y).y(d => d.x);
+        const marginLeft = 100;
+
         root = tree(root);
 
-        let x0 = Infinity;
-        let x1 = -x0;
+        let minX = Infinity;
+        let maxX = -Infinity;
         root.each(d => {
-            if (d.x > x1) x1 = d.x;
-            if (d.x < x0) x0 = d.x;
+            minX = Math.min(d.x, minX);
+            maxX = Math.max(d.x, maxX);
         });
 
+        const height = maxX - minX + dx * 2;
+
         const svg = d3.create("svg")
-            .attr("viewBox", [0, 0, width, x1 - x0 + dx * 2])
+            .attr("width", (width+dy) + "px")
+            .attr("height", height + "px")
             .style("overflow", "visible");
 
         const g = svg.append("g")
-            .attr("font-size", 14)
+            .attr("font-size", 12)
             .attr("transform", function() {
-                return "translate(" + 0 + "," + (dx - x0) + ")";
+                return "translate(" + marginLeft + "," + (dx - minX) + ")";
             })
 
         const link = g.append("g")
@@ -81,7 +117,30 @@
             .on("mousemove", moveTooltip)
             .on("mouseout", hideTooltip);
 
-        node.append("circle")
+        node.filter(function(d) {
+            return d.data.type === structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE || d.data.type === structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE;
+        }).append("rect")
+            .attr("fill", function(d) {
+                return d.data.style.background;
+            })
+            .attr("stroke-width", 1)
+            .attr("stroke", function(d) {
+                return d.data.style.stroke;
+            })
+            .attr("width", function(d) {
+                return sizes[d.data.type] * 2;
+            })
+            .attr("height", function(d) {
+                return sizes[d.data.type] * 2;
+            })
+            .attr("x", function(d){  return -(sizes[d.data.type]);})
+            .attr("y", function(d){  return -(sizes[d.data.type]);})
+            .attr("rx", "3")
+            .attr("ry", "3");
+
+        node.filter(function(d) {
+            return d.data.type !== structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE && d.data.type !== structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE;
+        }).append("circle")
             .attr("fill", function(d) {
                 return d.data.style.background;
             })
@@ -91,6 +150,25 @@
             })
             .attr("r", function(d) {
                 return sizes[d.data.type];
+            });
+
+        node.filter(function(d) {
+            return d.data.style.icon !== undefined;
+        }).append("image")
+            .attr("width", function(d) {
+                return sizes[d.data.type];
+            })
+            .attr("height", function(d) {
+                return sizes[d.data.type];
+            })
+            .attr("x", function(d) {
+                return -(sizes[d.data.type]/2);
+            })
+            .attr("y", function(d) {
+                return -(sizes[d.data.type]/2);
+            })
+            .attr("href", function(d) {
+                return d.data.style.icon;
             });
 
         node.append("text")
@@ -110,7 +188,14 @@
                 return d.data.name;
             });
 
-        return svg.node();
+        const html = svg.node();
+
+        $('#graphs').append('<div id="'+ domId + '" class="graph hidden" style="overflow-x: scroll"><div width="' + width + '"></div></div>');
+        $('#' + domId + ' div').html(svg.node());
+
+        $('#graphSelector').append(
+            $('<option></option>').val('#' + domId).html(label)
+        );
     }
 
     function showTooltipForElement(event, d) {
@@ -128,11 +213,16 @@
         tooltip.hide();
     }
 
-    function getModelAsTreeStructure() {
-        const model = structurizr.workspace.model;
+    function showSelectedGraph() {
+        $('.graph').addClass('hidden')
+        const selectedGraph = $('#graphSelector').val();
+        $(selectedGraph).removeClass('hidden')
+    }
+
+    function getStaticStructureAsTreeStructure() {
         const softwareSystems = [];
 
-        model.softwareSystems.forEach(function(softwareSystem) {
+        structurizr.workspace.model.softwareSystems.forEach(function(softwareSystem) {
             const s = {
                 name: softwareSystem.name,
                 element: softwareSystem,
@@ -175,7 +265,7 @@
         sortArrayByNameAscending(softwareSystems);
 
         return {
-            name: "Model",
+            name: "",
             children: softwareSystems,
             description: "",
             type: "Model",
@@ -184,6 +274,81 @@
                 stroke: '#000000'
             }
         };
+    }
+
+    function getDeploymentEnvironmentAsTreeStructure(environmentName) {
+        const deploymentNodes = [];
+
+        structurizr.workspace.model.deploymentNodes.forEach(function(deploymentNode) {
+            if (deploymentNode.environment === environmentName) {
+                deploymentNodes.push(getDeploymentNodeAsTreeStructure(deploymentNode));
+            }
+
+        });
+
+        sortArrayByNameAscending(deploymentNodes);
+
+        return {
+            name: "",
+            children: deploymentNodes,
+            description: "",
+            type: "DeploymentEnvironment",
+            style: {
+                background: '#777777',
+                stroke: '#000000'
+            }
+        };
+    }
+
+    function getDeploymentNodeAsTreeStructure(deploymentNode) {
+        const dn = {
+            name: deploymentNode.name,
+            element: deploymentNode,
+            type: structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE,
+            style: structurizr.ui.findElementStyle(deploymentNode),
+            children: []
+        };
+
+        if (deploymentNode.children) {
+            deploymentNode.children.forEach(function(child) {
+                dn.children.push(getDeploymentNodeAsTreeStructure(child));
+            });
+        }
+
+        if (deploymentNode.infrastructureNodes) {
+            deploymentNode.infrastructureNodes.forEach(function(infrastructureNode) {
+                dn.children.push({
+                    name: infrastructureNode.name,
+                    element: infrastructureNode,
+                    type: structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE,
+                    style: structurizr.ui.findElementStyle(infrastructureNode)
+                });
+            });
+        }
+
+        if (deploymentNode.softwareSystemInstances) {
+            deploymentNode.softwareSystemInstances.forEach(function(softwareSystemInstance) {
+                dn.children.push({
+                    name: softwareSystemInstance.name,
+                    element: softwareSystemInstance,
+                    type: structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE,
+                    style: structurizr.ui.findElementStyle(softwareSystemInstance)
+                });
+            });
+        }
+
+        if (deploymentNode.containerInstances) {
+            deploymentNode.containerInstances.forEach(function(containerInstance) {
+                dn.children.push({
+                    name: containerInstance.name,
+                    element: containerInstance,
+                    type: structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE,
+                    style: structurizr.ui.findElementStyle(containerInstance)
+                });
+            });
+        }
+
+        return dn;
     }
 
     function sortArrayByNameAscending(array) {
