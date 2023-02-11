@@ -3,6 +3,7 @@
     <option value="general-rules">General rules</option>
     <option value="comments">Comments</option>
     <option value="identifiers">Identifiers</option>
+    <option value="expressions">Expressions</option>
     <option value="workspace">workspace</option>
     <option value="constants">&nbsp;- !constant</option>
     <option value="identifier-scope">&nbsp;- !identifiers</option>
