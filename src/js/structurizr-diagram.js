@@ -280,7 +280,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         // orthogonal routing already snaps to the compass points, so we're only interested in links without a routing algorithm set
         if (linkView.model.get('router') === undefined) {
             var type = view.model.get('type');
-            if (type === 'structurizr.box' || type === 'structurizr.ellipse' || type === 'structurizr.hexagon' || type === 'structurizr.webBrowser' || type === 'structurizr.mobileDevice') {
+            if (type === 'structurizr.box' || type === 'structurizr.ellipse' || type === 'structurizr.hexagon' || type === 'structurizr.webBrowser' || type === 'structurizr.window' || type === 'structurizr.mobileDevice') {
                 magnet = view.$('.structurizrHighlightableElement')[0];
             } else if (type === 'structurizr.person' || type === 'structurizr.robot') {
                 // calculate the angle from the centre point of the shape to the reference point, and prefer the head if the angle is too steep
@@ -492,6 +492,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     box = createPipe(view, element, elementStyle, positionX, positionY);
                 } else if (elementStyle.shape === 'WebBrowser') {
                     box = createWebBrowser(view, element, elementStyle, positionX, positionY);
+                } else if (elementStyle.shape === 'Window') {
+                    box = createWindow(view, element, elementStyle, positionX, positionY);
                 } else if (elementStyle.shape === 'MobileDevicePortrait') {
                     box = createMobileDevicePortrait(view, element, elementStyle, positionX, positionY);
                 } else if (elementStyle.shape === 'MobileDeviceLandscape') {
@@ -2785,6 +2787,151 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         return cell;
     }
 
+    function createWindow(view, element, configuration, x, y) {
+        var verticalOffset = 20;
+        var width = configuration.width;
+        var height = configuration.height;
+
+        var elementPadding = calculateElementPadding(configuration);
+        var nameLabel = formatName(element, configuration, elementPadding, elementPadding);
+        var metaDataLabel = formatMetaData(element, configuration, elementPadding, elementPadding);
+        var descriptionLabel = formatDescription(element, configuration, elementPadding, elementPadding);
+
+        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
+        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
+        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
+        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
+        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
+
+        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
+        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
+
+        var iconRefX = 0;
+        var iconRefY = 0;
+
+        if (configuration.icon) {
+            var iconRatio = getImageRatio(configuration.icon);
+            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
+            iconRefX = (((width - widthOfIcon) / 2) / width);
+            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
+        }
+
+        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
+
+        var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
+        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
+        var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
+
+        var cell = new structurizr.shapes.Window({
+            position: {
+                x: x,
+                y: y
+            },
+            size: {
+                width: configuration.width,
+                height: configuration.height
+            },
+            attrs: {
+                '.structurizrWindow': {
+                    fill: stroke,
+                    stroke: stroke,
+                    width: configuration.width,
+                    height: height,
+                    rx: 10,
+                    ry: 10
+                },
+                '.structurizrWindowPanel': {
+                    fill: fill,
+                    stroke: stroke,
+                    width: configuration.width - 20,
+                    height: height - 50,
+                    x: 10,
+                    y: 40,
+                    rx: 10,
+                    ry: 10
+                },
+                '.structurizrWindowButton1': {
+                    fill: fill,
+                    cx: 20,
+                    cy: 20,
+                    rx: 10,
+                    ry: 10
+                },
+                '.structurizrWindowButton2': {
+                    fill: fill,
+                    cx: 50,
+                    cy: 20,
+                    rx: 10,
+                    ry: 10
+                },
+                '.structurizrWindowButton3': {
+                    fill: fill,
+                    cx: 80,
+                    cy: 20,
+                    rx: 10,
+                    ry: 10
+                },
+                '.structurizrName': {
+                    text: nameLabel,
+                    'font-family': font.name,
+                    fill: textColor,
+                    'font-size': configuration.fontSize+nameFontSizeDifference,
+                    'ref-y': nameRefY,
+                    'lineHeight': lineHeight
+                },
+                '.structurizrDescription': {
+                    text: descriptionLabel,
+                    'font-family': font.name,
+                    fill: textColor,
+                    'font-size': configuration.fontSize,
+                    'ref-y': descriptionRefY,
+                    'lineHeight': lineHeight
+                },
+                '.structurizrMetaData': {
+                    text: metaDataLabel,
+                    'font-family': font.name,
+                    fill: textColor,
+                    'font-size': configuration.fontSize+metaDataFontSizeDifference,
+                    'ref-y': metaDataRefY,
+                    'lineHeight': lineHeight
+                },
+                '.structurizrNavigation': {
+                    'font-family': font.name,
+                    fill: textColor,
+                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                },
+                '.structurizrIcon': {
+                }
+            },
+            element: element
+        });
+
+        if (configuration.border !== 'Solid') {
+            cell.attributes.attrs['.structurizrWindow']['stroke-dasharray'] = borderStyles[configuration.border];
+        }
+
+        if (configuration.icon) {
+            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
+            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
+            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
+            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
+            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
+            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
+        }
+
+        graph.addCell(cell);
+        mapOfIdToBox[element.id] = cell;
+
+        cell._computedStyle = {};
+        cell._computedStyle.background = fill;
+        cell._computedStyle.color = textColor;
+        cell._computedStyle.borderStyle = configuration.border;
+        cell._computedStyle.stroke = stroke;
+        cell._computedStyle.opacity = configuration.opacity;
+
+        return cell;
+    }
+
     function createMobileDevicePortrait(view, element, configuration, x, y) {
         var verticalOffset = 0;
         var width = configuration.width;
@@ -4735,6 +4882,18 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += '<ellipse cx="80" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += createTextForKey(width, height, 0, 40, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
+            } else if (elementStyle.shape === "Window") {
+                var width = keyElementWidth;
+                var height = keyElementHeight;
+
+                svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
+                svg += '<rect width="' + width + '" height="' + height + '" rx="10" ry="10" x="0" y="0" fill="' + stroke + '" stroke-width="5" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
+                svg += '<rect width="' + (width-20) + '" height="' + (height-50) + '" rx="10" ry="10" x="10" y="40" fill="' + fill + '" stroke-width="0"/>';
+                svg += '<ellipse cx="20" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
+                svg += '<ellipse cx="50" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
+                svg += '<ellipse cx="80" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
+                svg += createTextForKey(width, height, 0, 40, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += '</g>';
             } else if (elementStyle.shape === "MobileDevicePortrait") {
                 var width = keyElementHeight;
                 var height = keyElementWidth;
@@ -5451,6 +5610,22 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             selector.css('fill', background);
 
             selector = $('#' + domId + ' .structurizrWebBrowserButton3');
+            selector.css('fill', background);
+        } else if (type === "structurizr.window") {
+            var selector = $('#' + domId + ' .structurizrWindow');
+            selector.css('fill', stroke);
+            selector.css('stroke', stroke);
+
+            selector = $('#' + domId + ' .structurizrWindowPanel');
+            selector.css('fill', background);
+
+            selector = $('#' + domId + ' .structurizrWindowButton1');
+            selector.css('fill', background);
+
+            selector = $('#' + domId + ' .structurizrWindowButton2');
+            selector.css('fill', background);
+
+            selector = $('#' + domId + ' .structurizrWindowButton3');
             selector.css('fill', background);
         } else if (type === "structurizr.mobileDevice") {
             var selector = $('#' + domId + ' .structurizrMobileDevice');
@@ -7301,6 +7476,59 @@ structurizr.shapes.WebBrowser = joint.dia.Element.extend({
                 'pointer-events': 'visiblePainted'
             },
             '.structurizrWebBrowserUrlBar': {
+                stroke: '#444444',
+                'stroke-width': 0,
+                'pointer-events': 'visiblePainted'
+            },
+            '.structurizrName': {
+                'font-weight': 'bold',
+                ref: 'rect',
+                'ref-x': 0.5,
+                'ref-y': 0.15,
+                'text-anchor': 'middle',
+                'pointer-events': 'visible'
+            },
+            '.structurizrMetaData': {
+                ref: 'rect',
+                'ref-x': 0.5,
+                'ref-y': 0.30,
+                'text-anchor': 'middle'
+            },
+            '.structurizrDescription': {
+                ref: 'rect',
+                'ref-x': 0.5,
+                'ref-y': 0.45,
+                'text-anchor': 'middle'
+            },
+            '.structurizrNavigation': {
+                ref: 'rect',
+                'font-weight': 'bold',
+                'ref-x': 0.5,
+                'ref-y': 0.90,
+                'text-anchor': 'middle'
+            },
+            '.structurizrIcon': {
+                ref: 'rect'
+            }
+        }
+    }, joint.dia.Element.prototype.defaults)
+});
+
+structurizr.shapes.Window = joint.dia.Element.extend({
+    markup: '<g class="structurizrElement"><rect class="structurizrWindow structurizrHighlightableElement"/><rect class="structurizrWindowPanel"/><ellipse class="structurizrWindowButton1"/><ellipse class="structurizrWindowButton2"/><ellipse class="structurizrWindowButton3"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'structurizr.window',
+        attrs: {
+            rect: {
+                rx: 1,
+                ry: 1
+            },
+            '.structurizrWindow': {
+                stroke: '#444444',
+                'stroke-width': 2,
+                'pointer-events': 'visiblePainted'
+            },
+            '.structurizrWindowPanel': {
                 stroke: '#444444',
                 'stroke-width': 0,
                 'pointer-events': 'visiblePainted'
