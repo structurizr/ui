@@ -365,7 +365,7 @@
         // todo
         // $(".diagramEmbedDiagramId").html("" + encodeURIComponent(view.key));
 
-        if (view.type === "Dynamic" || view.animations.length > 1) {
+        if (view.type === "Dynamic" || (view.animations && view.animations.length > 1)) {
             $('.dynamicDiagramButton').removeClass("hidden");
 
             $('.stepBackwardAnimationButton').attr("disabled", true);
