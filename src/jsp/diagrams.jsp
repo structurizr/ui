@@ -74,6 +74,9 @@
 
     <div class="col-sm-10" style="padding: 0">
         <div id="diagram" tabindex="1" style="position: relative">
+            <%@ include file="/WEB-INF/fragments/quick-navigation.jspf" %>
+            <%@ include file="/WEB-INF/fragments/tooltip.jspf" %>
+            <%@ include file="/WEB-INF/fragments/diagrams/navigation.jspf" %>
         </div>
     </div>
 </div>
@@ -135,12 +138,9 @@
 </style>
 
 <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
-<%@ include file="/WEB-INF/fragments/quick-navigation.jspf" %>
-<%@ include file="/WEB-INF/fragments/tooltip.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/key.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/embed.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/export.jspf" %>
-<%@ include file="/WEB-INF/fragments/diagrams/navigation.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/perspectives.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/tags.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/autolayout.jspf" %>
