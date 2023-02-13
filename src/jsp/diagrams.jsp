@@ -896,7 +896,7 @@
                 views = structurizr.workspace.findComponentViewsForContainer(element.id);
             }
 
-            views = views.concat(structurizr.workspace.findExternalViewsForElement(element.id));
+            views = views.concat(structurizr.workspace.findImageViewsForElement(element.id));
 
             views.forEach(function(view) {
                 options.push({
@@ -910,6 +910,14 @@
                 options.push({
                     url: documentationUrl,
                     label: 'Documentation'
+                });
+            }
+
+            if (element.documentation && element.documentation.decisions && element.documentation.decisions.length > 0) {
+                const decisionsUrl = '${urlPrefix}/decisions/' + toScope(element) + '${urlSuffix}';
+                options.push({
+                    url: decisionsUrl,
+                    label: 'Decisions'
                 });
             }
 

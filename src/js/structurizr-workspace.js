@@ -613,6 +613,15 @@ structurizr.Workspace = class Workspace {
             self.#registerView(view);
         });
 
+        if (this.#workspace.views.imageViews === undefined) {
+            this.#workspace.views.imageViews = [];
+        }
+
+        this.#workspace.views.imageViews.forEach(function(view) {
+            view.type = structurizr.constants.IMAGE_VIEW_TYPE;
+            self.#registerView(view);
+        });
+
         if (this.#workspace.views.configuration === undefined) {
             this.#workspace.views.configuration = {};
         }
@@ -659,27 +668,29 @@ structurizr.Workspace = class Workspace {
             view.description = '';
         }
 
-        if (view.elements === undefined) {
-            view.elements = [];
-        }
-
-        if (view.relationships === undefined) {
-            view.relationships = [];
-        }
-
-        if (view.type !== structurizr.constants.DYNAMIC_VIEW_TYPE) {
-            if (view.animations === undefined) {
-                view.animations = [];
+        if (view.type !== structurizr.constants.IMAGE_VIEW_TYPE) {
+            if (view.elements === undefined) {
+                view.elements = [];
             }
 
-            view.animations.forEach(function(animationStep) {
-                if (animationStep.elements === undefined) {
-                    animationStep.elements = [];
+            if (view.relationships === undefined) {
+                view.relationships = [];
+            }
+
+            if (view.type !== structurizr.constants.DYNAMIC_VIEW_TYPE) {
+                if (view.animations === undefined) {
+                    view.animations = [];
                 }
-                if (animationStep.relationships === undefined) {
-                    animationStep.relationships = [];
-                }
-            });
+
+                view.animations.forEach(function (animationStep) {
+                    if (animationStep.elements === undefined) {
+                        animationStep.elements = [];
+                    }
+                    if (animationStep.relationships === undefined) {
+                        animationStep.relationships = [];
+                    }
+                });
+            }
         }
     }
 
@@ -742,6 +753,20 @@ structurizr.Workspace = class Workspace {
                 if (baseView.type === structurizr.constants.COMPONENT_VIEW_TYPE && baseView.containerId === containerId) {
                     views.push(view);
                 }
+            }
+        }
+
+        return views;
+    };
+
+    findImageViewsForElement(elementId) {
+        const views = [];
+
+        for (var i = 0; i < this.views.imageViews.length; i++) {
+            var view = this.views.imageViews[i];
+
+            if (view.elementId === elementId) {
+                views.push(view);
             }
         }
 

@@ -33,7 +33,8 @@ QUnit.test("Workspace() initialises an empty JSON document", function( assert ) 
         "dynamicViews": [],
         "filteredViews": [],
         "systemContextViews": [],
-        "systemLandscapeViews": []
+        "systemLandscapeViews": [],
+        "imageViews": []
       });
 });
 

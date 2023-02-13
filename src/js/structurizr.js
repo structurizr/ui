@@ -24,6 +24,7 @@ var structurizr = structurizr || {
         DYNAMIC_VIEW_TYPE: "Dynamic",
         DEPLOYMENT_VIEW_TYPE: "Deployment",
         FILTERED_VIEW_TYPE: "Filtered",
+        IMAGE_VIEW_TYPE: "Image",
 
         DEFAULT_DEPLOYMENT_ENVIRONMENT_NAME: "Default",
 
