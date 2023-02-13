@@ -881,6 +881,7 @@
                 return;
             }
 
+            const options = [];
             var views = [];
             if (element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
                 if (structurizr.diagram.getCurrentView().type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || structurizr.diagram.getCurrentView().softwareSystemId !== element.id) {
@@ -895,14 +896,51 @@
                 views = structurizr.workspace.findComponentViewsForContainer(element.id);
             }
 
-            if (views.length > 1) {
-                openNavigationModal(views);
-            } else if (views.length === 1) {
-                window.location.hash = encodeURIComponent(views[0].key);
-            } else if (element.url !== undefined) {
-                window.open(element.url);
+            views = views.concat(structurizr.workspace.findExternalViewsForElement(element.id));
+
+            views.forEach(function(view) {
+                options.push({
+                    url: '#' + view.key,
+                    label: structurizr.ui.getTitleForView(view) + ' (#' + view.key + ')'
+                });
+            });
+
+            if (element.documentation && element.documentation.sections && element.documentation.sections.length > 0) {
+                const documentationUrl = '${urlPrefix}/documentation/' + toScope(element) + '${urlSuffix}';
+                options.push({
+                    url: documentationUrl,
+                    label: 'Documentation'
+                });
+            }
+
+            if (element.url !== undefined) {
+                options.push({
+                    url: element.url,
+                    label: element.url
+                });
+            }
+
+            if (options.length === 1) {
+                if (options[0].url.indexOf('#') === 0) {
+                    window.location = options[0].url;
+                } else {
+                    window.open(options[0].url);
+                }
+            } else {
+                openNavigationModal(options);
             }
         }
+    }
+
+    function toScope(element) {
+        if (element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
+            return structurizr.util.escapeHtml(element.name);
+        } else if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
+            const softwareSystem = structurizr.workspace.findElementById(element.parentId);
+            return structurizr.util.escapeHtml(softwareSystem.name) + '/' + structurizr.util.escapeHtml(element.name);
+        }
+
+        return undefined;
     }
 
     function relationshipDoubleClicked(evt, relationshipId) {

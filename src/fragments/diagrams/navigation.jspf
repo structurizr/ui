@@ -16,18 +16,18 @@
         navigate();
     });
 
-    function openNavigationModal(views) {
+    function openNavigationModal(options) {
         const navigationList = $('#navigationList');
         navigationList.empty();
 
-        if (views.length > 0) {
-            views.forEach(function(view) {
+        if (options.length > 0) {
+            options.forEach(function(option) {
                 navigationList.append(
-                    $('<option></option>').val(view.key).html(structurizr.ui.getTitleForView(view) + ' (#' + view.key + ')')
+                    $('<option></option>').val(option.url).html(option.label)
                 );
             });
 
-            navigationList.attr('size', Math.min(8, views.length));
+            navigationList.attr('size', Math.min(8, options.length));
             navigationList.val('');
 
             $('#navigationModal').modal();
@@ -35,8 +35,12 @@
     }
 
     function navigate() {
-        var view = $('#navigationList').val();
+        var url = $('#navigationList').val();
         $('#navigationModal').modal('hide');
-        window.location.hash = '#' + view;
+        if (url.indexOf('#') === 0) {
+            window.location = url;
+        } else {
+            window.open(url);
+        }
     }
 </script>
