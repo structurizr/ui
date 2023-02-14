@@ -112,7 +112,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     var onKeyPressEventHandler;
 
     var imageSources = undefined;
-    var imageRatios = undefined;
+    var imageMetadata = undefined;
     var diagramRendered = false;
 
     var parentElement = $('#' + id);
@@ -208,13 +208,17 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             images.push(branding.logo);
         }
 
+        structurizr.workspace.views.imageViews.forEach(function(view) {
+            images.push(view.content);
+        })
+
         return images;
     }
 
     function preloadImages() {
         if (imageSources === undefined) {
             imageSources = [];
-            imageRatios = [];
+            imageMetadata = [];
 
             getImagesToPreload().forEach(function(url) {
                 if (imageSources.indexOf(url) === -1) {
@@ -223,7 +227,9 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         structurizr.ui.ignoredImages.push(url);
                     } else {
                         imageSources.push(url);
-                        imageRatios.push(0);
+                        imageMetadata.push({
+                            loaded: false
+                        });
                     }
                 }
             });
@@ -233,13 +239,21 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 image.setAttribute('crossorigin', 'anonymous');
                 image.addEventListener('load', function () {
                     var index = imageSources.indexOf(this.src);
-                    imageRatios[index] = (this.naturalWidth / this.naturalHeight);
+                    imageMetadata[index] = {
+                        width: this.naturalWidth,
+                        height: this.naturalHeight,
+                        ratio: (this.naturalWidth / this.naturalHeight),
+                        loaded: true
+                    };
                 });
                 image.addEventListener('error', function (error) {
                     // there was an error loading the image, so ignore and continue
                     console.log('There was an error loading the image ' + this.src + ' - please check that the image exists, and that the Access-Control-Allow-Origin header is set to allow cross-origin requests.');
                     var index = imageSources.indexOf(this.src);
-                    imageRatios[index] = 1;
+                    imageMetadata[index] = {
+                        ratio: 1,
+                        loaded: true
+                    };
 
                     structurizr.ui.ignoredImages.push(this.src);
                 });
@@ -248,7 +262,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             });
         }
 
-        if (imageRatios.length > 0 && imageRatios.indexOf(0) > -1) {
+        if (imageMetadata.length > 0 && imageMetadata.filter(function(im) { return im.loaded === false; }).length > 0) {
             setTimeout(preloadImages, 100);
         } else {
             if (constructionCompleteCallback) {
@@ -4663,13 +4677,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function getImageRatio(image) {
-        var result = imageRatios[imageSources.indexOf(image.trim())];
+        return imageMetadata[imageSources.indexOf(image.trim())].ratio;
+    }
 
-        if (result === undefined) {
-            result = 1;
-        }
-
-        return result;
+    function getImageMetadata(image) {
+        return imageMetadata[imageSources.indexOf(image.trim())];
     }
 
     function createDiagramKey() {
