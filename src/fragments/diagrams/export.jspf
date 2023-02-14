@@ -233,7 +233,9 @@
                 }
             });
         } else {
-            structurizr.diagram.changeView(originalViewKey);
+            setTimeout(function() {
+                structurizr.diagram.changeView(originalViewKey);
+            }, 1000);
         }
     }
 
@@ -282,7 +284,7 @@
 
         if (diagramKeyAsPNG !== undefined) {
             var imgKey = document.createElement('img');
-            imgKey.className = "img-thumbnail exportedPNGDiagramKey";
+            imgKey.className = "img-thumbnail";
             imgKey.style = "display: block; margin-bottom: 5px";
             var linkKey = document.createElement("a");
             linkKey.appendChild(imgKey);
@@ -314,7 +316,10 @@
             const viewToExport = viewsToExport[0];
             structurizr.diagram.changeView(viewToExport, function () {
                 var diagramAsSVG = structurizr.diagram.exportCurrentDiagramToSVG(includeDiagramMetadata);
-                var diagramKeyAsSVG = structurizr.diagram.exportCurrentDiagramKeyToSVG();
+                var diagramKeyAsSVG;
+                if (structurizr.workspace.findViewByKey(viewToExport).type !== structurizr.constants.IMAGE_VIEW_TYPE) {
+                    diagramKeyAsSVG = structurizr.diagram.exportCurrentDiagramKeyToSVG();
+                }
 
                 addExportedSVGToPage(diagramAsSVG, diagramKeyAsSVG, download);
 
@@ -322,7 +327,9 @@
                 exportDiagramsToSVG(viewsToExport, includeDiagramMetadata, download, originalViewKey);
             });
         } else {
-            structurizr.diagram.changeView(originalViewKey);
+            setTimeout(function() {
+                structurizr.diagram.changeView(originalViewKey);
+            }, 1000);
         }
     }
 
@@ -352,31 +359,33 @@
         link.appendChild(img);
         div.appendChild(link);
 
-        var imgKey = document.createElement('div');
-        imgKey.className = "img-thumbnail exportedPNGDiagramKey";
-        imgKey.style = "display: block; margin-bottom: 5px";
-        var linkKey = document.createElement("a");
-        linkKey.appendChild(imgKey);
-        div.appendChild(linkKey);
-
         var blob = structurizr.util.toBlob(diagramAsSVG, 'text/html;charset=utf-8');
         var url = URL.createObjectURL(blob);
         img.innerHTML = diagramAsSVG;
         link.download = diagramFilename;
         link.href = url;
 
-        var blobKey = structurizr.util.toBlob(diagramKeyAsSVG, 'text/html;charset=utf-8');
-        var urlKey = URL.createObjectURL(blobKey);
-        imgKey.innerHTML = diagramKeyAsSVG;
-        linkKey.download = keyFilename;
-        linkKey.href = urlKey;
-
         if (download) {
             link.click();
         }
 
-        if (download) {
-            linkKey.click();
+        if (diagramKeyAsSVG) {
+            var imgKey = document.createElement('div');
+            imgKey.className = "img-thumbnail";
+            imgKey.style = "display: block; margin-bottom: 5px";
+            var linkKey = document.createElement("a");
+            linkKey.appendChild(imgKey);
+            div.appendChild(linkKey);
+
+            var blobKey = structurizr.util.toBlob(diagramKeyAsSVG, 'text/html;charset=utf-8');
+            var urlKey = URL.createObjectURL(blobKey);
+            imgKey.innerHTML = diagramKeyAsSVG;
+            linkKey.download = keyFilename;
+            linkKey.href = urlKey;
+
+            if (download) {
+                linkKey.click();
+            }
         }
     }
 

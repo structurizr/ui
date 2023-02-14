@@ -325,7 +325,9 @@
         const editable = structurizr.diagram.isEditable();
         if (!editable) {
             $('#diagramEditButtons').addClass('hidden');
-            $('#diagramNotEditableMessage').removeClass('hidden');
+            if (view.type !== structurizr.constants.IMAGE_VIEW_TYPE) {
+                $('#diagramNotEditableMessage').removeClass('hidden');
+            }
         } else {
             $('#diagramEditButtons').removeClass('hidden');
             $('#diagramNotEditableMessage').addClass('hidden');
@@ -335,6 +337,12 @@
             $('#editDiagramButton').addClass('hidden');
         } else {
             $('#editDiagramButton').removeClass('hidden');
+        }
+
+        if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
+            $('#modelViewButtons').addClass('hidden');
+        } else {
+            $('#modelViewButtons').removeClass('hidden');
         }
 
         structurizr.diagram.resize();
@@ -494,6 +502,9 @@
 
             html += '<div id="' + id + 'Thumbnail" class="diagramThumbnail centered small">';
 
+            if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
+                html += '  <img src="' + view.content + '" class="img-thumbnail" style="margin-bottom: 10px;" onerror="this.onerror = null; this.src=\'/static/img/thumbnail-not-available.png\';" /><br />';
+            } else {
             <c:choose>
             <c:when test="${not empty param.version or embed eq true}">
             html += '  <img src="/static/img/thumbnail-not-available.png" class="img-thumbnail" style="margin-bottom: 10px" /></a>';
@@ -502,6 +513,7 @@
             html += '  <img src="${thumbnailUrl}' + structurizr.util.escapeHtml(view.key) + '-thumbnail.png" class="img-thumbnail" style="margin-bottom: 10px;" onerror="this.onerror = null; this.src=\'/static/img/thumbnail-not-available.png\';" /><br />';
             </c:otherwise>
             </c:choose>
+            }
 
             html += title;
             html += '<br /><span class="small">#' + structurizr.util.escapeHtml(view.key) + '</span>';

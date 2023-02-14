@@ -93,11 +93,17 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix)
         }
 
         if (view) {
-            // embed the specified diagram
-            var id = 'structurizrEmbed' + (++embedIndex);
-            var embedUrl = '/embed' + '?workspace=' + workspace.id + '&view=' + encodeURIComponent(diagramIdentifier) + '&perspective=' + encodeURIComponent(perspective) + '&type=' + type + '&iframe=' + id + '&urlPrefix=' + urlPrefix + '&urlSuffix=' + encodeURIComponent(urlSuffix);
+            if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
+                const content = view.content;
+                const title = view.title;
+                return '<div style="text-align: center"><img src="' + content + '" alt="' + title + '" class="img-thumbnail" /><br />' + title + '</div>';
+            } else {
+                // embed the specified diagram
+                var id = 'structurizrEmbed' + (++embedIndex);
+                var embedUrl = '/embed' + '?workspace=' + workspace.id + '&view=' + encodeURIComponent(diagramIdentifier) + '&perspective=' + encodeURIComponent(perspective) + '&type=' + type + '&iframe=' + id + '&urlPrefix=' + urlPrefix + '&urlSuffix=' + encodeURIComponent(urlSuffix);
 
-            return '<div style="text-align: center"><iframe id="' + id + '" class="structurizrEmbed thumbnail" src="' + embedUrl + '" width="100%" height="' + (window.innerHeight * 0.85) + 'px" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>' + '</div>';
+                return '<div style="text-align: center"><iframe id="' + id + '" class="structurizrEmbed thumbnail" src="' + embedUrl + '" width="100%" height="' + (window.innerHeight * 0.85) + 'px" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>' + '</div>';
+            }
         } else {
             return '<div class="alert alert-danger" role="alert">Unable to embed view \'' + diagramIdentifier + '\' - there is no view with this key in the workspace.</div>';
         }
