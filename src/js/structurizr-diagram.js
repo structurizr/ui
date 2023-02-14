@@ -914,6 +914,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var domElement = $('#' + cellView.id);
         var navigation = '';
         var views = [];
+        var documentation = false;
+        var decisions = false;
         var url = element.url;
 
         if (element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
@@ -926,12 +928,17 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             views = structurizr.workspace.findComponentViewsForContainer(element.id);
         }
 
+        views = views.concat(structurizr.workspace.findImageViewsForElement(element.id));
+
+        documentation = (element.documentation && element.documentation.sections && element.documentation.sections.length > 0);
+        decisions = (element.documentation && element.documentation.decisions && element.documentation.decisions.length > 0);
+
         if (url !== undefined) {
             domElement.attr('style', 'cursor: pointer !important');
             navigation += '#';
         }
 
-        if (views.length > 0) {
+        if (views.length > 0 || documentation || decisions) {
             domElement.attr('style', 'cursor: zoom-in !important');
             navigation = '+' + navigation;
         }
