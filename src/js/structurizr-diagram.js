@@ -61,6 +61,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     var diagramTitle;
     var diagramDescription;
     var diagramMetadata;
+    var diagramMetadataWidth = 0;
     var brandingLogo;
     var primaryBoundary;
     var primaryBoundaryElement;
@@ -401,6 +402,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         cellsByElementId = {};
         lines = [];
         linesByRelationshipId = {};
+        diagramMetadataWidth = 0;
         selectedElements = [];
         primaryBoundary = undefined;
         primaryBoundaryElement = undefined;
@@ -3232,8 +3234,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         return cell;
     }
-
-    var diagramMetadataWidth = 0;
 
     function createDiagramMetadata() {
         var titleColor;
