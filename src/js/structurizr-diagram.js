@@ -29,8 +29,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     var scale = 0.5;
     var minZoomFactor = 0.1;
-    const maxZoomScale = 1;
-    const zoomSteps = 20;
+    const maxZoomScale = 2;
+    const zoomSteps = 40;
     var zoomDelta = (maxZoomScale - minZoomFactor) / zoomSteps;
     var pageSizeDelta = 100;
 
