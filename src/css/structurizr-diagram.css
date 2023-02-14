@@ -33,3 +33,7 @@
     fill: #08427B;
     r: 25px;
 }
+
+#navigationModal option {
+    padding: 5px;
+}
