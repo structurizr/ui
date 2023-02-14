@@ -437,11 +437,62 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             return editable;
         });
 
-        self.setPaperSize(view);
-
         if (tooltip) {
             tooltip.hide();
         }
+
+        if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
+            editable = false;
+            const imageMetadata = getImageMetadata(view.content);
+
+            const image = new structurizr.shapes.ImageView({
+                size: {
+                    width: imageMetadata.width,
+                    height: imageMetadata.height
+                },
+                attrs: {
+                    image: {
+                        'xlink:href': view.content,
+                        width: imageMetadata.width,
+                        height: imageMetadata.height
+                    }
+                }
+            });
+
+            graph.addCell(image);
+            image.toBack();
+
+            var cellView = paper.findViewByModel(image);
+            const domElement = $('#' + cellView.id);
+            domElement.attr('style', 'cursor: default !important');
+
+            view.dimensions = {
+                width: imageMetadata.width,
+                height: imageMetadata.height
+            }
+
+            self.setPaperSize(view);
+
+            if (embedded) {
+                self.zoomFitWidth();
+                minZoomFactor = scale;
+                zoomDelta = (maxZoomScale - minZoomFactor) / zoomSteps;
+            } else {
+                self.zoomToWidthOrHeight();
+            }
+
+            addGraphEventHandlers();
+
+            diagramRendered = true;
+
+            if (callback !== undefined) {
+                callback();
+            }
+
+            return;
+        }
+
+        self.setPaperSize(view);
 
         if (view.type === structurizr.constants.CONTAINER_VIEW_TYPE) {
             primaryBoundaryElement = structurizr.workspace.findElementById(view.softwareSystemId);
@@ -5231,6 +5282,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     this.exportCurrentDiagramKeyToPNG = function(callback) {
+        if (currentView.type === structurizr.constants.IMAGE_VIEW_TYPE) {
+            return callback(undefined);
+        }
+
         var svgMarkup = diagramKey;
 
         var myCanvas = document.createElement("canvas");
@@ -7014,6 +7069,18 @@ structurizr.shapes.BrandingImage = joint.dia.Element.extend({
         type: 'structurizr.brandingImage',
         attrs: {
             '.structurizrBrandingImage': {
+                'pointer-events': 'none'
+            }
+        }
+    }, joint.dia.Element.prototype.defaults)
+});
+
+structurizr.shapes.ImageView = joint.dia.Element.extend({
+    markup: '<g><image class="structurizrImageView"/></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'structurizr.image',
+        attrs: {
+            '.structurizrImage': {
                 'pointer-events': 'none'
             }
         }
