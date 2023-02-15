@@ -6261,18 +6261,22 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 currentY = point.y;
             }
 
+            const offset = parentElement.offset();
+            const x = evt.clientX - offset.left;
+            const y = evt.clientY - offset.top;
+
             if (evt.altKey && tooltip.isVisible()) {
                 // do nothing ... sticky tooltip mode
             } else {
                 if (tooltip && tooltip.isEnabled()) {
                     if (cell.model.elementInView) {
-                        showTooltipForElement(structurizr.workspace.findElementById(cell.model.elementInView.id), cell.model._computedStyle, evt.clientX, evt.clientY);
+                        showTooltipForElement(structurizr.workspace.findElementById(cell.model.elementInView.id), cell.model._computedStyle, x, y);
                     } else if (cell.model.relationshipInView) {
-                        showTooltipForRelationship(structurizr.workspace.findRelationshipById(cell.model.relationshipInView.id), cell.model.relationshipInView, cell.model._computedStyle, evt.clientX, evt.clientY);
+                        showTooltipForRelationship(structurizr.workspace.findRelationshipById(cell.model.relationshipInView.id), cell.model.relationshipInView, cell.model._computedStyle, x, y);
                     } else if (cell.model === primaryBoundary) {
-                        showTooltipForElement(primaryBoundaryElement, cell.model._computedStyle, evt.clientX, evt.clientY);
+                        showTooltipForElement(primaryBoundaryElement, cell.model._computedStyle, x, y);
                     } else if (secondaryBoundaries.indexOf(cell.model) > -1) {
-                        showTooltipForElement(secondaryBoundaryElements[secondaryBoundaries.indexOf(cell.model)], cell.model._computedStyle, evt.clientX, evt.clientY);
+                        showTooltipForElement(secondaryBoundaryElements[secondaryBoundaries.indexOf(cell.model)], cell.model._computedStyle, x, y);
                     }
                 }
             }
@@ -6605,6 +6609,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             return;
         }
 
+        if (tooltip === undefined) {
+            return;
+        }
+
         var additionalContent = '';
         if (currentPerspective !== undefined) {
             var perspectiveDetails = undefined;
@@ -6656,13 +6664,15 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
         }
 
-        if (tooltip) {
-            tooltip.showTooltipForElement(element, style, x, y, additionalContent);
-        }
+        tooltip.showTooltipForElement(element, style, x, y, additionalContent);
     }
 
     function showTooltipForRelationship(relationship, relationshipInView, style, x, y) {
         if (currentPerspective !== undefined && relationshipHasPerspective(relationship) === false) {
+            return;
+        }
+
+        if (tooltip === undefined) {
             return;
         }
 
@@ -6708,9 +6718,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
         }
 
-        if (tooltip) {
-            tooltip.showTooltipForRelationship(relationship, relationshipInView, style, x, y, additionalContent, darkMode);
-        }
+        tooltip.showTooltipForRelationship(relationship, relationshipInView, style, x, y, additionalContent, darkMode);
     }
 
     this.toggleMetadata = function() {
