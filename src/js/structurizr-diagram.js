@@ -5590,6 +5590,16 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
     }
 
+    this.changeColorOfElement = function(elementId, background) {
+        var cell = mapOfIdToBox[elementId];
+        if (cell) {
+            var foreground = cell._computedStyle.color;
+            var stroke = structurizr.util.shadeColor(background, darkenPercentage, darkMode);
+
+            changeColourOfCell(cell, background, foreground, stroke);
+        }
+    };
+
     function changeColourOfCell(cell, background, color, stroke) {
         var type = cell.attributes.type;
         var domId = paper.findViewByModel(cell).id;

@@ -324,6 +324,10 @@ structurizr.Workspace = class Workspace {
         return Object.keys(this.#elementsById).length > 0;
     }
 
+    getElements() {
+        return Object.values(this.#elementsById);
+    }
+
     findElementById(id) {
         return this.#elementsById[id];
     }

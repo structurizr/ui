@@ -16,6 +16,7 @@
 
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-diagram${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-ui${structurizrConfiguration.versionSuffix}.js"></script>
+<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-healthcheck${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-scripting-diagram${structurizrConfiguration.versionSuffix}.js"></script>
 
 <link href="${structurizrConfiguration.cdnUrl}/css/structurizr-diagram.css" rel="stylesheet" media="screen" />
@@ -161,6 +162,7 @@
     var unsavedChanges = false;
     var publishThumbnails = ${publishThumbnails};
     var presentationMode = false;
+    var healthCheck;
 
     function workspaceLoaded() {
         if (!structurizr.workspace.hasViews()) {
@@ -286,6 +288,7 @@
         initTags();
         initAutoLayout();
         initReview();
+        healthCheck = new structurizr.HealthCheck(updateHealth);
 
         <c:if test="${not empty perspective}">
         structurizr.diagram.changePerspective('${perspective}');
@@ -384,6 +387,25 @@
             $('.stepForwardAnimationButton').attr("disabled", false);
         } else {
             $('.dynamicDiagramButton').addClass("hidden");
+        }
+
+        var elementsHaveHealthChecks = false;
+        if (view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
+            view.elements.forEach(function(ev) {
+                const element = structurizr.workspace.findElementById(ev.id);
+                if (element && element.healthChecks && element.healthChecks.length > 0) {
+                    elementsHaveHealthChecks = true;
+                }
+            })
+        }
+
+        healthCheck.stop();
+        if (elementsHaveHealthChecks) {
+            $('#healthOnButton').removeClass('hidden');
+            $('#healthOffButton').addClass('hidden');
+        } else {
+            $('#healthOnButton').addClass('hidden');
+            $('#healthOffButton').addClass('hidden');
         }
 
         const explorationsButton = document.getElementById('explorationsButton');
@@ -1281,6 +1303,59 @@
         }
     }
 
+    function showHealth(bool) {
+        if (bool) {
+            $('#healthOnButton').addClass('hidden');
+            $('#healthOffButton').removeClass('hidden');
+
+            healthCheck.start();
+        } else {
+            $('#healthOnButton').removeClass('hidden');
+            $('#healthOffButton').addClass('hidden');
+
+            healthCheck.stop();
+        }
+    }
+
+    function updateHealth(allHealthChecks, currentHealthCheck) {
+        var elementId = currentHealthCheck.elementId;
+        var numberOfHealthChecks = 0;
+        var numberOfSuccessfulHealthChecks = 0 ;
+        var numberOfHealthChecksForElement = 0;
+        var numberOfSuccessfulHealthChecksForElement = 0;
+
+        allHealthChecks.forEach(function(healthCheck) {
+            numberOfHealthChecks++;
+            if (healthCheck.status === true) {
+                numberOfSuccessfulHealthChecks++;
+            }
+
+            if (healthCheck.elementId === elementId) {
+                numberOfHealthChecksForElement++;
+                if (healthCheck.status === true) {
+                    numberOfSuccessfulHealthChecksForElement++;
+                }
+            }
+        });
+
+        var percentageOfSuccessfulHealthChecksForElement = (numberOfSuccessfulHealthChecksForElement / numberOfHealthChecksForElement);
+
+        var green = "#5cb85c";
+        var amber = "#f0ad4e";
+        var red =   "#d9534f";
+
+        var background;
+
+        if (percentageOfSuccessfulHealthChecksForElement === 1) {
+            background = green;
+        } else if (percentageOfSuccessfulHealthChecksForElement === 0) {
+            background = red;
+        } else {
+            background = amber;
+        }
+
+        structurizr.diagram.changeColorOfElement(elementId, background);
+    }
 </script>
 
 <c:if test="${embed eq true}">
