@@ -120,9 +120,11 @@
 <script>
     var jsonAsString = '${reviewAsJson}';
     var json;
+
     if (jsonAsString.length > 0) {
-        json = JSON.parse(jsonAsString);
+        json = JSON.parse(decodeBase64(jsonAsString));
     }
+
     var review = new structurizr.Review(json, '${reviewer}', json.locked === false);
 
     $(window).on("beforeunload", function() {
@@ -130,4 +132,10 @@
             return "There are unsaved changes.";
         }
     });
+
+    function decodeBase64(str) {
+        return decodeURIComponent(atob(str).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+    }
 </script>
