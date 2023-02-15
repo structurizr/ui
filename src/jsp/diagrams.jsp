@@ -292,6 +292,8 @@
 
         <c:if test="${not empty perspective}">
         structurizr.diagram.changePerspective('${perspective}');
+        tooltip.disable();
+        toggleTooltip();
         </c:if>
 
         <c:if test="${showDiagramSelector eq true}">
