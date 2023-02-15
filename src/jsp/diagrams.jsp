@@ -146,6 +146,7 @@
 <%@ include file="/WEB-INF/fragments/diagrams/autolayout.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/no-views-model.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/lasso.jspf" %>
+<%@ include file="/WEB-INF/fragments/diagrams/review.jspf" %>
 
 <script nonce="${scriptNonce}">
 
@@ -284,6 +285,7 @@
         initPerspectives();
         initTags();
         initAutoLayout();
+        initReview();
 
         <c:if test="${not empty perspective}">
         structurizr.diagram.changePerspective('${perspective}');

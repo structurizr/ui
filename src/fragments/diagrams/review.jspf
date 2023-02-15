@@ -1,0 +1,116 @@
+<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title">Review</h2>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Select the diagram(s) that you would like to include in the review.
+                    See <a href="https://structurizr.com/help/diagram-review" target="_blank">Help - Diagram review</a> for more details.
+                </p>
+
+                <form id="createReviewForm" method="post" action="/user/review/create" target="_blank">
+                    <input type="hidden" name="workspaceId" value="${workspace.id}" />
+                    <div id="createReviewFormFiles" class="hidden"></div>
+
+                    <div class="form-group">
+                        <select multiple class="form-control" id="reviewViewList" size="10">
+                        </select>
+                    </div>
+
+                    <div class="form-group form-inline centered">
+                        <select class="form-control" style="display: inline-block" name="review">
+                            <option value="General">General review</option>
+                            <option value="Risk">Risk review</option>
+                            <option value="STRIDE">STRIDE review</option>
+                        </select>
+
+                        <select class="form-control" style="display: inline-block" name="workspace">
+                            <option value="${workspace.id}">Private (use workspace settings)</option>
+                            <option value="">Public (allow unauthenticated access)</option>
+                        </select>
+                    </div>
+                </form>
+                &nbsp;
+            </div>
+            <div class="modal-footer">
+                <button id="reviewSelectedViewsButton" type="button" class="btn btn-default" onclick="createReviewForSelectedViews()">Create review</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script nonce="${scriptNonce}">
+
+    function initReview() {
+        const viewList = $('#reviewViewList');
+
+        structurizr.workspace.getViews().forEach(function(view) {
+            viewList.append(
+                $('<option></option>').val(structurizr.util.escapeHtml(view.key)).html(structurizr.util.escapeHtml(structurizr.ui.getTitleForView(view)))
+            );
+        });
+
+        viewList.attr("size", Math.min(10, structurizr.workspace.getViews().length));
+
+        viewList.change(function () {
+            const selectedItems = $(this).val();
+            $('#reviewSelectedViewsButton').attr('disabled', !(selectedItems && selectedItems.length > 0));
+        });
+    }
+
+    function createReviewForSelectedViews() {
+        $('#reviewSelectedViewsButton').prop('disabled', true);
+        var viewList = $('#reviewViewList');
+        var selectedViews = viewList.val();
+        var images = [];
+
+        if (selectedViews) {
+            if (!Array.isArray(selectedViews)) {
+                selectedViews = [ selectedViews ];
+            }
+
+            selectedViews.forEach(function (view) {
+                images.push(undefined);
+            });
+
+            var formFiles = document.getElementById('createReviewFormFiles');
+            formFiles.innerHTML = '';
+
+            exportDiagramsForReview(selectedViews, structurizr.diagram.getCurrentViewOrFilter().key);
+        }
+    }
+
+    function exportDiagramsForReview(viewsToExport, originalViewKey) {
+        if (viewsToExport && viewsToExport.length > 0) {
+            const viewToExport = viewsToExport[0];
+
+            structurizr.diagram.changeView(viewToExport, function () {
+                structurizr.diagram.exportCurrentDiagramToPNG(true, false, function(diagramAsPNG) {
+                    const formFiles = document.getElementById('createReviewFormFiles');
+                    const input = document.createElement("input");
+                    input.setAttribute("type", "hidden");
+                    input.setAttribute("name", "file");
+                    input.setAttribute("value", diagramAsPNG);
+                    formFiles.appendChild(input);
+
+                    viewsToExport.splice(0, 1);
+                    exportDiagramsForReview(viewsToExport, originalViewKey);
+                });
+            });
+        } else {
+            document.getElementById('createReviewForm').submit();
+            $('#reviewModal').modal('hide');
+
+            setTimeout(function() {
+                structurizr.diagram.changeView(originalViewKey);
+            }, 1000);
+        }
+    }
+
+    function openReviewModal() {
+        $('#reviewModal').modal();
+    }
+</script>
