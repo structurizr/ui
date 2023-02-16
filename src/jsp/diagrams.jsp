@@ -10,6 +10,7 @@
 
 <%-- PNG export --%>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/canvg-1.5.4.js"></script>
+<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/rgbcolor.js"></script>
 
 <%-- creating animated GIFs --%>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/gifshot-0.4.4.js"></script>
