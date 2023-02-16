@@ -132,6 +132,10 @@
         border-radius: 5px;
     }
 
+    .diagramThumbnail img {
+        max-height: 160px;
+    }
+
     .diagramThumbnailActive {
         background: #aaaaaa;
         color: #ffffff;
