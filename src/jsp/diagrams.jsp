@@ -147,6 +147,7 @@
 <%@ include file="/WEB-INF/fragments/diagrams/key.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/embed.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/export.jspf" %>
+<%@ include file="/WEB-INF/fragments/diagrams/publish.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/perspectives.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/tags.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/autolayout.jspf" %>
