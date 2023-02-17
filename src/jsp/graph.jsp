@@ -14,8 +14,8 @@
     <div id="embeddedControls" style="text-align: right; position: absolute; bottom: 10px; right: 10px; opacity: 0.1; z-index: 100;">
         <button class="btn btn-default" id="enterFullScreenButton" title="Enter Full Screen [f]" onclick="structurizr.ui.enterFullScreen('graphContent')"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen.svg" class="icon-btn" /></button>
         <button class="btn btn-default hidden" id="exitFullScreenButton" title="Exit Full Screen [Escape]" onclick="structurizr.ui.exitFullScreen()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen-exit.svg" class="icon-btn" /></button>
-        <c:if test="${embed eq true}">
-            <button class="btn btn-default" title="Open graph in new window" onclick="openGraphInNewWindow()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/link.svg" class="icon-btn" /></button>
+        <c:if test="${workspace.id > 0 && (embed eq true && workspace.editable eq false)}">
+        <button class="btn btn-default" title="Open graph in new window" onclick="openGraphInNewWindow()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/link.svg" class="icon-btn" /></button>
         </c:if>
     </div>
 </div>
