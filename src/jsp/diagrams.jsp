@@ -118,31 +118,6 @@
     </c:if>
 </div>
 
-<style>
-    #diagram {
-        background: gray;
-        margin: 0;
-        padding: 0;
-        border-style: none;
-    }
-
-    .diagramThumbnail {
-        cursor: pointer;
-        margin: 0 0 40px 0;
-        padding: 10px;
-        border-radius: 5px;
-    }
-
-    .diagramThumbnail img {
-        max-height: 160px;
-    }
-
-    .diagramThumbnailActive {
-        background: #aaaaaa;
-        color: #ffffff;
-    }
-</style>
-
 <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/key.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/embed.jspf" %>

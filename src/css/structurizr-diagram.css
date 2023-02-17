@@ -1,3 +1,26 @@
+#diagram {
+    background: gray;
+    margin: 0;
+    padding: 0;
+    border-style: none;
+}
+
+.diagramThumbnail {
+    cursor: pointer;
+    margin: 0 0 40px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.diagramThumbnail img {
+    max-height: 160px;
+}
+
+.diagramThumbnailActive {
+    background: #aaaaaa;
+    color: #ffffff;
+}
+
 .structurizrDiagramViewport {
     background: gray;
     text-align: center;
@@ -36,4 +59,15 @@
 
 #navigationModal option {
     padding: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .structurizrDiagramViewport {
+        background: #333333;
+    }
+
+    .diagramThumbnailActive {
+        background: #333333;
+        color: #ffffff;
+    }
 }
