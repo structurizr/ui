@@ -264,7 +264,7 @@
 
         var img = document.createElement('img');
         img.className = "img-thumbnail exportedPNGDiagram";
-        img.style = "display: block; margin-bottom: 5px";
+        img.style = "display: block; margin: 0 auto 5px auto";
         var link = document.createElement("a");
         link.appendChild(img);
         div.appendChild(link);
@@ -285,7 +285,7 @@
         if (diagramKeyAsPNG !== undefined) {
             var imgKey = document.createElement('img');
             imgKey.className = "img-thumbnail";
-            imgKey.style = "display: block; margin-bottom: 5px";
+            img.style = "display: block; margin: 0 auto 5px auto";
             var linkKey = document.createElement("a");
             linkKey.appendChild(imgKey);
             div.appendChild(linkKey);
