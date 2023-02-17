@@ -39,30 +39,7 @@
         }
     );
 
-    structurizr.saveWorkspace = function(refresh) {
-        if (structurizr.autoSave === false) {
-            progressMessage.show('<p>Saving workspace...</p>');
-        }
-        $('#exitAndUnlockWorkspaceButton').prop('disabled', 'disabled');
-
-        const callback = function(response) {
-            progressMessage.hide();
-            $('#exitAndUnlockWorkspaceButton').prop('disabled', '');
-
-            if (response.success === true) {
-                if (refresh === true) {
-                    const indexOfVersionParameter = window.location.href.indexOf('?version=');
-                    if (indexOfVersionParameter > -1) {
-                        window.location.href = window.location.href.substr(0, indexOfVersionParameter);
-                    } else {
-                        location.reload();
-                    }
-                }
-            } else {
-                $('#exitAndUnlockWorkspaceButton').prop('disabled', 'disabled');
-            }
-        };
-
+    structurizr.saveWorkspace = function(callback) {
         const workspace = structurizr.workspace.getJson();
         workspace.views = structurizr.workspace.views;
 

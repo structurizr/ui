@@ -1020,14 +1020,29 @@
     }
 
     function saveWorkspace() {
+        if (structurizr.autoSave === false) {
+            progressMessage.show('<p>Saving workspace...</p>');
+        }
+
         structurizr.workspace.views.configuration.lastSavedView = structurizr.diagram.getCurrentViewOrFilter().key;
-        structurizr.saveWorkspace(false);
+        structurizr.saveWorkspace(function(response) {
+            if (response.success === true) {
+                progressMessage.hide();
 
-        $('#saveButton').prop('disabled', true);
-        $('#saveButton').removeClass('btn-danger');
-        unsavedChanges = false;
+                $('#saveButton').prop('disabled', true);
+                $('#saveButton').removeClass('btn-danger');
+                unsavedChanges = false;
 
-        refreshThumbnail();
+                refreshThumbnail();
+            } else {
+                if (response.message) {
+                    console.log(response.message);
+                    if (progressMessage) {
+                        progressMessage.show(response.message);
+                    }
+                }
+            }
+        });
     }
 
     function putImage(viewKey, filename, imageAsBase64EncodedDataUri, callback) {
