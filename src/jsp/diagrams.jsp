@@ -458,21 +458,25 @@
     }
 
     function refreshThumbnail() {
+        const view = structurizr.diagram.getCurrentViewOrFilter();
+        const viewKey = view.key;
+
         if (structurizr.workspace.id < 1 || structurizr.diagram.isDarkMode() === true || structurizr.diagram.hasPerspective() || structurizr.diagram.hasTags()) {
-            structurizr.diagram.exportCurrentThumbnailToPNG(function(thumbnail) {
-                const viewKey = structurizr.diagram.getCurrentViewOrFilter().key;
-                const domId = '#diagram' + (viewKeys.indexOf(viewKey) + 1) + 'Thumbnail';
-                $(domId + ' img').attr('src', thumbnail);
+            if (view.type !== structurizr.constants.IMAGE_VIEW_TYPE) {
+                structurizr.diagram.exportCurrentThumbnailToPNG(function (thumbnail) {
+                    const domId = '#diagram' + (viewKeys.indexOf(viewKey) + 1) + 'Thumbnail';
+                    $(domId + ' img').attr('src', thumbnail);
 
-                if (publishThumbnails) {
-                    putImage(viewKey, viewKey + '-thumbnail.png', thumbnail);
+                    if (publishThumbnails) {
+                        putImage(viewKey, viewKey + '-thumbnail.png', thumbnail);
 
-                    // and if this is the first view, make this the workspace thumbnail
-                    if (viewKey === views[0].key) {
-                        putImage(viewKey, 'thumbnail.png', thumbnail);
+                        // and if this is the first view, make this the workspace thumbnail
+                        if (viewKey === views[0].key) {
+                            putImage(viewKey, 'thumbnail.png', thumbnail);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 
