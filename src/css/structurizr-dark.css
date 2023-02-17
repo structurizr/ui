@@ -35,38 +35,6 @@
         background: #111111;
     }
 
-    .glyphicon-xs {
-        filter: invert(1.0);
-    }
-
-    .glyphicon-sm {
-        filter: invert(1.0);
-    }
-
-    .glyphicon-md {
-        filter: invert(1.0);
-    }
-
-    .glyphicon-lg {
-        filter: invert(1.0);
-    }
-
-    .glyphicon-xl {
-        filter: invert(1.0);
-    }
-
-    .glyphicon-xxl {
-        filter: invert(1.0);
-    }
-
-    .glyphicon-h1 {
-        filter: invert(1.0);
-    }
-
-    .glyphicon-h2 {
-        filter: invert(1.0);
-    }
-
     .icon-xs {
         filter: invert(1.0);
     }
@@ -153,17 +121,10 @@
         display: block;
     }
 
-    #exploreTree .node text {
-        font-size: 10px;
+    .exploreTree text {
         fill: #eeeeee;
-    }
-
-    #exploreTree .link {
-        stroke: #777777;
-    }
-
-    #exploreGraph {
-        background: #111111;
+        stroke: #111111;
+        paint-order: stroke;
     }
 
     #exploreGraph .nodeName {
@@ -172,50 +133,6 @@
 
     #exploreGraph .nodeMetadata {
         fill: #aaaaaa;
-    }
-
-    #exploreDependencies .node text {
-        fill: #eeeeee;
-    }
-
-    #exploreDependencies .link {
-        stroke: #777777;
-    }
-
-    #exploreDependencies .link:hover {
-        stroke: #cccccc;
-    }
-
-    #exploreCodeUsageCount text {
-        fill: #eeeeee;
-    }
-
-    #editorControls .nav a, #staticViewControls .nav a {
-        color: #eeeeee;
-    }
-
-    #editorDeploymentNodesTree .node rect {
-        fill: #111111;
-    }
-
-    #editorStaticElementsTree .node text, #editorDeploymentNodesTree .node text {
-        fill: #eeeeee;
-    }
-
-    #editorStaticElementsTree .link, #editorDeploymentNodesTree .link {
-        stroke: #777777;
-    }
-
-    #editorRelationshipsGraph .node text {
-        fill: #eeeeee;
-    }
-
-    #editorRelationshipsGraph .link {
-        stroke: #777777;
-    }
-
-    #editorRelationshipsGraph .link:hover {
-        stroke: #aaaaaa;
     }
 
     #topNavigation {

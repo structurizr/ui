@@ -33,13 +33,6 @@ body {
     padding-left: 10px;
     padding-right: 10px;
 }
-.jumbo h1 {
-    font-size: 60px;
-    font-weight: normal;
-}
-.jumbo {
-    font-size: 30px;
-}
 .row {
     padding-bottom: 20px;
 }
@@ -70,12 +63,6 @@ h5 {
 h6 {
     font-size: 13px;
     font-weight: normal;
-}
-.profileImage {
-    border: 1px solid #808080;
-    border-radius: 6px;
-    height: 48px;
-    width: 48px;
 }
 
 .form-signin {
@@ -208,16 +195,6 @@ th {
     filter: grayscale(100%);
 }
 
-.exampleDiagram {
-    -webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
-    filter: grayscale(100%);
-}
-
-.exampleDiagram:hover {
-    -webkit-filter: none; /* Chrome, Safari, Opera */
-
-    filter: none;
-}
 code {
     color: #08427B;
     background: #E9F4FE;
@@ -352,69 +329,21 @@ code {
 .faded {
     color: #aaaaaa;
 }
-mark {
-    background: #85BBF0;
-    color: #ffffff;
-    padding: 0;
-}
-
-.editorGuidance {
-    text-align: center;
-    padding: 10px;
-    font-size: 13px;
-}
-
-.carousel-caption {
-    background: #438DD5;
-    color: #ffffff;
-    text-shadow: none;
-    font-size: 30px;
-    opacity: 0.9;
-    padding: 20px;
-    border-radius: 5px;
-}
-
-.carousel-control {
-    color: #000000;
-    text-shadow: none;
-    opacity: 0.1;
-}
-.carousel-control:hover, .carousel-control:focus {
-    opacity: 0.1;
-}
 
 .btn {
     text-shadow: none;
 }
-.glyphicon-btn {
-    width: 22px;
-    height: 22px;
-    margin-bottom: 0;
-    vertical-align: top;
-}
+
 .icon-btn {
     width: 18px;
     height: 18px;
     margin-bottom: 1px;
     vertical-align: middle;
 }
-
-.glyphicon-xs {
-    width: 15px;
-    height: 15px;
-    margin-bottom: 1px;
-}
 .icon-xs {
     width: 12px;
     height: 12px;
     margin: 2px 2px 4px 0;
-}
-
-.glyphicon-sm {
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-    margin-bottom: 1px;
 }
 .icon-sm {
     width: 18px;
@@ -422,64 +351,24 @@ mark {
     vertical-align: middle;
     margin: 2px 2px 4px 0;
 }
-
-.glyphicon-md {
-    width: 28px;
-    height: 28px;
-    margin-bottom: 2px;
-}
 .icon-md {
     width: 26px;
     height: 26px;
     margin: 2px 2px 4px 0;
 }
-
-.glyphicon-lg {
-    width: 36px;
-    height: 36px;
-    margin-bottom: 2px;
-}
-
 .icon-lg {
     width: 36px;
     height: 36px;
     margin: 2px 2px 4px 0;
 }
-
-.glyphicon-xl {
-    width: 40px;
-    height: 40px;
-}
-
-.glyphicon-xxl {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 10px;
-}
-
 .icon-xxl {
     width: 50px;
     height: 50px;
     margin-bottom: 10px;
 }
-
-.glyphicon-white {
-    filter: invert(1);
-}
 .icon-white {
     filter: invert(1);
 }
-
-.glyphicon-gray {
-    filter: invert(0.5);
-}
-
-.glyphicon-h1 {
-    width: 50px;
-    height: 50px;
-    vertical-align: bottom;
-}
-
 .icon-h1 {
     width: 45px;
     height: 45px;
@@ -487,15 +376,6 @@ mark {
     line-height: 1;
     margin-bottom: 0;
 }
-
-.glyphicon-h2 {
-    width: 36px;
-    height: 36px;
-    vertical-align: middle;
-    line-height: 1.1;
-    margin-bottom: 4px;
-}
-
 .icon-h2 {
     width: 32px;
     height: 32px;
@@ -516,196 +396,21 @@ hr {
      display: none;
 }
 
-#exploreTree .node {
-    cursor: pointer;
-}
-#exploreTree .node circle {
-    fill: #ffffff;
-    stroke-width: 2px;
-}
-#exploreTree .node text {
-    font-size: 10px;
+.exploreTree text {
     fill: #000000;
-}
-#exploreTree .link {
-    fill: none;
-    stroke: #cccccc;
-    stroke-width: 1px;
-}
-#exploreTree .componentType {
-    font-weight: bold;
-}
-#exploreTree .sharedCode {
-    fill: #bbb;
-}
-
-#exploreBlocks .node rect {
     stroke: #ffffff;
-    stroke-width: 1px;
-}
-#exploreBlocks .node text {
-    pointer-events: none;
-}
-#exploreBlocks .elementName {
-    font-size: 13px;
-}
-#exploreBlocks .elementDescription {
-    font-size: 8px;
-}
-#exploreBlocks path.link {
-    fill: none;
-    stroke: #dddddd;
-    stroke-width: 1px;
-}
-#exploreBlocks .componentType {
-    font-weight: bold;
-}
-#exploreBlocks .sharedCode {
-    fill-opacity: 0.5;
-}
-#exploreBlocks {
-    padding-top: 20px;
+    paint-order: stroke;
 }
 
-#exploreGraph {
-    background: #ffffff;
-}
-#exploreGraph .link {
-    stroke-width: 1px;
-    fill: none;
-}
-#exploreGraph .node {
-    stroke-width: 2px;
-}
 #exploreGraph .nodeName {
     font-size: 13px;
-    cursor: default;
     fill: #000000;
+    cursor: default;
 }
 #exploreGraph .nodeMetadata {
     font-size: 8px;
     fill: #444444;
     cursor: default;
-}
-
-#exploreDependencies .node circle {
-    stroke-width: 2px;
-}
-#exploreDependencies .node {
-    font-size: 10px;
-}
-#exploreDependencies .node text {
-    fill: #000000;
-}
-#exploreDependencies .link {
-    fill: none;
-    stroke: #eeeeee;
-    stroke-width: 2px;
-}
-#exploreDependencies .link:hover {
-    stroke-width: 4px;
-    stroke: #cccccc;
-}
-#exploreDependencies .cyclic {
-    stroke: #ff0000;
-}
-
-#exploreComponentAndCodeDependencies .links line {
-    stroke-opacity: 0.6;
-}
-#exploreComponentAndCodeDependencies .nodes circle {
-    stroke-width: 2px;
-}
-
-#exploreCodeUsageCount .code {
-    fill: #dddddd;
-    stroke: #bbbbbb;
-}
-#exploreCodeUsageCount text {
-    fill: #000000;
-}
-#exploreCodeUsageCount .bar {
-    stroke-width: 2px;
-}
-#exploreCodeUsageCount .axis {
-    font-size: 11px;
-}
-#exploreCodeUsageCount .axis path, #exploreCodeUsageCount .axis line {
-    fill: none;
-    display: none;
-}
-#exploreCodeUsageCount .label {
-    font-size: 11px;
-}
-
-#editorControls .nav a, #staticViewControls .nav a {
-    color: #000000;
-}
-#editorControls .nav-pills li a:hover, #staticViewControls .nav-pills li a:hover {
-    background: #85BBF0;
-}
-#editorControls .nav-pills li.active a, #staticViewControls .nav-pills li.active a {
-    background: #438DD5;
-}
-
-#editorStaticElementsTree, #editorDeploymentNodesTree {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-#editorStaticElementsTree .node, #editorDeploymentNodesTree .node {
-    cursor: pointer;
-}
-#editorStaticElementsTree .node circle, #editorDeploymentNodesTree .node circle {
-    fill: #ffffff;
-    stroke-width: 2px;
-}
-#editorDeploymentNodesTree .node rect {
-    fill: #ffffff;
-}
-#editorStaticElementsTree .node text, #editorDeploymentNodesTree .node text {
-    font-size: 11px;
-    font-weight: bold;
-    fill: #000000;
-}
-#editorStaticElementsTree .link, #editorDeploymentNodesTree .link {
-    fill: none;
-    stroke: #e6e6e6;
-    stroke-width: 1px;
-}
-
-#editorRelationshipsGraph {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-#editorRelationshipsGraph .node circle {
-    stroke-width: 2px;
-}
-#editorRelationshipsGraph .node {
-    font-size: 11px;
-    font-weight: normal;
-    fill: #333333;
-}
-#editorRelationshipsGraph .node text {
-    fill: #000000;
-}
-#editorRelationshipsGraph .link {
-    fill: none;
-    stroke: #eeeeee;
-    stroke-width: 2px;
-}
-#editorRelationshipsGraph .link:hover {
-    stroke-width: 4px;
-    stroke: #777777;
-}
-#editorRelationshipsGraph .cyclic {
-    stroke: #ff0000;
-}
-#editorRelationshipsGraph .multiple {
-    stroke: #aaaaaa;
 }
 
 #topNavigation, #workspaceSummaryControls {
@@ -726,7 +431,7 @@ hr {
     border-bottom: solid 1px #dddddd;
     box-shadow: 0px 0px 3px #dddddd;
 }
-#topNavigation .row, #workspaceSummaryControls .row, #editorControls .row, #diagramControls .row, #explorationControls .row, #documentationControls .row, #decisionLogControls .row, #healthControls .row {
+#topNavigation .row, #workspaceSummaryControls .row, #diagramControls .row, #explorationControls .row, #documentationControls .row, #decisionLogControls .row, #healthControls .row {
     margin-left: 0;
     margin-right: 0;
 }
@@ -735,13 +440,11 @@ hr {
     overflow-y: scroll;
     border-right: solid 1px #dddddd;
 }
+
 .brandingLogo {
     max-height: 35px;
 }
 
-[data-braintree-id="discover-card-icon"], [data-braintree-id="maestro-card-icon"] {
-    display: none !important;
-}
 .btn-active {
     background: #999999;
 }
@@ -750,7 +453,6 @@ hr {
     background: #85BBF0;
     color: #ffffff;
 }
-
 #quickFindModal .quickNavigationItem {
     padding: 4px;
     border-radius: 2px;

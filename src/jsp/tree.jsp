@@ -192,9 +192,6 @@
             });
 
         node.append("text")
-            .attr("fill", '#000000')
-            .attr("stroke", "white")
-            .attr("paint-order", "stroke")
             .attr("dy", "0.31em")
             .attr("x", function(d) {
                 if (d.children) {
@@ -210,7 +207,7 @@
 
         const html = svg.node();
 
-        $('#graphs').append('<div id="'+ domId + '" class="graph hidden" style="overflow-x: scroll"><div width="' + width + '"></div></div>');
+        $('#graphs').append('<div id="'+ domId + '" class="graph exploreTree hidden" style="overflow-x: scroll"><div width="' + width + '"></div></div>');
         $('#' + domId + ' div').html(svg.node());
 
         $('#graphSelector').append(
