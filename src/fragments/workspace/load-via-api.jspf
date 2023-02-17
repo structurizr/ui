@@ -28,6 +28,13 @@
                 } else {
                     loadWorkspace(json);
                 }
+            } else {
+                if (response.message) {
+                    console.log(response.message);
+                    if (progressMessage) {
+                        progressMessage.show(response.message);
+                    }
+                }
             }
         }
     );
