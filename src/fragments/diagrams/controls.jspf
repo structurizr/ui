@@ -59,9 +59,6 @@
         <c:if test="${workspace.editable}">
         <div class="btn-group">
             <button class="btn btn-default" id="saveButton" title="Save workspace" onclick="saveWorkspace();" disabled="true" style="text-shadow: none"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/folder-check.svg" class="icon-btn icon-white" /></button>
-            <c:if test="${workspace.locked}">
-            <button id="exitAndUnlockWorkspaceButton" class="btn btn-primary" title="Close diagram editor" onclick="window.location.href='${urlPrefix}/diagrams'" style="text-shadow: none"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/x-circle.svg" class="icon-btn icon-white" /></button>
-            </c:if>
         </div>
         </c:if>
 

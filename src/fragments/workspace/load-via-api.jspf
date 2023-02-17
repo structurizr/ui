@@ -3,6 +3,7 @@
     <c:if test="${collaborationEnabled eq true}">
     username = 'Collaboration Session';
     </c:if>
+    const agent = '${userAgent}';
 
     structurizr.autoSave = false;
     var structurizrEncryptionStrategy;
@@ -11,7 +12,8 @@
         "${workspace.id}",
         "${workspace.apiKey}",
         "${workspace.apiSecret}",
-        username
+        username,
+        agent
     );
 
     structurizrApiClient.getWorkspace(

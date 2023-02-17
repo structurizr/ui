@@ -5,14 +5,20 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
     #apiKey;
     #apiSecret;
     #username;
+    #agent;
 
     #revision;
 
-    constructor(apiUrl, workspaceId, apiKey, apiSecret, username) {
+    constructor(apiUrl, workspaceId, apiKey, apiSecret, username, agent) {
         this.#workspaceId = workspaceId;
         this.#apiKey = apiKey;
         this.#apiSecret = apiSecret;
         this.#username = username;
+        this.#agent = agent;
+
+        if (this.#agent === undefined || this.#agent.length === 0) {
+            this.#agent = 'structurizr-javascript';
+        }
 
         if (apiUrl !== undefined) {
             this.#apiUrl = apiUrl;
@@ -81,7 +87,7 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
         var self = this;
         workspace.revision = this.#revision; // send back the current revision
         workspace.lastModifiedDate = new Date().toISOString();
-        workspace.lastModifiedAgent = 'structurizr-javascript';
+        workspace.lastModifiedAgent = this.#agent;
         workspace.lastModifiedUser = this.#username;
 
         const jsonAsString = JSON.stringify(workspace);

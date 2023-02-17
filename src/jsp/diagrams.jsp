@@ -313,7 +313,7 @@
 
         <c:if test="${structurizrConfiguration.type ne 'lite'}">
         <c:if test="${workspace.editable && workspace.ownerUserType.allowedToLockWorkspaces && not empty workspace.apiKey}">
-        new structurizr.Lock(${workspace.id}, '${workspace.apiKey}', 'structurizr-onpremises/${version.buildNumber}');
+        new structurizr.Lock(${workspace.id}, '${userAgent}');
         </c:if>
         </c:if>
 
