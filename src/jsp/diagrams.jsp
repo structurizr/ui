@@ -240,10 +240,6 @@
     }
 
     function init() {
-        if (structurizr.workspace.id > 0) { // i.e. not a demo page
-            initThumbnails();
-        }
-
         structurizr.ui.applyBranding();
 
         structurizr.diagram = new structurizr.ui.Diagram('diagram', ${workspace.editable}, diagramCreated);
@@ -789,6 +785,10 @@
     }
 
     function diagramCreated() {
+        if (structurizr.workspace.id > 0) { // i.e. not a demo page
+            initThumbnails();
+        }
+
         var diagramIdentifier = '${diagramIdentifier}';
 
         if (window.location.hash) {
