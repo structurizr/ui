@@ -59,8 +59,6 @@
 
 <script nonce="${scriptNonce}">
     $('#diagramSelectorToggle').click(function() {
-        var diagramSelectorHeight = 55;
-
         if ($('#diagramSelectorToggle').is(':checked')) {
             $('.diagramEmbedDiagramSelector').html('true');
         } else {

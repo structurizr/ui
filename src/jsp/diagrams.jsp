@@ -90,10 +90,6 @@
         <button class="btn btn-default" title="Zoom in [+]" onclick="structurizr.diagram.zoomIn()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/zoom-in.svg" class="icon-btn" /></button>
     </div>
 
-    <c:if test="${showDiagramSelector eq true}">
-        <button class="btn btn-default backButton" title="Go back to previous diagram" onclick="back()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/arrow-90deg-left.svg" class="icon-btn" /></button>
-    </c:if>
-
     <div class="btn-group">
         <button class="btn btn-default hidden dynamicDiagramButton stepBackwardAnimationButton" title="Step backward [,]" onclick="stepBackwardInAnimation()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/skip-backward.svg" class="icon-btn" /></button>
         <button class="btn btn-default hidden dynamicDiagramButton startAnimationButton" title="Play animation" onclick="startAnimation(true)"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/play.svg" class="icon-btn" /></button>
@@ -102,14 +98,15 @@
     </div>
 
     <c:if test="${embed eq true}">
-    <div class="btn-group">
+    <div class="modelViewButtons btn-group">
         <button class="btn btn-default" title="Diagram key [i]" onclick="showKey()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/info-circle.svg" class="icon-btn" /></button>
-        <button class="btn btn-default diagramTooltipOnButton" title="Diagram tooltips on [t]" onclick="toggleTooltip()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/chat-square-text.svg" class="icon-btn" /></button>
-        <button class="btn btn-default hidden diagramTooltipOffButton" title="Diagram tooltips off [t]" onclick="toggleTooltip()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/chat-square-text-fill.svg" class="icon-btn" /></button>
-        <button class="btn btn-default" id="tagsOnButton" title="Tags" onclick="openTagsModal()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/tags.svg" class="icon-btn" /></button>
-        <button class="btn btn-default hidden" id="tagsOffButton" title="Tags" onclick="openTagsModal()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/tags-fill.svg" class="icon-btn" /></button>
-        <button class="btn btn-default hidden" id="perspectivesOnButton" title="Perspectives" onclick="openPerspectivesModal()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/binoculars.svg" class="icon-btn" /></button>
-        <button class="btn btn-default hidden" id="perspectivesOffButton" title="Perspectives" onclick="openPerspectivesModal()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/binoculars-fill.svg" class="icon-btn" /></button>
+    </div>
+
+    <div class="btn-group">
+        <c:if test="${showDiagramSelector eq true}">
+        <button class="btn btn-default backButton" title="Go back to previous diagram" onclick="back()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/arrow-90deg-left.svg" class="icon-btn" /></button>
+        </c:if>
+
         <c:if test="${workspace.id > 0 && (embed eq true && workspace.editable eq false)}">
         <button class="btn btn-default" title="Link to this diagram" onclick="openCurrentDiagramInNewWindow()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/link.svg" class="icon-btn" /></button>
         </c:if>
@@ -328,9 +325,9 @@
         }
 
         if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
-            $('#modelViewButtons').addClass('hidden');
+            $('.modelViewButtons').addClass('hidden');
         } else {
-            $('#modelViewButtons').removeClass('hidden');
+            $('.modelViewButtons').removeClass('hidden');
         }
 
         structurizr.diagram.resize();

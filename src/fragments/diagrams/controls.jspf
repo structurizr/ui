@@ -20,7 +20,7 @@
             <button class="btn btn-default backButton" title="Go back to the last viewed diagram [b]" onclick="back()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/arrow-90deg-left.svg" class="icon-btn" /></button>
         </div>
 
-        <div id="modelViewButtons" class="btn-group">
+        <div class="modelViewButtons btn-group">
             <button class="btn btn-default" title="Diagram key [i]" onclick="showKey()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/info-circle.svg" class="icon-btn" /></button>
             <button class="btn btn-default diagramTooltipOnButton" title="Diagram tooltips on [t]" onclick="toggleTooltip()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/chat-square-text.svg" class="icon-btn" /></button>
             <button class="btn btn-default hidden diagramTooltipOffButton" title="Diagram tooltips off [t]" onclick="toggleTooltip()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/chat-square-text-fill.svg" class="icon-btn" /></button>

@@ -503,6 +503,8 @@ structurizr.ui.getDefaultViewName = function(view) {
         } else {
             return '[Deployment] ' + view.environment;
         }
+    } else if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
+        return '[Image] ' + view.key;
     }
 
     return '';
