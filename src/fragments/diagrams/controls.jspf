@@ -30,11 +30,11 @@
             <button class="btn btn-default hidden" id="perspectivesOffButton" title="Perspectives" onclick="openPerspectivesModal()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/binoculars-fill.svg" class="icon-btn" /></button>
             <button id="showDiagramScopeOnButton" class="btn btn-default hidden" title="Toggle diagram scope on" onclick="showDiagramScope(true)"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/pin-map.svg" class="icon-btn" /></button>
             <button id="showDiagramScopeOffButton" class="btn btn-default hidden" title="Toggle diagram scope off" onclick="showDiagramScope(false)"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/pin-map-fill.svg" class="icon-btn" /></button>
-            <button class="btn btn-default hidden" id="explorationsButton" title="Explore" onclick="window.location.href='${urlPrefix}/explore${urlSuffix}'"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/diagram-3.svg" class="icon-btn" /></button>
             <button class="btn btn-default hidden" id="healthOnButton" title="Health checks" onclick="showHealth(true)"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/heart-pulse.svg" class="icon-btn" /></button>
             <button class="btn btn-default hidden" id="healthOffButton" title="Health checks" onclick="showHealth(false)"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/heart-pulse-fill.svg" class="icon-btn" /></button>
             <button class="btn btn-default" id="darkModeOnButton" title="Dark mode on" onclick="toggleDarkMode()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon.svg" class="icon-btn" /></button>
             <button class="btn btn-default hidden" id="darkModeOffButton" title="Dark mode off" onclick="toggleDarkMode()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon-fill.svg" class="icon-btn" /></button>
+            <button class="btn btn-default hidden" id="explorationsButton" title="Explore" onclick="window.location.href='${urlPrefix}/explore${urlSuffix}'"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/diagram-3.svg" class="icon-btn" /></button>
         </div>
 
         <div class="btn-group">
