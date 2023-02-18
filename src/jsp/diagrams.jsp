@@ -306,28 +306,29 @@
         $('.backButton').attr("disabled", viewsVisited.count() === 1);
 
         selectDiagramByView(view);
-
         const editable = structurizr.diagram.isEditable();
-        if (!editable) {
-            $('#diagramEditButtons').addClass('hidden');
-            if (view.type !== structurizr.constants.IMAGE_VIEW_TYPE) {
-                $('#diagramNotEditableMessage').removeClass('hidden');
-            }
-        } else {
-            $('#diagramEditButtons').removeClass('hidden');
-            $('#diagramNotEditableMessage').addClass('hidden');
-        }
-
-        if (view.automaticLayout !== undefined) {
-            $('#editDiagramButton').addClass('hidden');
-        } else {
-            $('#editDiagramButton').removeClass('hidden');
-        }
 
         if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
+            $('#diagramEditButtons').addClass('hidden');
+            $('#diagramNotEditableMessage').addClass('hidden');
+            $('#editDiagramButton').addClass('hidden');
             $('.modelViewButtons').addClass('hidden');
         } else {
             $('.modelViewButtons').removeClass('hidden');
+
+            if (editable) {
+                $('#diagramEditButtons').removeClass('hidden');
+            } else {
+                $('#diagramEditButtons').addClass('hidden');
+            }
+
+            if (view.automaticLayout !== undefined) {
+                $('#editDiagramButton').addClass('hidden');
+                $('#diagramNotEditableMessage').removeClass('hidden');
+            } else {
+                $('#editDiagramButton').removeClass('hidden');
+                $('#diagramNotEditableMessage').addClass('hidden');
+            }
         }
 
         structurizr.diagram.resize();
