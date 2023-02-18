@@ -412,6 +412,9 @@ hr {
     fill: #444444;
     cursor: default;
 }
+#exploreGraph .link {
+    fill: none;
+}
 
 #topNavigation, #workspaceSummaryControls {
     padding: 10px;
