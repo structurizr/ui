@@ -871,23 +871,31 @@ structurizr.Workspace = class Workspace {
     };
 
     #findElementForView(view) {
-        if (view.type === 'SystemLandscape') {
+        if (view.type === structurizr.constants.CUSTOM_VIEW_TYPE) {
             return undefined;
-        } else if (view.type === 'SystemContext') {
+        } else if (view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE) {
+            return undefined;
+        } else if (view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE) {
             return this.findElementById(view.softwareSystemId);
-        } else if (view.type === 'Container') {
+        } else if (view.type === structurizr.constants.CONTAINER_VIEW_TYPE) {
             return this.findElementById(view.softwareSystemId);
-        } else if (view.type === 'Component') {
+        } else if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE) {
             return this.findElementById(view.containerId);
-        } else if (view.type === 'Dynamic') {
+        } else if (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE) {
             if (view.elementId !== undefined) {
                 return this.findElementById(view.elementId);
             } else {
                 return undefined;
             }
-        } else if (view.type === 'Deployment') {
+        } else if (view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
             if (view.softwareSystemId !== undefined) {
                 return this.findElementById(view.softwareSystemId);
+            } else {
+                return undefined;
+            }
+        } else if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
+            if (view.elementId !== undefined) {
+                return this.findElementById(view.elementId);
             } else {
                 return undefined;
             }
