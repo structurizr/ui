@@ -781,8 +781,8 @@ structurizr.Workspace = class Workspace {
         var listOfViews = [];
         var filters = [];
 
-        var viewTypeOrders = [ 'SystemLandscape', 'SystemContext', 'Container', 'Component', 'Dynamic', 'Deployment' ];
-        var elementTypeOrders = [ '*', 'SoftwareSystem', 'Container' ];
+        var viewTypeOrders = [ 'SystemLandscape', 'SystemContext', 'Container', 'Component', 'Code', 'Dynamic', 'Deployment', 'Image' ];
+        var elementTypeOrders = [ '*', 'SoftwareSystem', 'Container', 'Component' ];
 
         this.#allViews.forEach(function(view) {
             if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
@@ -810,13 +810,19 @@ structurizr.Workspace = class Workspace {
                 }
 
                 if (obj.element) {
-                    obj.elementTypeOrder = elementTypeOrders.indexOf(obj.element.type);
                     obj.scope = obj.element.canonicalName;
 
-                    if (obj.element.parentId) {
-                        obj.softwareSystem = this.findElementById(obj.element.parentId);
-                    } else {
+                    if (obj.element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
+                        obj.elementTypeOrder = elementTypeOrders.indexOf(structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE);
                         obj.softwareSystem = obj.element;
+                    } else if (obj.element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
+                        obj.elementTypeOrder = elementTypeOrders.indexOf(structurizr.constants.CONTAINER_ELEMENT_TYPE);
+                        obj.softwareSystem = this.findElementById(obj.element.parentId);
+                    } else if (obj.element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
+                        obj.elementTypeOrder = elementTypeOrders.indexOf(structurizr.constants.COMPONENT_ELEMENT_TYPE);
+                        obj.viewTypeOrder = viewTypeOrders.indexOf("Code");
+                        const container = this.findElementById(obj.element.parentId);
+                        obj.softwareSystem = this.findElementById(container.parentId);
                     }
                 } else {
                     obj.elementTypeOrder = elementTypeOrders.indexOf('*');
