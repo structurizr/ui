@@ -28,10 +28,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     var scale = 0.5;
-    var minZoomFactor = 0.1;
+    var minZoomScale = 0.1;
     const maxZoomScale = 2;
     const zoomSteps = 40;
-    var zoomDelta = (maxZoomScale - minZoomFactor) / zoomSteps;
+    var zoomDelta = (maxZoomScale - minZoomScale) / zoomSteps;
     var pageSizeDelta = 100;
 
     const thumbnailWidth = 400;
@@ -475,8 +475,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             if (embedded) {
                 self.zoomFitWidth();
-                minZoomFactor = scale;
-                zoomDelta = (maxZoomScale - minZoomFactor) / zoomSteps;
+                minZoomScale = scale;
+                zoomDelta = (maxZoomScale - minZoomScale) / zoomSteps;
             } else {
                 self.zoomToWidthOrHeight();
             }
@@ -936,8 +936,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         if (embedded) {
             self.zoomFitWidth();
-            minZoomFactor = scale;
-            zoomDelta = (maxZoomScale - minZoomFactor) / zoomSteps;
+            minZoomScale = scale;
+            zoomDelta = (maxZoomScale - minZoomScale) / zoomSteps;
         } else {
             self.zoomToWidthOrHeight();
         }
@@ -1302,11 +1302,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     function setMinimumZoomAndMargins() {
-        minZoomFactor = scale;
-        zoomDelta = (maxZoomScale - minZoomFactor) / zoomSteps;
+        minZoomScale = scale;
+        zoomDelta = (maxZoomScale - minZoomScale) / zoomSteps;
 
-        var minimumWidth = minZoomFactor * diagramWidth;
-        var minimumHeight = minZoomFactor * diagramHeight;
+        var minimumWidth = minZoomScale * diagramWidth;
+        var minimumHeight = minZoomScale * diagramHeight;
 
         var viewportWidth = viewport.innerWidth();
         var viewportHeight = viewport.innerHeight();
@@ -4515,7 +4515,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     this.zoomOut = function(evt) {
-        zoomToAndScroll(Math.max(scale - zoomDelta, minZoomFactor), evt);
+        zoomToAndScroll(Math.max(scale - zoomDelta, minZoomScale), evt);
     };
 
     function zoomToAndScroll(zoomScale, evt) {
@@ -4572,7 +4572,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     this.zoomTo = function(zoomScale) {
-        scale = zoomScale;
+        if (zoomScale > maxZoomScale) {
+            scale = maxZoomScale;
+        } else {
+            scale = zoomScale;
+        }
 
         var width = Math.floor(diagramWidth*scale);
         var height = Math.floor(diagramHeight*scale);
