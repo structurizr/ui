@@ -354,9 +354,8 @@
             $('#showDiagramScopeOffButton').addClass('hidden');
         }
 
-        // // set the view key in the embed code modal
-        // todo
-        // $(".diagramEmbedDiagramId").html("" + encodeURIComponent(view.key));
+        // set the view key in the embed code modal
+        $('.diagramEmbedDiagramId').text(structurizr.diagram.getCurrentViewOrFilter().key);
 
         if (view.type === "Dynamic" || (view.animations && view.animations.length > 1)) {
             $('.dynamicDiagramButton').removeClass("hidden");
