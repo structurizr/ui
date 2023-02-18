@@ -114,6 +114,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     var imageSources = undefined;
     var imageMetadata = undefined;
+    var imagePreloadAttempts = 0;
     var diagramRendered = false;
 
     var parentElement = $('#' + id);
@@ -229,6 +230,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     } else {
                         imageSources.push(url);
                         imageMetadata.push({
+                            src: url,
                             loaded: false
                         });
                     }
@@ -241,6 +243,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 image.addEventListener('load', function () {
                     var index = imageSources.indexOf(this.src);
                     imageMetadata[index] = {
+                        src: this.src,
                         width: this.naturalWidth,
                         height: this.naturalHeight,
                         ratio: (this.naturalWidth / this.naturalHeight),
@@ -261,11 +264,19 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 image.src = imageSource;
             });
+        } else {
+            imagePreloadAttempts++;
         }
 
-        if (imageMetadata.length > 0 && imageMetadata.filter(function(im) { return im.loaded === false; }).length > 0) {
+        if (imageMetadata.length > 0 && imageMetadata.filter(function(im) { return im.loaded === false; }).length > 0 && imagePreloadAttempts < 50) {
             setTimeout(preloadImages, 100);
         } else {
+            imageMetadata.forEach(function(im) {
+                if (im.loaded === false) {
+                    console.log('Failed to preload ' + im.src);
+                }
+            });
+
             if (constructionCompleteCallback) {
                 setTimeout(constructionCompleteCallback, 10);
             }
