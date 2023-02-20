@@ -115,13 +115,14 @@
                 '${urlPrefix}',
                 '${urlSuffix}');
 
-            structurizr.scripting = {};
-            structurizr.scripting.exportDocumentationToOfflineHtmlPage = function (callback) {
-                exportDocumentationToOfflineHtmlPage(callback);
-            };
+            structurizr.scripting = new function() {
+                this.exportDocumentationToOfflineHtmlPage = function (callback) {
+                    exportDocumentationToOfflineHtmlPage(callback);
+                };
 
-            structurizr.scripting.isDocumentationRendered = function() {
-                return rendered;
+                this.isDocumentationRendered = function () {
+                    return rendered;
+                };
             };
 
             init();

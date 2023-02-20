@@ -18,7 +18,6 @@
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-diagram${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-ui${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-healthcheck${structurizrConfiguration.versionSuffix}.js"></script>
-<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-scripting-diagram${structurizrConfiguration.versionSuffix}.js"></script>
 
 <link href="${structurizrConfiguration.cdnUrl}/css/structurizr-diagram.css" rel="stylesheet" media="screen" />
 
@@ -256,6 +255,83 @@
         structurizr.diagram.onViewChanged(viewChanged);
         structurizr.diagram.onAnimationStarted(animationStarted);
         structurizr.diagram.onAnimationStopped(animationStopped);
+        structurizr.scripting = new function() {
+
+            this.isDiagramRendered = function() {
+                return structurizr.diagram.isRendered();
+            };
+
+            this.exportCurrentDiagramToPNG = function(options, callback) {
+                if (options === undefined) {
+                    options = {};
+                }
+
+                if (options.includeMetadata === undefined) {
+                    options.includeMetadata = true;
+                }
+
+                if (options.crop === undefined) {
+                    options.crop = false;
+                }
+
+                return structurizr.diagram.exportCurrentDiagramToPNG(options.includeMetadata, options.crop, callback);
+            };
+
+            this.exportCurrentDiagramKeyToPNG = function(callback) {
+                return structurizr.diagram.exportCurrentDiagramKeyToPNG(callback);
+            };
+
+            this.exportCurrentDiagramToSVG = function(options) {
+                if (options === undefined) {
+                    options = {};
+                }
+
+                if (options.includeMetadata === undefined) {
+                    options.includeMetadata = true;
+                }
+
+                return structurizr.diagram.exportCurrentDiagramToSVG(options.includeMetadata);
+            };
+
+            this.exportCurrentDiagramKeyToSVG = function() {
+                return structurizr.diagram.exportCurrentDiagramKeyToSVG();
+            };
+
+            this.getViews = function() {
+                const views = [];
+
+                structurizr.workspace.getViews().forEach(function(view) {
+                    views.push(
+                        {
+                            key: view.key,
+                            name: structurizr.ui.getTitleForView(view),
+                            description: view.description ? view.description : '',
+                            type: view.type
+                        }
+                    )
+                });
+
+                return views;
+            };
+
+            this.getViewKey = function() {
+                return structurizr.diagram.getCurrentViewOrFilter().key;
+            };
+
+            this.getView = function() {
+                return structurizr.diagram.getCurrentViewOrFilter();
+            }
+
+            this.changeView = function(viewKey) {
+                var view = structurizr.workspace.findViewByKey(viewKey);
+                if (view) {
+                    structurizr.diagram.changeView(viewKey);
+                } else {
+                    throw 'A view with the key "' + viewKey + '" could not be found.';
+                }
+            };
+
+        };
 
         initEmbed();
         initPerspectives();
@@ -875,8 +951,6 @@
             {
                 passive: false
             });
-
-        structurizr.scripting = new structurizr.scripting.DiagramScripting(structurizr.diagram);
     }
 
     function initQuickNavigation() {
