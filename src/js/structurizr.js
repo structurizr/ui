@@ -1,7 +1,6 @@
 var structurizr = structurizr || {
 
     io: {},
-    scripting: {},
     ui: {},
     util: {},
 
