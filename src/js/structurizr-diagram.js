@@ -7,7 +7,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     const iconPadding = 10;
     const nameFontSizeDifference = +10;
     const metaDataFontSizeDifference = -5;
-    const navigationPadding = 20;
+    const navigationPadding = 15;
     const navigationFontSizeDifference = 10;
 
     const darkenPercentage = -10;
