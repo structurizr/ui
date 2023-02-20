@@ -7,6 +7,9 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     const iconPadding = 10;
     const nameFontSizeDifference = +10;
     const metaDataFontSizeDifference = -5;
+    const navigationPadding = 20;
+    const navigationFontSizeDifference = 10;
+
     const darkenPercentage = -10;
     const borderStyles = {
         Solid: '',
@@ -39,7 +42,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     var diagramWidth = 0;
     var diagramHeight = 0;
     var scrollBarWidth = 0;
-    var navigationFontSizeDifference = 0;
     var lineHeight = '1.2em';
     var diagramKey;
     var totalWidthOfKey;
@@ -1461,7 +1463,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -1589,7 +1592,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     'font-family': font.name,
                     fill: textColor,
                     'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': circle ? 0.92 : 0.90
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -1715,7 +1718,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -1840,7 +1844,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -1980,7 +1985,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -2132,7 +2138,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -2269,7 +2276,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -2404,7 +2412,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -2534,7 +2543,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -2683,7 +2693,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -2839,7 +2850,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -2984,7 +2996,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -3132,7 +3145,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -3271,7 +3285,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrNavigation': {
                     'font-family': font.name,
                     fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference
+                    'font-size': configuration.fontSize+navigationFontSizeDifference,
+                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
                 },
                 '.structurizrIcon': {
                 }
@@ -6951,9 +6966,8 @@ structurizr.shapes.Box = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: 'rect',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.5,
-                'ref-y': 0.90,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
@@ -7162,9 +7176,8 @@ structurizr.shapes.Person = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: 'rect',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.5,
-                'ref-y': 0.88,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
@@ -7216,9 +7229,8 @@ structurizr.shapes.Robot = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: 'rect',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.5,
-                'ref-y': 0.88,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
@@ -7264,9 +7276,8 @@ structurizr.shapes.Cylinder = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: 'rect',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.5,
-                'ref-y': 0.90,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
@@ -7312,9 +7323,8 @@ structurizr.shapes.Pipe = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: 'rect',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.5,
-                'ref-y': 0.90,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
@@ -7367,9 +7377,8 @@ structurizr.shapes.Folder = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: '.structurizrFolder',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.5,
-                'ref-y': 0.89,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
@@ -7428,9 +7437,8 @@ structurizr.shapes.Component = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: '.structurizrComponent',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.5,
-                'ref-y': 0.89,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
@@ -7474,9 +7482,8 @@ structurizr.shapes.Ellipse = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: 'ellipse',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.5,
-                'ref-y': 0.95,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
@@ -7491,7 +7498,7 @@ structurizr.shapes.Hexagon = joint.dia.Element.extend({
     defaults: joint.util.deepSupplement({
         type: 'structurizr.hexagon',
         attrs: {
-            ellipse: {
+            polygon: {
             },
             '.structurizrHexagon': {
                 stroke: '#444444',
@@ -7520,9 +7527,8 @@ structurizr.shapes.Hexagon = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: 'polygon',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.50,
-                'ref-y': 0.92,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
@@ -7537,7 +7543,7 @@ structurizr.shapes.Diamond = joint.dia.Element.extend({
     defaults: joint.util.deepSupplement({
         type: 'structurizr.diamond',
         attrs: {
-            ellipse: {
+            polygon: {
             },
             '.structurizrDiamond': {
                 stroke: '#444444',
@@ -7566,9 +7572,8 @@ structurizr.shapes.Diamond = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: 'polygon',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.50,
-                'ref-y': 0.92,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
@@ -7624,9 +7629,8 @@ structurizr.shapes.WebBrowser = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: 'rect',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.5,
-                'ref-y': 0.90,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
@@ -7677,9 +7681,8 @@ structurizr.shapes.Window = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: 'rect',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.5,
-                'ref-y': 0.90,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
@@ -7730,9 +7733,8 @@ structurizr.shapes.MobileDevice = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: 'rect',
-                'font-weight': 'bold',
+                'font-weight': 'normal',
                 'ref-x': 0.5,
-                'ref-y': 0.90,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
