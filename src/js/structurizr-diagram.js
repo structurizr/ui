@@ -112,7 +112,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     var onKeyDownEventHandler;
     var onKeyPressEventHandler;
 
-    var imageSources = undefined;
     var imageMetadata = undefined;
     var imagePreloadAttempts = 0;
     var diagramRendered = false;
@@ -218,51 +217,44 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function preloadImages() {
-        if (imageSources === undefined) {
-            imageSources = [];
+        if (imageMetadata === undefined) {
             imageMetadata = [];
 
             getImagesToPreload().forEach(function(url) {
-                if (imageSources.indexOf(url) === -1) {
+                if (getImageMetadata(url) === undefined) {
                     if (url.indexOf('.svg') > -1) {
                         console.log('Ignoring ' + url + ' - SVG icons are not supported');
                         structurizr.ui.ignoredImages.push(url);
                     } else {
-                        imageSources.push(url);
                         imageMetadata.push({
                             src: url,
-                            loaded: false
+                            loaded: false,
+                            error: false
                         });
                     }
                 }
             });
 
-            imageSources.forEach(function(imageSource) {
-                var image = new Image();
+            imageMetadata.forEach(function(im) {
+                const image = new Image();
                 image.setAttribute('crossorigin', 'anonymous');
                 image.addEventListener('load', function () {
-                    var index = imageSources.indexOf(this.src);
-                    imageMetadata[index] = {
-                        src: this.src,
-                        width: this.naturalWidth,
-                        height: this.naturalHeight,
-                        ratio: (this.naturalWidth / this.naturalHeight),
-                        loaded: true
-                    };
+                    im.width = this.naturalWidth;
+                    im.height = this.naturalHeight;
+                    im.ratio = (this.naturalWidth / this.naturalHeight);
+                    im.loaded = true;
+                    im.error = false;
                 });
                 image.addEventListener('error', function (error) {
                     // there was an error loading the image, so ignore and continue
-                    console.log('There was an error loading the image ' + this.src + ' - please check that the image exists, and that the Access-Control-Allow-Origin header is set to allow cross-origin requests.');
-                    var index = imageSources.indexOf(this.src);
-                    imageMetadata[index] = {
-                        ratio: 1,
-                        loaded: true
-                    };
+                    console.log('There was an error loading the image ' + im.src + ' - please check that the image exists, and that the Access-Control-Allow-Origin header is set to allow cross-origin requests.');
+                    im.loaded = true;
+                    im.error = true;
 
                     structurizr.ui.ignoredImages.push(this.src);
                 });
 
-                image.src = imageSource;
+                image.src = im.src;
             });
         } else {
             imagePreloadAttempts++;
@@ -274,6 +266,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             imageMetadata.forEach(function(im) {
                 if (im.loaded === false) {
                     console.log('Failed to preload ' + im.src);
+                    im.error = true;
                 }
             });
 
@@ -453,8 +446,16 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
 
         if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
+            var content = view.content;
             editable = false;
-            const imageMetadata = getImageMetadata(view.content);
+            const imageMetadata = getImageMetadata(content);
+
+            if (imageMetadata.error) {
+                content = '/static/img/image-not-available.png';
+                imageMetadata.width = 200;
+                imageMetadata.height = 100;
+                imageMetadata.ratio = 2;
+            }
 
             const image = new structurizr.shapes.ImageView({
                 size: {
@@ -463,7 +464,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 },
                 attrs: {
                     image: {
-                        'xlink:href': view.content,
+                        'xlink:href': content,
                         width: imageMetadata.width,
                         height: imageMetadata.height
                     }
@@ -4750,11 +4751,13 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function getImageRatio(image) {
-        return imageMetadata[imageSources.indexOf(image.trim())].ratio;
+        return getImageMetadata(image).ratio;
     }
 
     function getImageMetadata(image) {
-        return imageMetadata[imageSources.indexOf(image.trim())];
+        return imageMetadata.filter(function(im) {
+            return im.src === image;
+        })[0];
     }
 
     function createDiagramKey() {
