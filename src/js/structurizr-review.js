@@ -61,17 +61,17 @@ structurizr.Review = function(json, reviewer, canComment) {
         var commentModalButtons = $('#commentModalButtons');
 
         if (review.type && review.type === 'Risk') {
-            var html = '<button class="btn commentTypeButton riskLowButton" style="background: ' + commentTypeColors['RiskLow'] + '; color: #ffffff" title="Risk - Low"><img src="/static/img/review/comment-RiskLow.svg" class="glyphicon-btn"/></button>';
+            var html = '<button class="btn commentTypeButton riskLowButton" style="background: ' + commentTypeColors['RiskLow'] + '; color: #ffffff" title="Risk - Low"><img src="/static/img/review/comment-RiskLow.svg" class="icon-btn"/></button>';
             commentTypeButtons.append(html);
             floatingControls.append(html);
             commentModalButtons.append(html);
 
-            html ='<button class="btn commentTypeButton riskMediumButton" style="background: ' + commentTypeColors['RiskMedium'] + '; color: #ffffff" title="Risk - Medium"><img src="/static/img/review/comment-RiskMedium.svg" class="glyphicon-btn"/></button>';
+            html ='<button class="btn commentTypeButton riskMediumButton" style="background: ' + commentTypeColors['RiskMedium'] + '; color: #ffffff" title="Risk - Medium"><img src="/static/img/review/comment-RiskMedium.svg" class="icon-btn"/></button>';
             commentTypeButtons.append(html);
             floatingControls.append(html);
             commentModalButtons.append(html);
 
-            html = '<button class="btn commentTypeButton riskHighButton" style="background: ' + commentTypeColors['RiskHigh'] + '; color: #ffffff" title="Risk - High"><img src="/static/img/review/comment-RiskHigh.svg" class="glyphicon-btn"/></button>';
+            html = '<button class="btn commentTypeButton riskHighButton" style="background: ' + commentTypeColors['RiskHigh'] + '; color: #ffffff" title="Risk - High"><img src="/static/img/review/comment-RiskHigh.svg" class="icon-btn"/></button>';
             commentTypeButtons.append(html);
             floatingControls.append(html);
             commentModalButtons.append(html);
@@ -93,7 +93,7 @@ structurizr.Review = function(json, reviewer, canComment) {
             commentType = 'RiskLow';
             commentColor = commentTypeColors['RiskLow'];
         } else if (review.type && review.type === 'STRIDE') {
-            var html = '<button class="btn commentTypeButton strideButton strideSpoofingButton" style="background: ' + commentTypeColors['STRIDE_Spoofing'] + '; color: #000000" title="Spoofing"><img src="/static/img/review/comment-STRIDE_Spoofing.svg" class="glyphicon-btn"/></button>';
+            var html = '<button class="btn commentTypeButton strideButton strideSpoofingButton" style="background: ' + commentTypeColors['STRIDE_Spoofing'] + '; color: #000000" title="Spoofing"><img src="/static/img/review/comment-STRIDE_Spoofing.svg" class="icon-btn"/></button>';
             commentTypeButtons.append(html);
             floatingControls.append(html);
             commentModalButtons.append(html);
@@ -102,7 +102,7 @@ structurizr.Review = function(json, reviewer, canComment) {
                 self.changeCommentType('strideSpoofingButton', 'STRIDE_Spoofing', commentTypeColors['STRIDE_Spoofing']);
             });
 
-            html = '<button class="btn commentTypeButton strideButton strideTamperingButton" style="background: ' + commentTypeColors['STRIDE_Tampering'] + '; color: #000000" title="Tampering"><img src="/static/img/review/comment-STRIDE_Tampering.svg" class="glyphicon-btn"/></button>';
+            html = '<button class="btn commentTypeButton strideButton strideTamperingButton" style="background: ' + commentTypeColors['STRIDE_Tampering'] + '; color: #000000" title="Tampering"><img src="/static/img/review/comment-STRIDE_Tampering.svg" class="icon-btn"/></button>';
             commentTypeButtons.append(html);
             floatingControls.append(html);
             commentModalButtons.append(html);
@@ -111,7 +111,7 @@ structurizr.Review = function(json, reviewer, canComment) {
                 self.changeCommentType('strideTamperingButton', 'STRIDE_Tampering', commentTypeColors['STRIDE_Tampering']);
             });
 
-            html = '<button class="btn commentTypeButton strideButton strideRepudiationButton" style="background: ' + commentTypeColors['STRIDE_Repudiation'] + '; color: #000000" title="Repudiation"><img src="/static/img/review/comment-STRIDE_Repudiation.svg" class="glyphicon-btn"/></button>';
+            html = '<button class="btn commentTypeButton strideButton strideRepudiationButton" style="background: ' + commentTypeColors['STRIDE_Repudiation'] + '; color: #000000" title="Repudiation"><img src="/static/img/review/comment-STRIDE_Repudiation.svg" class="icon-btn"/></button>';
             commentTypeButtons.append(html);
             floatingControls.append(html);
             commentModalButtons.append(html);
@@ -120,7 +120,7 @@ structurizr.Review = function(json, reviewer, canComment) {
                 self.changeCommentType('strideRepudiationButton', 'STRIDE_Repudiation', commentTypeColors['STRIDE_Repudiation']);
             });
 
-            html = '<button class="btn commentTypeButton strideButton strideInformationDisclosureButton" style="background: ' + commentTypeColors['STRIDE_InformationDisclosure'] + '; color: #000000" title="Information Disclosure"><img src="/static/img/review/comment-STRIDE_InformationDisclosure.svg" class="glyphicon-btn"/></button>';
+            html = '<button class="btn commentTypeButton strideButton strideInformationDisclosureButton" style="background: ' + commentTypeColors['STRIDE_InformationDisclosure'] + '; color: #000000" title="Information Disclosure"><img src="/static/img/review/comment-STRIDE_InformationDisclosure.svg" class="icon-btn"/></button>';
             commentTypeButtons.append(html);
             floatingControls.append(html);
             commentModalButtons.append(html);
@@ -129,7 +129,7 @@ structurizr.Review = function(json, reviewer, canComment) {
                 self.changeCommentType('strideInformationDisclosureButton', 'STRIDE_InformationDisclosure', commentTypeColors['STRIDE_InformationDisclosure']);
             });
 
-            html = '<button class="btn commentTypeButton strideButton strideDenialOfServiceButton" style="background: ' + commentTypeColors['STRIDE_DenialOfService'] + '; color: #000000" title="Denial of Service"><img src="/static/img/review/comment-STRIDE_DenialOfService.svg" class="glyphicon-btn"/></button>';
+            html = '<button class="btn commentTypeButton strideButton strideDenialOfServiceButton" style="background: ' + commentTypeColors['STRIDE_DenialOfService'] + '; color: #000000" title="Denial of Service"><img src="/static/img/review/comment-STRIDE_DenialOfService.svg" class="icon-btn"/></button>';
             commentTypeButtons.append(html);
             floatingControls.append(html);
             commentModalButtons.append(html);
@@ -138,7 +138,7 @@ structurizr.Review = function(json, reviewer, canComment) {
                 self.changeCommentType('strideDenialOfServiceButton', 'STRIDE_DenialOfService', commentTypeColors['STRIDE_DenialOfService']);
             });
 
-            html = '<button class="btn commentTypeButton strideButton strideElevationOfPrivilegeButton" style="background: ' + commentTypeColors['STRIDE_ElevationOfPrivilege'] + '; color: #000000" title="Elevation of Privilege"><img src="/static/img/review/comment-STRIDE_ElevationOfPrivilege.svg" class="glyphicon-btn"/></button>';
+            html = '<button class="btn commentTypeButton strideButton strideElevationOfPrivilegeButton" style="background: ' + commentTypeColors['STRIDE_ElevationOfPrivilege'] + '; color: #000000" title="Elevation of Privilege"><img src="/static/img/review/comment-STRIDE_ElevationOfPrivilege.svg" class="icon-btn"/></button>';
             commentTypeButtons.append(html);
             floatingControls.append(html);
             commentModalButtons.append(html);
@@ -154,7 +154,7 @@ structurizr.Review = function(json, reviewer, canComment) {
         } else {
             var count = 0;
             generalColors.forEach(function (color) {
-                var html = '<button class="commentColor' + count + ' btn commentTypeButton" style="background: ' + color + '"><img src="/static/img/review/comment-General.svg" class="glyphicon-btn"/></button>';
+                var html = '<button class="commentColor' + count + ' btn commentTypeButton" style="background: ' + color + '"><img src="/static/img/review/comment-General.svg" class="icon-btn"/></button>';
                 commentTypeButtons.append(html);
                 floatingControls.append(html);
                 commentModalButtons.append(html);
