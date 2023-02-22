@@ -1,6 +1,5 @@
 <%@ include file="/WEB-INF/fragments/workspace/javascript.jspf" %>
 <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
-<%@ include file="/WEB-INF/fragments/quick-navigation.jspf" %>
 
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/d3-7.8.2.min.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-ui${structurizrConfiguration.versionSuffix}.js"></script>
@@ -20,6 +19,7 @@
     </div>
 
     <%@ include file="/WEB-INF/fragments/tooltip.jspf" %>
+    <%@ include file="/WEB-INF/fragments/quick-navigation.jspf" %>
 
     <div id="embeddedControls" style="text-align: right; position: absolute; bottom: 10px; right: 10px; opacity: 0.1; z-index: 100;">
         <button class="btn btn-default" id="enterFullScreenButton" title="Enter Full Screen [f]" onclick="structurizr.ui.enterFullScreen('exploreGraphPanel')"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen.svg" class="icon-btn" /></button>
