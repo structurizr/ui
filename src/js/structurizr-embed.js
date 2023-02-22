@@ -4,8 +4,8 @@ var structurizr = structurizr || {
 
 structurizr.ui.Embed = function() {
 
-    var specifiedMaxHeight = undefined;
-    var embeds = {};
+    var maxHeight = undefined;
+    const embeds = {};
 
     this.receiveStructurizrResponsiveEmbedMessage = function(event) {
         if (event === undefined) {
@@ -30,8 +30,7 @@ structurizr.ui.Embed = function() {
                     embed.type = type;
                     embed.scriptingContext = scriptingContext;
 
-
-                    resizeEmbeddedDiagram(elementId);
+                    resize(embed);
                 } catch (err) {
                     console.log(event);
                     console.log("Ignoring message: " + err);
@@ -41,8 +40,8 @@ structurizr.ui.Embed = function() {
         }
     };
 
-    this.setMaxHeight = function(maxHeight) {
-        specifiedMaxHeight = maxHeight;
+    this.setMaxHeight = function(height) {
+        maxHeight = height;
     };
 
     function getEmbed(elementId) {
@@ -65,23 +64,21 @@ structurizr.ui.Embed = function() {
 
     this.resizeEmbeddedDiagrams = function () {
         Object.keys(embeds).forEach(function(key) {
-            resizeEmbeddedDiagram(key);
+            resize(embeds[key]);
         });
     };
 
-    function resizeEmbeddedDiagram(elementId) {
-        var iframe = document.getElementById(elementId);
+    var resizeHandler = function(embed) {
+        var iframe = document.getElementById(embed.elementId);
         var parentNode = iframe.parentNode;
         if (parentNode) {
             var width = parentNode.offsetWidth;
-            var embed = getEmbed(elementId);
 
             var aspectRatio = embed.aspectRatio;
             var addition = embed.addition;
             var type = embed.type;
 
             var height = Math.ceil((width / aspectRatio) + addition);
-            var maxHeight = specifiedMaxHeight;
             if (maxHeight === undefined) {
                 maxHeight = window.innerHeight * 0.85;
             }
@@ -94,14 +91,21 @@ structurizr.ui.Embed = function() {
             }
 
             // enforce some minimum dimensions
-            width =  Math.max(width, 200);
-            height =  Math.max(height, 200);
+            width = Math.max(width, 200);
+            height = Math.max(height, 200);
 
             iframe.width = width + "px";
             iframe.height = height + "px";
         }
     }
 
+    this.onResize = function(handler) {
+        resizeHandler = handler;
+    }
+
+    function resize(embed) {
+        resizeHandler(embed);
+    }
 };
 
 structurizr.embed = new structurizr.ui.Embed();
