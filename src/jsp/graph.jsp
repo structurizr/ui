@@ -61,6 +61,7 @@
         addEventHandlers();
 
         structurizr.ui.applyBranding();
+        $('#brandingLogoAnchor').attr('href', '${urlPrefix}');
         progressMessage.hide();
     }
 

@@ -80,6 +80,7 @@
             $('#staticStructure').removeClass('hidden');
         }
 
+        $('#brandingLogoAnchor').attr('href', '${urlPrefix}');
         progressMessage.hide();
     }
 
