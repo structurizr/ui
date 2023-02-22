@@ -166,7 +166,7 @@
             if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
                 view = structurizr.workspace.findViewByKey(view.baseViewKey);
             }
-            if (view.automaticLayout && view.automaticLayout.implementation === 'Graphviz') {
+            if (view.automaticLayout && (view.automaticLayout.implementation === undefined || view.automaticLayout.implementation === 'Graphviz')) {
                 result = true;
             }
         });
@@ -398,7 +398,7 @@
                 $('#editDiagramButton').addClass('hidden');
                 $('#diagramNotEditableMessage').removeClass('hidden');
 
-                if (view.automaticLayout.implementation === undefined || view.automaticLayout.implementation === 'Dagre') {
+                if (view.automaticLayout.implementation === 'Dagre') {
                     structurizr.diagram.runDagre(
                         view.automaticLayout.rankDirection,
                         view.automaticLayout.rankSeparation,
