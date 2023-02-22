@@ -397,7 +397,18 @@
             if (view.automaticLayout !== undefined) {
                 $('#editDiagramButton').addClass('hidden');
                 $('#diagramNotEditableMessage').removeClass('hidden');
-            } else {
+
+                if (view.automaticLayout.implementation === undefined || view.automaticLayout.implementation === 'Dagre') {
+                    structurizr.diagram.runDagre(
+                        view.automaticLayout.rankDirection,
+                        view.automaticLayout.rankSeparation,
+                        view.automaticLayout.nodeSeparation,
+                        view.automaticLayout.edgeSeparation,
+                        view.automaticLayout.vertices,
+                        true
+                    );
+                    structurizr.diagram.autoPageSize();
+                }
                 $('#editDiagramButton').removeClass('hidden');
                 $('#diagramNotEditableMessage').addClass('hidden');
             }
