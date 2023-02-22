@@ -9,8 +9,7 @@
             <div id="diagramEmbed" class="modal-body">
                 <p>
                     The code below allows you to embed your diagram(s) using a responsive iframe.
-                    See <a href="https://structurizr.com/help/embed-iframe" target="_blank">iframe embed</a> for more details, or
-                    <a href="https://structurizr.com/help/atlassian-confluence" target="_blank">Atlassian Confluence</a> for details of the pre-built macros.
+                    See <a href="https://structurizr.com/help/embed-iframe" target="_blank">iframe embed</a> for more details.
                 </p>
 
                 <c:choose>
