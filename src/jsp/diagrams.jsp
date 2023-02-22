@@ -475,17 +475,10 @@
         if (explorationsButton) {
             if (view.type === structurizr.constants.CUSTOM_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE || view.type === structurizr.constants.CONTAINER_VIEW_TYPE || view.type === structurizr.constants.COMPONENT_VIEW_TYPE) {
                 explorationsButton.onclick = function () {
-                    var queryString;
                     const urlPrefix = '${urlPrefix}';
                     const urlSuffix = '${urlSuffix}';
 
-                    if (urlSuffix.length === 0) {
-                        queryString = '?';
-                    } else {
-                        queryString = (urlSuffix + '&');
-                    }
-                    queryString += ('view=' + encodeURIComponent(view.key));
-                    window.open(urlPrefix + '/explore/graph' + queryString);
+                    window.open(urlPrefix + '/explore/graph' + urlSuffix + '#' + encodeURIComponent(view.key));
                 };
 
                 $('#explorationsButton').removeClass('hidden');

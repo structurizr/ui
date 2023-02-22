@@ -5,14 +5,24 @@
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/d3-7.8.2.min.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-ui${structurizrConfiguration.versionSuffix}.js"></script>
 
-<div id="graphContent" >
+<div id="exploreGraphPanel">
+
     <div id="exploreGraph" style="width: 100%"></div>
-    <div id="graphTitle" style="position: absolute; bottom: 10px; left: 10px; color: #aaaaaa; font-size: 13px; user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; -o-user-select: none;"></div>
+    <div style="position: absolute; bottom: 10px; left: 10px;">
+        <c:choose>
+        <c:when test="${embed}">
+            <div id="graphTitle" style="color: #aaaaaa; font-size: 13px; user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; -o-user-select: none;"></div>
+        </c:when>
+        <c:otherwise>
+        <select id="viewSelector" class="form-control" onchange="showSelectedView()"></select>
+        </c:otherwise>
+        </c:choose>
+    </div>
 
     <%@ include file="/WEB-INF/fragments/tooltip.jspf" %>
 
     <div id="embeddedControls" style="text-align: right; position: absolute; bottom: 10px; right: 10px; opacity: 0.1; z-index: 100;">
-        <button class="btn btn-default" id="enterFullScreenButton" title="Enter Full Screen [f]" onclick="structurizr.ui.enterFullScreen('graphContent')"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen.svg" class="icon-btn" /></button>
+        <button class="btn btn-default" id="enterFullScreenButton" title="Enter Full Screen [f]" onclick="structurizr.ui.enterFullScreen('exploreGraphPanel')"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen.svg" class="icon-btn" /></button>
         <button class="btn btn-default hidden" id="exitFullScreenButton" title="Exit Full Screen [Escape]" onclick="structurizr.ui.exitFullScreen()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen-exit.svg" class="icon-btn" /></button>
         <c:if test="${workspace.id > 0 && (embed eq true && workspace.editable eq false)}">
         <button class="btn btn-default" title="Open graph in new window" onclick="openGraphInNewWindow()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/link.svg" class="icon-btn" /></button>
@@ -33,7 +43,7 @@
     var link;
     var nodeHighlighted;
 
-    const viewKey = '${view}';
+    var viewKey = '${view}';
     var view;
 
     const relationshipsBySourceAndDestination = [];
@@ -56,9 +66,40 @@
 
     function init() {
         setWidthAndHeight();
+
+        if (viewKey.length === 0) {
+            if (window.location.hash !== undefined) {
+                viewKey = window.location.hash.substring(1);
+            } else {
+                viewKey = structurizr.workspace.getViews()[0].key;
+            }
+        }
+
         createGraph();
         renderGraph();
         addEventHandlers();
+
+        <c:choose>
+        <c:when test="${embed}">
+        $('#graphTitle').text(structurizr.ui.getTitleForView(view));
+        </c:when>
+        <c:otherwise>
+        const views = structurizr.workspace.getViews();
+        views.forEach(function(view) {
+            if (
+                view.type === structurizr.constants.CUSTOM_VIEW_TYPE ||
+                view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE ||
+                view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE ||
+                view.type === structurizr.constants.CONTAINER_VIEW_TYPE ||
+                view.type === structurizr.constants.COMPONENT_VIEW_TYPE) {
+                $('#viewSelector').append(
+                    $('<option></option>').val(view.key).html(structurizr.ui.getTitleForView(view))
+                );
+            }
+        });
+        $('#viewSelector').val(viewKey);
+        </c:otherwise>
+        </c:choose>
 
         structurizr.ui.applyBranding();
         $('#brandingLogoAnchor').attr('href', '${urlPrefix}');
@@ -92,8 +133,8 @@
                         }
                     });
                 }
-
-                $('#graphTitle').text(structurizr.ui.getTitleForView(view));
+            } else {
+                return;
             }
         }
 
@@ -146,7 +187,7 @@
         $("#exploreGraph").empty();
 
         if (view === undefined) {
-            $("#exploreGraph").html('<div style="text-align: center; vertical-align: center; margin-top: 200px">No view with key <code>${view}</code>.</div>');
+            $("#exploreGraph").html('<div style="text-align: center; vertical-align: center; margin-top: 200px">No view with key <code>' + viewKey + '</code>.</div>');
             return;
         }
 
@@ -513,7 +554,7 @@
     );
 
     function openGraphInNewWindow() {
-        window.open('${urlPrefix}/explore/graph?view=' + encodeURIComponent(viewKey));
+        window.open('${urlPrefix}/explore/graph#' + encodeURIComponent(viewKey));
     }
 
     $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange fullscreenChange MSFullscreenChange',function(){
@@ -525,6 +566,14 @@
             $('#exitFullScreenButton').addClass("hidden");
         }
     });
+
+    function showSelectedView() {
+        const selectedView = $('#viewSelector').val();
+        viewKey = selectedView;
+        createGraph();
+        renderGraph();
+        window.location.hash = viewKey;
+    }
 </script>
 
 <c:choose>

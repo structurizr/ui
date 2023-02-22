@@ -121,6 +121,10 @@
         display: block;
     }
 
+    #exploreGraphPanel {
+        background: #111111;
+    }
+
     .exploreTree text {
         fill: #eeeeee;
         stroke: #111111;

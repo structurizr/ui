@@ -396,6 +396,10 @@ hr {
      display: none;
 }
 
+#exploreGraphPanel {
+    background: #ffffff;
+}
+
 .exploreTree text {
     fill: #000000;
     stroke: #ffffff;
