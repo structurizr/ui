@@ -200,6 +200,7 @@
         clear() {
             const quickFindModalItems = $('#quickFindModalItems');
             quickFindModalItems.empty();
+            this.#selectedIndex = -1;
         };
     }
 

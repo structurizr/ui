@@ -110,6 +110,7 @@
         graph = { nodes: [], links: []};
         const elements = [];
         const elementIds = [];
+        quickNavigation.clear();
 
         if (viewKey !== undefined) {
             view = structurizr.workspace.findViewByKey(viewKey);
