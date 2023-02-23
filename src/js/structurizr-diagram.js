@@ -3371,35 +3371,30 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             diagramDescription = undefined;
         }
 
-        var options = {
+        const timezone = structurizr.workspace.views.configuration.properties['structurizr.timezone'];
+        const locale = structurizr.workspace.views.configuration.properties['structurizr.locale'];
+        const options = {
             weekday: 'long',
             year:'numeric',
             month: 'long',
             day: 'numeric',
             hour: 'numeric',
             minute: 'numeric',
+            timeZone: timezone,
             timeZoneName : 'long'
         };
 
         var metadata;
         if (structurizr.workspace.id === 0) {
-            var lastModified = structurizr.workspace.lastModifiedDate;
-            if (lastModified) {
-                var date = new Date(lastModified);
-
-                metadata = date.toLocaleString(undefined, options);
-            } else {
-                var date = new Date();
-                metadata = date.toLocaleString(undefined, options);
-            }
+            // demo page
+            metadata = new Date().toLocaleString(locale, options);
         } else {
-            var lastModified = structurizr.workspace.lastModifiedDate;
+            const lastModified = structurizr.workspace.lastModifiedDate;
             if (lastModified) {
-                var date = new Date(lastModified);
-                metadata = date.toLocaleString(undefined, options);
+                metadata = new Date(lastModified).toLocaleString(locale, options);
             }
 
-            var version = structurizr.workspace.version;
+            const version = structurizr.workspace.version;
             if (version) {
                 if (metadata) {
                     metadata += ' | ';
