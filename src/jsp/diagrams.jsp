@@ -368,6 +368,9 @@
     function viewChanged(key) {
         $('#keyModal').modal('hide');
 
+        // set the view key in the embed code modal
+        $('.diagramEmbedDiagramId').text(key);
+
         const view = structurizr.workspace.findViewByKey(key);
 
         $('#undoButton').prop('disabled', true);
@@ -380,42 +383,46 @@
         selectDiagramByView(view);
         const editable = structurizr.diagram.isEditable();
 
+        healthCheck.stop();
+
         if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
             $('#diagramEditButtons').addClass('hidden');
             $('#diagramNotEditableMessage').addClass('hidden');
             $('#editDiagramButton').addClass('hidden');
             $('.modelViewButtons').addClass('hidden');
-        } else {
-            $('.modelViewButtons').removeClass('hidden');
 
-            if (editable) {
-                $('#diagramEditButtons').removeClass('hidden');
-            } else {
-                $('#diagramEditButtons').addClass('hidden');
-            }
+            structurizr.diagram.resize();
+            structurizr.diagram.zoomToWidthOrHeight();
 
-            if (view.automaticLayout !== undefined) {
-                $('#editDiagramButton').addClass('hidden');
-                $('#diagramNotEditableMessage').removeClass('hidden');
-
-                if (view.automaticLayout.implementation === 'Dagre') {
-                    structurizr.diagram.runDagre(
-                        view.automaticLayout.rankDirection,
-                        view.automaticLayout.rankSeparation,
-                        view.automaticLayout.nodeSeparation,
-                        view.automaticLayout.edgeSeparation,
-                        view.automaticLayout.vertices,
-                        true
-                    );
-                    structurizr.diagram.autoPageSize();
-                }
-                $('#editDiagramButton').removeClass('hidden');
-                $('#diagramNotEditableMessage').addClass('hidden');
-            }
+            return;
         }
 
-        structurizr.diagram.resize();
-        structurizr.diagram.zoomToWidthOrHeight();
+         $('.modelViewButtons').removeClass('hidden');
+
+        if (editable) {
+            $('#diagramEditButtons').removeClass('hidden');
+        } else {
+            $('#diagramEditButtons').addClass('hidden');
+        }
+
+        if (view.automaticLayout !== undefined) {
+            $('#editDiagramButton').addClass('hidden');
+            $('#diagramNotEditableMessage').removeClass('hidden');
+
+            if (view.automaticLayout.implementation === 'Dagre') {
+                structurizr.diagram.runDagre(
+                    view.automaticLayout.rankDirection,
+                    view.automaticLayout.rankSeparation,
+                    view.automaticLayout.nodeSeparation,
+                    view.automaticLayout.edgeSeparation,
+                    view.automaticLayout.vertices,
+                    true
+                );
+                structurizr.diagram.autoPageSize();
+            }
+            $('#editDiagramButton').removeClass('hidden');
+            $('#diagramNotEditableMessage').addClass('hidden');
+        }
 
         // disable some UI elements based upon whether the diagram is editable
         $('#autoLayoutButton').prop('disabled', !editable);
@@ -438,9 +445,6 @@
             $('#showDiagramScopeOffButton').addClass('hidden');
         }
 
-        // set the view key in the embed code modal
-        $('.diagramEmbedDiagramId').text(structurizr.diagram.getCurrentViewOrFilter().key);
-
         if (view.type === "Dynamic" || (view.animations && view.animations.length > 1)) {
             $('.dynamicDiagramButton').removeClass("hidden");
 
@@ -462,7 +466,6 @@
             })
         }
 
-        healthCheck.stop();
         if (elementsHaveHealthChecks) {
             $('#healthOnButton').removeClass('hidden');
             $('#healthOffButton').addClass('hidden');
@@ -503,7 +506,37 @@
             }
         }
 
+        configureTooltip(view);
+        structurizr.diagram.resize();
+        structurizr.diagram.zoomToWidthOrHeight();
         refreshThumbnail();
+    }
+
+    function configureTooltip(view) {
+        const STRUCTURIZR_TOOLTIPS_PROPERTY_NAME = 'structurizr.tooltips';
+        if (view.properties) {
+            if (view.properties[STRUCTURIZR_TOOLTIPS_PROPERTY_NAME] === 'true') {
+                tooltip.disable();
+                toggleTooltip();
+                return;
+            } else if (view.properties[STRUCTURIZR_TOOLTIPS_PROPERTY_NAME] === 'false') {
+                tooltip.enable();
+                toggleTooltip();
+                return;
+            }
+        }
+
+        if (structurizr.workspace.views.configuration.properties) {
+            if (structurizr.workspace.views.configuration.properties[STRUCTURIZR_TOOLTIPS_PROPERTY_NAME] === 'true') {
+                tooltip.disable();
+                toggleTooltip();
+                return;
+            } else if (structurizr.workspace.views.configuration.properties[STRUCTURIZR_TOOLTIPS_PROPERTY_NAME] === 'false') {
+                tooltip.enable();
+                toggleTooltip();
+                return;
+            }
+        }
     }
 
     function refreshThumbnail() {
