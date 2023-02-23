@@ -156,7 +156,10 @@
                 resize();
             });
 
-            $('#lastModifiedDate').html(new Date(structurizr.workspace.lastModifiedDate).toLocaleString(undefined,
+            const timezone = structurizr.workspace.views.configuration.properties['structurizr.timezone'];
+            const locale = structurizr.workspace.views.configuration.properties['structurizr.locale'];
+
+            $('#lastModifiedDate').html(new Date(structurizr.workspace.lastModifiedDate).toLocaleString(locale,
                 {
                     weekday: 'long',
                     year:'numeric',
@@ -164,6 +167,7 @@
                     day: 'numeric',
                     hour: 'numeric',
                     minute: 'numeric',
+                    timeZone: timezone,
                     timeZoneName : 'long'
                 }
             ));
