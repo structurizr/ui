@@ -186,18 +186,20 @@
             var propertiesHtml = '';
             var properties = structurizr.workspace.getAllPropertiesForElement(element);
             if (Object.keys(properties).length > 0) {
-                propertiesHtml += '<div class="smaller">';
-                propertiesHtml += '<p>Properties:</p>';
-                propertiesHtml += '<ul>';
                 Object.keys(properties).forEach(function (key) {
-                    propertiesHtml += '<li>';
-                    propertiesHtml += (structurizr.util.escapeHtml(key) + ' = ' + structurizr.util.escapeHtml(properties[key]));
-                    propertiesHtml += '</li>';
+                    if (key.indexOf('structurizr.') === 0) {
+                        // ignore 'structurizr.' properties
+                    } else {
+                        propertiesHtml += '<li>';
+                        propertiesHtml += (structurizr.util.escapeHtml(key) + ' = ' + structurizr.util.escapeHtml(properties[key]));
+                        propertiesHtml += '</li>';
+                    }
                 });
-                propertiesHtml += '</ul>';
-                propertiesHtml += '</div>'
             }
-            tooltipProperties.html(propertiesHtml);
+
+            if (propertiesHtml.length > 0) {
+                tooltipProperties.html('<div class="smaller"><p>Properties:</p><ul>' + propertiesHtml + '</ul></div>');
+            }
 
             var urlHtml = '';
             var url = element.url;
