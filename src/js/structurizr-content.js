@@ -78,6 +78,8 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix)
 
                             if (parameterName === 'type' && parameterValue === 'graph') {
                                 type = 'graph';
+                            } else if (parameterName === 'type' && parameterValue === 'tree') {
+                                type = 'tree';
                             }
 
                             if (parameterName === 'perspective') {

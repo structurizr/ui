@@ -435,22 +435,6 @@
         showConnectedNodes(this, true);
     }
 
-    function setWidthAndHeight() {
-        var navHeight = 0;
-
-        <c:if test="${empty iframe}">
-        if (structurizr.ui.isFullScreen()) {
-            navHeight = 0;
-        } else {
-            navHeight = $('#topNavigation').outerHeight();
-        }
-        </c:if>
-
-        width = window.innerWidth - margin;
-        height = window.innerHeight - navHeight - margin;
-        distance = Math.min(width, height) / 4;
-    }
-
     function addEventHandlers() {
         $(document).keypress(function(e) {
             const plus = 43;
@@ -471,6 +455,22 @@
                 simulation.alpha(0.3).restart();
             }
         });
+
+        function setWidthAndHeight() {
+            var navHeight = 0;
+
+            <c:if test="${empty iframe}">
+            if (structurizr.ui.isFullScreen()) {
+                navHeight = 0;
+            } else {
+                navHeight = $('#topNavigation').outerHeight();
+            }
+            </c:if>
+
+            width = window.innerWidth - margin;
+            height = window.innerHeight - navHeight - margin;
+            distance = Math.min(width, height) / 4;
+        }
 
         window.addEventListener("resize", function() {
             setWidthAndHeight();

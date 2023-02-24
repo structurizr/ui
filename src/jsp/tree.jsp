@@ -31,6 +31,8 @@
 </div>
 
 <script nonce="${scriptNonce}">
+    var margin = 0;
+
     var viewKey = '${view}';
     var view;
 
@@ -62,6 +64,8 @@
             }
         }
 
+        renderTree();
+
         <c:choose>
         <c:when test="${embed}">
         $('#treeTitle').text(structurizr.ui.getTitleForView(view));
@@ -84,8 +88,6 @@
         $('#viewSelector').val(viewKey);
         </c:otherwise>
         </c:choose>
-
-        renderTree();
 
         $('#brandingLogoAnchor').attr('href', '${urlPrefix}');
         progressMessage.hide();
@@ -116,6 +118,8 @@
                 );
             }
         }
+
+        setWidthAndHeight();
     }
 
     function graph(label, root) {
@@ -257,6 +261,35 @@
     function hideTooltip(event, d) {
         tooltip.hide();
     }
+
+    $('#embeddedControls').hover(
+        function() {
+            $('#embeddedControls').css('opacity', '1.0');
+        },
+        function() {
+            $('#embeddedControls').css('opacity', '0.1');
+        }
+    );
+
+    function setWidthAndHeight() {
+        var navHeight = 0;
+
+        <c:if test="${empty iframe}">
+        if (structurizr.ui.isFullScreen()) {
+            navHeight = 0;
+        } else {
+            navHeight = $('#topNavigation').outerHeight();
+        }
+        </c:if>
+
+        var height = window.innerHeight - navHeight - margin;
+
+        $("#exploreTree").height(height);
+    }
+
+    window.addEventListener("resize", function() {
+        setWidthAndHeight();
+    }, false);
 
     function openTreeInNewWindow() {
         window.open('${urlPrefix}/explore/tree#' + encodeURIComponent(viewKey));
@@ -451,10 +484,15 @@
 </script>
 
 <c:choose>
+    <c:when test="${loadWorkspaceFromParent eq true}">
+        <script nonce="${scriptNonce}">
+            loadWorkspaceFromParent();
+        </script>
+    </c:when>
     <c:when test="${not empty workspaceAsJson}">
-<%@ include file="/WEB-INF/fragments/workspace/load-via-inline.jspf" %>
+        <%@ include file="/WEB-INF/fragments/workspace/load-via-inline.jspf" %>
     </c:when>
     <c:otherwise>
-<%@ include file="/WEB-INF/fragments/workspace/load-via-api.jspf" %>
+        <%@ include file="/WEB-INF/fragments/workspace/load-via-api.jspf" %>
     </c:otherwise>
 </c:choose>
