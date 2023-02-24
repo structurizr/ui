@@ -396,7 +396,7 @@ hr {
      display: none;
 }
 
-#exploreGraphPanel {
+#exploreGraphPanel, #exploreTreePanel {
     background: #ffffff;
 }
 

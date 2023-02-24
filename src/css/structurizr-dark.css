@@ -121,7 +121,7 @@
         display: block;
     }
 
-    #exploreGraphPanel {
+    #exploreGraphPanel, #exploreTreePanel {
         background: #111111;
     }
 

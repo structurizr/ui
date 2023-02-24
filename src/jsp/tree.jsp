@@ -4,18 +4,38 @@
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/d3-7.8.2.min.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-ui${structurizrConfiguration.versionSuffix}.js"></script>
 
-<%@ include file="/WEB-INF/fragments/tooltip.jspf" %>
+<div id="exploreTreePanel" style="overflow-y: scroll">
 
-<div id="graphs" style="margin: 10px 50px 10px 50px; padding: 20px">
+    <div id="exploreTree"></div>
 
-    <div class="centered form-inline">
-        <select id="graphSelector" class="hidden form-control" onchange="showSelectedGraph()"></select>
+    <%@ include file="/WEB-INF/fragments/tooltip.jspf" %>
+
+    <div id="embeddedControls" style="overflow: scroll; text-align: right; position: fixed; bottom: 10px; right: 10px; opacity: 0.1; z-index: 100;">
+        <button class="btn btn-default" id="enterFullScreenButton" title="Enter Full Screen [f]" onclick="structurizr.ui.enterFullScreen('exploreTreePanel')"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen.svg" class="icon-btn" /></button>
+        <button class="btn btn-default hidden" id="exitFullScreenButton" title="Exit Full Screen [Escape]" onclick="structurizr.ui.exitFullScreen()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen-exit.svg" class="icon-btn" /></button>
+        <c:if test="${workspace.id > 0 && (embed eq true && workspace.editable eq false)}">
+            <button class="btn btn-default" title="Open graph in new window" onclick="openTreeInNewWindow()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/link.svg" class="icon-btn" /></button>
+        </c:if>
     </div>
 
+    <div style="position: fixed; bottom: 10px; left: 10px;">
+        <c:choose>
+            <c:when test="${embed}">
+                <div id="treeTitle" style="color: #aaaaaa; font-size: 13px; user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; -o-user-select: none;"></div>
+            </c:when>
+            <c:otherwise>
+                <select id="viewSelector" class="form-control" onchange="showSelectedView()"></select>
+            </c:otherwise>
+        </c:choose>
+    </div>
 </div>
 
 <script nonce="${scriptNonce}">
+    var viewKey = '${view}';
+    var view;
+
     const sizes = {
+        "View": 20,
         "Model": 20,
         "Person": 18,
         "SoftwareSystem": 18,
@@ -23,7 +43,6 @@
         "Container": 14,
         "ContainerInstance": 14,
         "Component": 10,
-        "DeploymentEnvironment": 20,
         "DeploymentNode": 18,
         "InfrastructureNode": 14
     };
@@ -35,56 +54,71 @@
     }
 
     function init() {
-        const viewKey = '${view}';
-        var view;
-        var filter;
-
-        if (viewKey.length > 0) {
-            view = structurizr.workspace.findViewByKey(viewKey);
+        if (viewKey.length === 0) {
+            if (window.location.hash.length > 1) {
+                viewKey = window.location.hash.substring(1);
+            } else {
+                viewKey = structurizr.workspace.getViews()[0].key;
+            }
         }
 
-        if (view !== undefined && view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
-            filter = view.elements.map(function(e) { return e.id; });
-            const deploymentEnvironment = view.environment;
-            graph(
-                'deploymentView',
-                'Deployment: ' + deploymentEnvironment,
-                d3.hierarchy(getDeploymentEnvironmentAsTreeStructure(deploymentEnvironment, filter))
-            );
-            $('#deploymentView').removeClass('hidden');
-        } else {
-            graph(
-                'staticStructure',
-                'Static structure',
-                d3.hierarchy(getStaticStructureAsTreeStructure())
-            );
-
-            const deploymentEnvironments = [];
-            structurizr.workspace.model.deploymentNodes.forEach(function (deploymentNode) {
-                if (deploymentEnvironments.indexOf(deploymentNode.environment) === -1) {
-                    deploymentEnvironments.push(deploymentNode.environment);
-                }
-            });
-            deploymentEnvironments.sort();
-
-            var counter = 1;
-            deploymentEnvironments.forEach(function (deploymentEnvironment) {
-                graph(
-                    'deploymentEnvironment' + counter++,
-                    'Deployment: ' + deploymentEnvironment,
-                    d3.hierarchy(getDeploymentEnvironmentAsTreeStructure(deploymentEnvironment, filter))
+        <c:choose>
+        <c:when test="${embed}">
+        $('#treeTitle').text(structurizr.ui.getTitleForView(view));
+        </c:when>
+        <c:otherwise>
+        const views = structurizr.workspace.getViews();
+        views.forEach(function(view) {
+            if (
+                view.type === structurizr.constants.CUSTOM_VIEW_TYPE ||
+                view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE ||
+                view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE ||
+                view.type === structurizr.constants.CONTAINER_VIEW_TYPE ||
+                view.type === structurizr.constants.COMPONENT_VIEW_TYPE ||
+                view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
+                $('#viewSelector').append(
+                    $('<option></option>').val(view.key).html(structurizr.ui.getTitleForView(view))
                 );
-            });
+            }
+        });
+        $('#viewSelector').val(viewKey);
+        </c:otherwise>
+        </c:choose>
 
-            $('#graphSelector').removeClass('hidden');
-            $('#staticStructure').removeClass('hidden');
-        }
+        renderTree();
 
         $('#brandingLogoAnchor').attr('href', '${urlPrefix}');
         progressMessage.hide();
     }
 
-    function graph(domId, label, root) {
+    function renderTree() {
+        var treeStructure;
+
+        view = structurizr.workspace.findViewByKey(viewKey);
+        if (view !== undefined) {
+            if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
+                // find the base view instead
+                view = structurizr.workspace.findViewByKey(view.baseViewKey);
+            }
+        }
+
+        if (view !== undefined) {
+            if (view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
+                treeStructure = getDeploymentViewAsTreeStructure();
+            } else {
+                treeStructure = getStaticViewAsTreeStructure();
+            }
+
+            if (treeStructure) {
+                graph(
+                    structurizr.ui.getTitleForView(view),
+                    d3.hierarchy(treeStructure)
+                );
+            }
+        }
+    }
+
+    function graph(label, root) {
         const horizontalMargin = 50;
         const width = window.innerWidth - horizontalMargin;
         const dx = 100;
@@ -206,14 +240,7 @@
                 return d.data.name;
             });
 
-        const html = svg.node();
-
-        $('#graphs').append('<div id="'+ domId + '" class="graph exploreTree hidden" style="overflow-x: scroll"><div width="' + width + '"></div></div>');
-        $('#' + domId + ' div').html(svg.node());
-
-        $('#graphSelector').append(
-            $('<option></option>').val('#' + domId).html(label)
-        );
+        $('#exploreTree').html(svg.node());
     }
 
     function showTooltipForElement(event, d) {
@@ -231,52 +258,86 @@
         tooltip.hide();
     }
 
-    function showSelectedGraph() {
-        $('.graph').addClass('hidden')
-        const selectedGraph = $('#graphSelector').val();
-        $(selectedGraph).removeClass('hidden')
+    function openTreeInNewWindow() {
+        window.open('${urlPrefix}/explore/tree#' + encodeURIComponent(viewKey));
     }
 
-    function getStaticStructureAsTreeStructure() {
+    $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange fullscreenChange MSFullscreenChange',function(){
+        if (structurizr.ui.isFullScreen()) {
+            $('#enterFullScreenButton').addClass("hidden");
+            $('#exitFullScreenButton').removeClass("hidden");
+        } else {
+            $('#enterFullScreenButton').removeClass("hidden");
+            $('#exitFullScreenButton').addClass("hidden");
+        }
+    });
+
+    function showSelectedView() {
+        const selectedView = $('#viewSelector').val();
+        viewKey = selectedView;
+        renderTree();
+        window.location.hash = viewKey;
+    }
+
+    function getStaticViewAsTreeStructure() {
+        const filter = [];
+
+        view.elements.forEach(function(elementView) {
+            var element = structurizr.workspace.findElementById(elementView.id);
+            filter.push(element.id);
+            while (element.parentId !== undefined) {
+                if (filter.indexOf(element.parentId) === -1) {
+                    filter.push(element.parentId);
+                }
+                element = structurizr.workspace.findElementById(element.parentId);
+            }
+        });
+
         const softwareSystems = [];
 
         structurizr.workspace.model.softwareSystems.forEach(function(softwareSystem) {
-            const s = {
-                name: softwareSystem.name,
-                element: softwareSystem,
-                type: structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE,
-                style: structurizr.ui.findElementStyle(softwareSystem),
-                children: []
-            };
-            softwareSystems.push(s);
+            if (inFilter(softwareSystem, filter)) {
+                const s = {
+                    name: softwareSystem.name,
+                    element: softwareSystem,
+                    type: structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE,
+                    style: structurizr.ui.findElementStyle(softwareSystem),
+                    children: []
+                };
+                softwareSystems.push(s);
 
-            if (softwareSystem.containers) {
-                softwareSystem.containers.forEach(function (container) {
-                    const c = {
-                        name: container.name,
-                        element: container,
-                        type: structurizr.constants.CONTAINER_ELEMENT_TYPE,
-                        style: structurizr.ui.findElementStyle(container),
-                        children: []
-                    };
-                    s.children.push(c);
-
-                    if (container.components) {
-                        container.components.forEach(function (component) {
-                            const cc = {
-                                element: component,
-                                name: component.name,
-                                type: structurizr.constants.COMPONENT_ELEMENT_TYPE,
-                                style: structurizr.ui.findElementStyle(component)
+                if (softwareSystem.containers) {
+                    softwareSystem.containers.forEach(function (container) {
+                        if (inFilter(container, filter)) {
+                            const c = {
+                                name: container.name,
+                                element: container,
+                                type: structurizr.constants.CONTAINER_ELEMENT_TYPE,
+                                style: structurizr.ui.findElementStyle(container),
+                                children: []
                             };
-                            c.children.push(cc);
-                        });
+                            s.children.push(c);
 
-                        sortArrayByNameAscending(c.children);
-                    }
-                });
+                            if (container.components) {
+                                container.components.forEach(function (component) {
+                                    if (inFilter(component, filter)) {
+                                        const cc = {
+                                            element: component,
+                                            name: component.name,
+                                            type: structurizr.constants.COMPONENT_ELEMENT_TYPE,
+                                            style: structurizr.ui.findElementStyle(component)
+                                        };
+                                        c.children.push(cc);
+                                    }
+                                });
 
-                sortArrayByNameAscending(s.children);
+                                sortArrayByNameAscending(c.children);
+                            }
+                        }
+                    });
+
+                    sortArrayByNameAscending(s.children);
+                }
             }
         });
 
@@ -286,7 +347,7 @@
             name: "",
             children: softwareSystems,
             description: "",
-            type: "Model",
+            type: "View",
             style: {
                 background: '#777777',
                 stroke: '#000000'
@@ -294,11 +355,12 @@
         };
     }
 
-    function getDeploymentEnvironmentAsTreeStructure(environmentName, filter) {
+    function getDeploymentViewAsTreeStructure() {
+        const filter = view.elements.map(function(e) { return e.id; });
         const deploymentNodes = [];
 
         structurizr.workspace.model.deploymentNodes.forEach(function(deploymentNode) {
-            if (deploymentNode.environment === environmentName && inFilter(deploymentNode, filter)) {
+            if (inFilter(deploymentNode, filter)) {
                 deploymentNodes.push(getDeploymentNodeAsTreeStructure(deploymentNode, filter));
             }
 
@@ -310,7 +372,7 @@
             name: "",
             children: deploymentNodes,
             description: "",
-            type: "DeploymentEnvironment",
+            type: "View",
             style: {
                 background: '#777777',
                 stroke: '#000000'

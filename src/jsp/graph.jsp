@@ -68,7 +68,7 @@
         setWidthAndHeight();
 
         if (viewKey.length === 0) {
-            if (window.location.hash !== undefined) {
+            if (window.location.hash.length > 1) {
                 viewKey = window.location.hash.substring(1);
             } else {
                 viewKey = structurizr.workspace.getViews()[0].key;

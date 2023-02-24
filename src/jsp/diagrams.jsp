@@ -480,24 +480,15 @@
                 explorationsButton.onclick = function () {
                     const urlPrefix = '${urlPrefix}';
                     const urlSuffix = '${urlSuffix}';
-
                     window.open(urlPrefix + '/explore/graph' + urlSuffix + '#' + encodeURIComponent(view.key));
                 };
 
                 $('#explorationsButton').removeClass('hidden');
             } else if (view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
                 explorationsButton.onclick = function () {
-                    var queryString;
                     const urlPrefix = '${urlPrefix}';
                     const urlSuffix = '${urlSuffix}';
-
-                    if (urlSuffix.length === 0) {
-                        queryString = '?';
-                    } else {
-                        queryString = (urlSuffix + '&');
-                    }
-                    queryString += ('view=' + encodeURIComponent(view.key));
-                    window.open(urlPrefix + '/explore/tree' + queryString);
+                    window.open(urlPrefix + '/explore/tree' + urlSuffix + '#' + encodeURIComponent(view.key));
                 };
 
                 $('#explorationsButton').removeClass('hidden');
