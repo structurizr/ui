@@ -120,6 +120,7 @@
         }
 
         setWidthAndHeight();
+        $('#exploreTreePanel')[0].scrollBy(0, ($("#exploreTree").innerHeight()/2));
     }
 
     function graph(label, root) {
