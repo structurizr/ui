@@ -32,7 +32,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     var scale = 0.5;
     var minZoomScale = 0.1;
-    const maxZoomScale = 2;
+    const DEFAULT_MAX_ZOOM_SCALE = 2;
+    var maxZoomScale = DEFAULT_MAX_ZOOM_SCALE;
     const zoomSteps = 40;
     var zoomDelta = (maxZoomScale - minZoomScale) / zoomSteps;
     var pageSizeDelta = 100;
@@ -449,9 +450,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             if (imageMetadata.error) {
                 content = '/static/img/image-not-available.png';
+                imageMetadata.contentType = structurizr.constants.CONTENT_TYPE_IMAGE_PNG;
                 imageMetadata.width = 200;
                 imageMetadata.height = 100;
                 imageMetadata.ratio = 2;
+            } else {
+                imageMetadata.contentType = view.contentType;
             }
 
             const image = new structurizr.shapes.ImageView({
@@ -487,6 +491,9 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 minZoomScale = scale;
                 zoomDelta = (maxZoomScale - minZoomScale) / zoomSteps;
             } else {
+                if (imageMetadata.contentType === structurizr.constants.CONTENT_TYPE_IMAGE_SVG) {
+                    maxZoomScale = 10;
+                }
                 self.zoomToWidthOrHeight();
             }
 
@@ -948,6 +955,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             minZoomScale = scale;
             zoomDelta = (maxZoomScale - minZoomScale) / zoomSteps;
         } else {
+            maxZoomScale = DEFAULT_MAX_ZOOM_SCALE;
             self.zoomToWidthOrHeight();
         }
 
@@ -1310,8 +1318,22 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
     };
 
-    function setMinimumZoomAndMargins() {
+    function setZoomAndMargins() {
         minZoomScale = scale;
+
+        if (currentView.type === structurizr.constants.IMAGE_VIEW_TYPE) {
+            const imageMetadata = getImageMetadata(currentView.content);
+            if (imageMetadata.contentType === structurizr.constants.CONTENT_TYPE_IMAGE_SVG) {
+                const maxWidth = self.getPossibleViewportWidth();
+                const maxHeight = self.getPossibleViewportHeight();
+                maxZoomScale = 2 * Math.max(maxWidth / imageMetadata.width, maxHeight / imageMetadata.height);
+            } else {
+                maxZoomScale = 1;
+            }
+        } else {
+            maxZoomScale = DEFAULT_MAX_ZOOM_SCALE;
+        }
+
         zoomDelta = (maxZoomScale - minZoomScale) / zoomSteps;
 
         var minimumWidth = minZoomScale * diagramWidth;
@@ -4636,7 +4658,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             this.zoomFitWidth();
         }
 
-        setMinimumZoomAndMargins();
+        setZoomAndMargins();
     };
 
     this.resize = function() {
@@ -5208,7 +5230,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         canvasContext.fillStyle = canvasColor;
                         canvasContext.fillRect(0, 0, myCanvas.width, myCanvas.height);
 
-                        callback(myCanvas.toDataURL("image/png"));
+                        callback(myCanvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG));
                     }
                 });
         } else {
@@ -5218,7 +5240,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             canvasContext.fillStyle = canvasColor;
             canvasContext.fillRect(0, 0, myCanvas.width, myCanvas.height);
 
-            return myCanvas.toDataURL("image/png");
+            return myCanvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG);
         }
     }
 
@@ -5327,7 +5349,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         canvasContext.fillStyle = canvasColor;
                         canvasContext.fillRect(0, 0, myCanvas.width, myCanvas.height);
 
-                        callback(myCanvas.toDataURL("image/png"));
+                        callback(myCanvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG));
                     }
                 });
         } else {
@@ -5337,7 +5359,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             canvasContext.fillStyle = canvasColor;
             canvasContext.fillRect(0, 0, myCanvas.width, myCanvas.height);
 
-            return myCanvas.toDataURL("image/png");
+            return myCanvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG);
         }
     };
 

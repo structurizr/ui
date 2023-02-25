@@ -27,5 +27,9 @@ var structurizr = structurizr || {
 
         DEFAULT_DEPLOYMENT_ENVIRONMENT_NAME: "Default",
 
+        CONTENT_TYPE_IMAGE_SVG: 'image/svg+xml',
+        CONTENT_TYPE_IMAGE_PNG: 'image/png',
+        CONTENT_TYPE_IMAGE_JPG: 'image/jpeg',
+
     }
 };
