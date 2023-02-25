@@ -98,7 +98,7 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix)
             if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
                 const content = view.content;
                 const title = view.title;
-                return '<div style="text-align: center"><img src="' + content + '" alt="' + title + '" class="img-thumbnail" /><br />' + title + '</div>';
+                return '<div style="text-align: center"><img src="' + content + '" alt="' + title + '" class="img-thumbnail" style="max-height: ' + (window.innerHeight * 0.8) + 'px" /><br />' + title + '</div>';
             } else {
                 // embed the specified diagram
                 var id = 'structurizrEmbed' + (++embedIndex);
@@ -133,9 +133,9 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix)
         }
 
         if (image) {
-            return '<div style="text-align: center"><img src="data:' + image.type + ';base64,' + image.content + '" alt="' + alt + '" class="img-thumbnail" />' + imageTitle + '</div>';
+            return '<div style="text-align: center"><img src="data:' + image.type + ';base64,' + image.content + '" alt="' + alt + '" class="img-thumbnail" style="max-height: ' + (window.innerHeight * 0.8) + 'px" />' + imageTitle + '</div>';
         } else {
-            return '<div style="text-align: center"><img src="' + name + '" alt="' + alt + '" class="img-thumbnail" />' + imageTitle + '</div>';
+            return '<div style="text-align: center"><img src="' + name + '" alt="' + alt + '" class="img-thumbnail" style="max-height: ' + (window.innerHeight * 0.8) + 'px" />' + imageTitle + '</div>';
         }
     }
 
