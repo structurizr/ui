@@ -224,16 +224,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             getImagesToPreload().forEach(function(url) {
                 if (getImageMetadata(url) === undefined) {
-                    if (url.indexOf('.svg') > -1) {
-                        console.log('Ignoring ' + url + ' - SVG icons are not supported');
-                        structurizr.ui.ignoredImages.push(url);
-                    } else {
-                        imageMetadata.push({
-                            src: url,
-                            loaded: false,
-                            error: false
-                        });
-                    }
+                    imageMetadata.push({
+                        src: url,
+                        loaded: false,
+                        error: false
+                    });
                 }
             });
 
