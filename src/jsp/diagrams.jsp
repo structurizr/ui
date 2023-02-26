@@ -75,6 +75,8 @@
 
     <div class="col-sm-10" style="padding: 0">
         <div id="diagram" tabindex="1" style="position: relative">
+            <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
+            <%@ include file="/WEB-INF/fragments/diagrams/key.jspf" %>
             <%@ include file="/WEB-INF/fragments/quick-navigation.jspf" %>
             <%@ include file="/WEB-INF/fragments/tooltip.jspf" %>
             <%@ include file="/WEB-INF/fragments/diagrams/navigation.jspf" %>
@@ -114,8 +116,6 @@
     </c:if>
 </div>
 
-<%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
-<%@ include file="/WEB-INF/fragments/diagrams/key.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/embed.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/export.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/publish.jspf" %>
