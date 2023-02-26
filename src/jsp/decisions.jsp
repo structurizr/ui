@@ -406,8 +406,22 @@
             if (graph) {
                 highlightDecisionInGraph(decision);
             }
+
+            rewriteInternalWorkspaceLinks();
             highlightNavigation();
         }
+    }
+
+    function rewriteInternalWorkspaceLinks() {
+        $('#decisionLogContent a').each(function () {
+            var href = $(this).attr('href');
+            href = decodeURIComponent(href);
+            if (href.indexOf(structurizr.constants.WORKSPACE_URL_PREFIX) === 0) {
+                // convert {workspace}/doc... to /workspace/1234/doc...
+                href = '${urlPrefix}' + href.substring(structurizr.constants.WORKSPACE_URL_PREFIX.length) + '${urlSuffix}';
+                $(this).attr('href', href)
+            }
+        });
     }
 
     function changeDecision(evt) {

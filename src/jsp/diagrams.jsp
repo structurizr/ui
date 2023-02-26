@@ -1001,11 +1001,27 @@
         $('#reviewModal').modal();
     }
 
+    function processInternalWorkspaceLink(url) {
+        if (url !== undefined) {
+            if (url.indexOf(structurizr.constants.WORKSPACE_URL_PREFIX + '/diagrams#') === 0) {
+                // convert {workspace}/diagrams#key to #key
+                url = url.substring((structurizr.constants.WORKSPACE_URL_PREFIX + '/diagrams').length);
+            } else if (url.indexOf(structurizr.constants.WORKSPACE_URL_PREFIX) === 0) {
+                // convert {workspace}/doc... to /workspace/1234/doc...
+                url = '${urlPrefix}' + url.substring(structurizr.constants.WORKSPACE_URL_PREFIX.length) + '${urlSuffix}';
+            }
+        }
+
+        return url;
+    }
+
     function elementDoubleClicked(evt, elementId) {
         const element = structurizr.workspace.findElementById(elementId);
         if (element) {
-            if (evt.altKey === true && element.url !== undefined) {
-                window.open(element.url);
+            var elementUrl = processInternalWorkspaceLink(element.url);
+
+            if (evt.altKey === true && elementUrl !== undefined) {
+                navigateTo(elementUrl);
                 return;
             }
 
@@ -1049,19 +1065,23 @@
                 });
             }
 
-            if (element.url !== undefined) {
+            if (elementUrl !== undefined) {
+                var label = elementUrl;
+                if (elementUrl.indexOf('#') === 0) {
+                    const key = elementUrl.substring(1);
+                    const view = structurizr.workspace.findViewByKey(key);
+                    if (view) {
+                        label = structurizr.ui.getTitleForView(view) + ' (#' + view.key + ')'
+                    }
+                }
                 options.push({
-                    url: element.url,
-                    label: element.url
+                    url: elementUrl,
+                    label: label
                 });
             }
 
             if (options.length === 1) {
-                if (options[0].url.indexOf('#') === 0) {
-                    window.location = options[0].url;
-                } else {
-                    window.open(options[0].url);
-                }
+                navigateTo(options[0].url);
             } else {
                 openNavigationModal(options);
             }
@@ -1082,7 +1102,8 @@
     function relationshipDoubleClicked(evt, relationshipId) {
         const relationship = structurizr.workspace.findRelationshipById(relationshipId);
         if (relationship && relationship.url) {
-            window.open(relationship.url);
+            const relationshipUrl = processInternalWorkspaceLink(relationship.url);
+            navigateTo(relationshipUrl);
         }
     }
 
