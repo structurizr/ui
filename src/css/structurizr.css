@@ -400,7 +400,7 @@ hr {
     background: #ffffff;
 }
 
-.exploreTree text {
+#exploreGraph text, #exploreTree text {
     fill: #000000;
     stroke: #ffffff;
     paint-order: stroke;

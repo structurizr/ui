@@ -125,7 +125,7 @@
         background: #111111;
     }
 
-    .exploreTree text {
+    #exploreGraph text, #exploreTree text {
         fill: #eeeeee;
         stroke: #111111;
         paint-order: stroke;
