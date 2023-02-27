@@ -49,7 +49,6 @@
                     <button type="button" class="btn btn-default" onclick="exportCurrentView()">Export current diagram</button>
                     <button id="exportSelectedViewsButton" type="button" class="btn btn-default" onclick="exportSelectedViews()">Export selected diagrams</button>
                     <button id="exportAllViewsButton" type="button" class="btn btn-default" onclick="exportAllViews()">Export all diagrams</button>
-                    <button id="publishAllViewsButton" type="button" class="btn btn-default hidden" onclick="publishAllViews()">Publish all diagrams</button>
                 </div>
 
                 <div id="exportAnimation" class="centered hidden" style="margin-top: 5px">
@@ -101,10 +100,6 @@
         $('#exportViewList').addClass('hidden');
         $('#exportSelectedViewsButton').addClass('hidden');
         $('#exportAllViewsButton').addClass('hidden');
-        </c:if>
-
-        <c:if test="${embed ne true && workspace.editable && (workspace.open || workspace.shareable) && not workspace.clientEncrypted && structurizrConfiguration.product ne 'lite'}">
-        $('#publishAllViewsButton').removeClass('hidden');
         </c:if>
     }
 
@@ -303,12 +298,6 @@
                 linkKey.click();
             }
         }
-
-            // if (publish) {
-            //     putImage(structurizr.workspace.id, viewKey, viewKey + '-key.png', diagramKeyAsPng, function (diagramKey) {
-            //     });
-            // }
-        // });
     }
 
     function exportDiagramsToSVG(viewsToExport, includeDiagramMetadata, download, originalViewKey) {
@@ -385,18 +374,6 @@
 
             if (download) {
                 linkKey.click();
-            }
-        }
-    }
-
-    function publishAllViews() {
-        $('#exportedDiagrams').empty();
-        $('#exportAnimation').addClass('hidden');
-
-        var selectedValues = $("#exportViewList option").map(function() {return $(this).val();}).get();
-        if (selectedValues) {
-            if (exportFormat === 'png') {
-                structurizr.diagram.exportDiagramsToPNG(selectedValues, true, false, false, false, true);
             }
         }
     }
