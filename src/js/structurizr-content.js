@@ -7,7 +7,9 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix)
     var images = workspace.documentation.images;
     var embedIndex = 0;
 
-    var md = window.markdownit();
+    var md = window.markdownit({
+        html: false
+    });
 
     md.renderer.rules.image = function(tokens, idx, options, env, self) {
         var token = tokens[idx];
