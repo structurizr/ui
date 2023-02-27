@@ -95,7 +95,8 @@
                 structurizr.workspace,
                 '${structurizrConfiguration.cdnUrl}',
                 '${urlPrefix}',
-                '${urlSuffix}');
+                '${urlSuffix}',
+                ${structurizrConfiguration.safeMode});
 
             init();
             renderNavigation();

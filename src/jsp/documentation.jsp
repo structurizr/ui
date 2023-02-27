@@ -113,7 +113,8 @@
                 structurizr.workspace,
                 '${structurizrConfiguration.cdnUrl}',
                 '${urlPrefix}',
-                '${urlSuffix}');
+                '${urlSuffix}',
+                ${structurizrConfiguration.safeMode});
 
             structurizr.scripting = new function() {
                 this.exportDocumentationToOfflineHtmlPage = function (callback) {

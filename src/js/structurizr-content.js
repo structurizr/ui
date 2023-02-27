@@ -1,14 +1,14 @@
 // this code renders the following items in Markdown/AsciiDoc documentation:
 // - images that are embedded in the workspace (as base64 data uris)
 // - diagrams from the workspace (as iframe embeds)
-structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix) {
+structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix, safeMode) {
 
     const MAX_HEIGHT_PERCENTAGE = 0.8;
     var images = workspace.documentation.images;
     var embedIndex = 0;
 
     var md = window.markdownit({
-        html: false
+        html: !safeMode
     });
 
     md.renderer.rules.image = function(tokens, idx, options, env, self) {
@@ -162,11 +162,17 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix)
     this.render = function(section) {
         if (section.format && section.format === "AsciiDoc") {
 
+            const inlinePassthroughRegex = /.*pass:.*\[/g;
+
             var preparsedContent = "";
             var lines = section.content.split('\n');
             for (var i = 0; i < lines.length; i++){
                 var line = lines[i];
-                if (line.startsWith("image::embed:")) {
+                if (safeMode && (line.trim() === "[pass]" || line.trim() === "++++")) {
+                    // skip passthroughs
+                } else if (safeMode && line.match(inlinePassthroughRegex)) {
+                    preparsedContent += line.replaceAll(inlinePassthroughRegex, "[");
+                } else if (line.startsWith("image::embed:")) {
                     var altTagStartIndex = line.indexOf("[");
                     var diagramIdentifier = line.substring("image::embed:".length, altTagStartIndex);
                     preparsedContent += ("pass:[" + renderEmbeddedDiagram(diagramIdentifier) + "]");
