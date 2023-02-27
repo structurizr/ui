@@ -376,7 +376,18 @@
     }
 
     function formatDate(dateAsString) {
-        return new Date(dateAsString).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const timezone = structurizr.workspace.views.configuration.properties['structurizr.timezone'];
+        const locale = structurizr.workspace.views.configuration.properties['structurizr.locale'];
+
+        return new Date(dateAsString).toLocaleDateString(
+            locale,
+            {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: timezone
+            });
     }
 
     function createStatusLabel(decision, includeText) {
