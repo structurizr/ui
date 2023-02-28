@@ -49,6 +49,7 @@
                     <button type="button" class="btn btn-default" onclick="exportCurrentView()">Export current diagram</button>
                     <button id="exportSelectedViewsButton" type="button" class="btn btn-default" onclick="exportSelectedViews()">Export selected diagrams</button>
                     <button id="exportAllViewsButton" type="button" class="btn btn-default" onclick="exportAllViews()">Export all diagrams</button>
+                    <button id="publishAllViewsButton" type="button" class="btn btn-default hidden" onclick="publishAllViews()">Publish all diagrams</button>
                 </div>
 
                 <div id="exportAnimation" class="centered hidden" style="margin-top: 5px">
@@ -100,6 +101,10 @@
         $('#exportViewList').addClass('hidden');
         $('#exportSelectedViewsButton').addClass('hidden');
         $('#exportAllViewsButton').addClass('hidden');
+        </c:if>
+
+        <c:if test="${embed ne true && fn:startsWith(urlPrefix, '/workspace') && (workspace.open || workspace.shareable) && not workspace.clientEncrypted && structurizrConfiguration.product eq 'onpremises'}">
+        $('#publishAllViewsButton').removeClass('hidden');
         </c:if>
     }
 
