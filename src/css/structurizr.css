@@ -467,7 +467,7 @@ hr {
 }
 
 #progressMessage {
-    position: absolute;
+    position: fixed;
     z-index: 10;
     width: 400px;
     opacity: .80;
