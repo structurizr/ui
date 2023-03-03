@@ -3,8 +3,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     const self = this;
     const font = structurizr.ui.getBranding().font;
     const gridSize = 5;
-    const defaultIconHeight = 80;
-    const iconPadding = 10;
+    const DEFAULT_ICON_HEIGHT = 60;
+    const ICON_PADDING = 5;
     const nameFontSizeDifference = +10;
     const metaDataFontSizeDifference = -5;
     const navigationPadding = 15;
@@ -980,11 +980,16 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     function addDoubleClickHandlerForElement(cellView, element) {
         var domElement = $('#' + cellView.id);
-        var navigation = '';
         var views = [];
         var documentation = false;
         var decisions = false;
         var url = element.url;
+
+        if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE) {
+            element = structurizr.workspace.findElementById(element.softwareSystemId);
+        } else if (element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE) {
+            element = structurizr.workspace.findElementById(element.containerId);
+        }
 
         if (element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
             if (currentView.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || currentView.softwareSystemId !== element.id) {
@@ -1003,24 +1008,72 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         if (url !== undefined) {
             domElement.attr('style', 'cursor: pointer !important');
-            navigation += '#';
+        }
+
+        var translateX = 5;
+        var translateXDelta = 25;
+        if (views.length > 0) {
+            const svg =
+                '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">' +
+                '<path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>' +
+                '<path d="M10.344 11.742c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1 6.538 6.538 0 0 1-1.398 1.4z"/>' +
+                '<path fill-rule="evenodd" d="M6.5 3a.5.5 0 0 1 .5.5V6h2.5a.5.5 0 0 1 0 1H7v2.5a.5.5 0 0 1-1 0V7H3.5a.5.5 0 0 1 0-1H6V3.5a.5.5 0 0 1 .5-.5z"/>' +
+                '</svg>';
+
+            $('#' + cellView.id + " .structurizrZoom").html(svg);
+            $('#' + cellView.id + " .structurizrZoom").attr('transform', 'translate(' + translateX + ' 0)');
+            translateX += translateXDelta;
+        }
+
+        if (documentation) {
+            const svg =
+                '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">' +
+                '<path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>' +
+                '</svg>';
+
+            $('#' + cellView.id + " .structurizrDocumentation").html(svg);
+            $('#' + cellView.id + " .structurizrDocumentation").attr('transform', 'translate(' + translateX + ' 0)');
+            translateX += translateXDelta;
+        }
+
+        if (decisions) {
+            const svg =
+                '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">' +
+                '<path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>' +
+                '<path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>' +
+                '<path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>' +
+                '</svg>';
+
+            $('#' + cellView.id + " .structurizrDecisions").html(svg);
+            $('#' + cellView.id + " .structurizrDecisions").attr('transform', 'translate(' + translateX + ' 0)');
+            translateX += translateXDelta;
+        }
+
+        if (url) {
+            const svg =
+                '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">' +
+                '<path d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9c-.086 0-.17.01-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z"/>' +
+                '<path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4.02 4.02 0 0 1-.82 1H12a3 3 0 1 0 0-6H9z"/>' +
+                '</svg>';
+
+            $('#' + cellView.id + " .structurizrLink").html(svg);
+            $('#' + cellView.id + " .structurizrLink").attr('transform', 'translate(' + translateX + ' 0)');
+            translateX += translateXDelta;
         }
 
         if (views.length > 0 || documentation || decisions) {
             domElement.attr('style', 'cursor: zoom-in !important');
-            navigation = '+' + navigation;
         }
+
+        const width = cellView.model._computedStyle.width;
+        const navigationRefX = (((width - translateX) / 2) / width);
+        cellView.model.attr('.structurizrNavigation/ref-x', navigationRefX);
 
         domElement.dblclick(function(event) {
             if (elementDoubleClickedHandler !== undefined) {
                 elementDoubleClickedHandler(event, element.id);
             }
         });
-
-        if (cellView.model.attr('.structurizrNavigation')) {
-            cellView.model.attr('.structurizrNavigation/text', navigation);
-            $('#' + cellView.id + " .structurizrNavigation").attr('display', 'block');
-        }
     }
 
     function addDoubleClickHandlerForRelationship(linkView, relationship) {
@@ -1399,39 +1452,87 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         return configuration.width * 0.07;
     }
 
+    function renderElementInternals(element, cell, configuration, width, horizontalPadding, height, verticalOffset) {
+        var internalPadding = 10;
+
+        var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
+        var color = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
+        var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
+        var navigationColor = color;
+
+        var name = formatName(element, configuration, horizontalPadding);
+        var metadata = formatMetaData(element, configuration, horizontalPadding);
+        var description = formatDescription(element, configuration, horizontalPadding);
+
+        var heightOfNameLabel = calculateHeight(name, configuration.fontSize, nameFontSizeDifference, false);
+        var heightOfMetaDataLabel = calculateHeight(metadata, configuration.fontSize, metaDataFontSizeDifference, false) + internalPadding;
+        var heightOfDescriptionLabel = calculateHeight(description, configuration.fontSize, 0, false);
+        var heightOfIcon = 0;
+        if (configuration.icon !== undefined) {
+            heightOfDescriptionLabel +=  + internalPadding;
+            heightOfIcon = DEFAULT_ICON_HEIGHT + ICON_PADDING;
+        }
+        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfDescriptionLabel + heightOfIcon;
+
+        var nameRefY =          (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
+        var metaDataRefY =      (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
+        var descriptionRefY =   (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
+        var iconRefY =          (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfDescriptionLabel + (height - totalHeightOfLabels) / 2) / height;
+        var navigationRefY =    (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfDescriptionLabel + heightOfIcon + internalPadding + ((height - totalHeightOfLabels) / 2)) / height;
+
+        if (configuration.icon) {
+            var iconRatio = getImageRatio(configuration.icon);
+            var widthOfIcon = ((heightOfIcon-ICON_PADDING) * iconRatio);
+            var iconRefX = (((width - widthOfIcon) / 2) / width);
+
+            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
+            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
+            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-ICON_PADDING);
+            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
+            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
+            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
+        }
+
+        cell.attributes.attrs['.structurizrName']['text'] = name;
+        cell.attributes.attrs['.structurizrName']['font-family'] = font.name;
+        cell.attributes.attrs['.structurizrName']['fill'] = color;
+        cell.attributes.attrs['.structurizrName']['font-size'] = configuration.fontSize+nameFontSizeDifference;
+        cell.attributes.attrs['.structurizrName']['ref-y'] = nameRefY;
+        cell.attributes.attrs['.structurizrName']['lineHeight'] = lineHeight;
+
+        cell.attributes.attrs['.structurizrMetaData']['text'] = metadata;
+        cell.attributes.attrs['.structurizrMetaData']['font-family'] = font.name;
+        cell.attributes.attrs['.structurizrMetaData']['fill'] = color;
+        cell.attributes.attrs['.structurizrMetaData']['font-size'] = configuration.fontSize+metaDataFontSizeDifference;
+        cell.attributes.attrs['.structurizrMetaData']['ref-y'] = metaDataRefY;
+        cell.attributes.attrs['.structurizrMetaData']['lineHeight'] = lineHeight;
+
+        cell.attributes.attrs['.structurizrDescription']['text'] = description;
+        cell.attributes.attrs['.structurizrDescription']['font-family'] = font.name;
+        cell.attributes.attrs['.structurizrDescription']['fill'] = color;
+        cell.attributes.attrs['.structurizrDescription']['font-size'] = configuration.fontSize;
+        cell.attributes.attrs['.structurizrDescription']['ref-y'] = descriptionRefY;
+        cell.attributes.attrs['.structurizrDescription']['lineHeight'] = lineHeight;
+
+        cell.attributes.attrs['.structurizrNavigation']['color'] = navigationColor;
+        cell.attributes.attrs['.structurizrNavigation']['opacity'] = 0.75;
+        cell.attributes.attrs['.structurizrNavigation']['ref-y'] = navigationRefY;
+
+        cell._computedStyle = {};
+        cell._computedStyle.width = width;
+        cell._computedStyle.height = height;
+        cell._computedStyle.background = fill;
+        cell._computedStyle.color = color;
+        cell._computedStyle.borderStyle = configuration.border;
+        cell._computedStyle.stroke = stroke;
+        cell._computedStyle.opacity = configuration.opacity;
+    }
+    
     function createBox(view, element, configuration, x, y, cornerRadius) {
         var width = configuration.width;
         var height = configuration.height;
 
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, configuration, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, configuration, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, configuration, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfDescriptionLabel + heightOfIcon;
-
-        var verticalOffset = 0;
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
-
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         var cell = new structurizr.shapes.Box({
@@ -1452,38 +1553,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     height: height,
                     rx: cornerRadius,
                     ry: cornerRadius
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+nameFontSizeDifference,
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize,
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+metaDataFontSizeDifference,
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -1493,31 +1562,15 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrBox']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
 
     function createEllipse(view, element, configuration, x, y, circle) {
-        var verticalOffset = 0;
-
         if (circle) {
             configuration.height = configuration.width;
         }
@@ -1525,41 +1578,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var width = configuration.width;
         var height = configuration.height;
 
-        var config = {
-            width: configuration.width * 0.8,
-            height: configuration.height,
-            fontSize: configuration.fontSize,
-            metadata: configuration.metadata,
-            description: configuration.description
-        };
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, config, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, config, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, config, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
-
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
-
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         var cell = new structurizr.shapes.Ellipse({
@@ -1580,38 +1599,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     cy: configuration.height/2,
                     rx: configuration.width/2,
                     ry: configuration.height/2
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+nameFontSizeDifference,
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize,
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+metaDataFontSizeDifference,
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -1621,65 +1608,17 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrEllipse']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
 
     function createHexagon(view, element, configuration, x, y) {
-        var verticalOffset = 0;
         var width = Math.floor((configuration.width/2) * Math.sqrt(3));
         var height = Math.floor((configuration.width/2) * Math.sqrt(3));
-
-        var config = {
-            width: configuration.width * 0.90,
-            height: configuration.height,
-            fontSize: configuration.fontSize,
-            metadata: configuration.metadata,
-            description: configuration.description
-        };
-        var elementPadding = calculateElementPadding(configuration) * 3;
-        var nameLabel = formatName(element, config, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, config, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, config, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
-
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
 
         var points =    (configuration.width/4) + ",0 " +
                         (3*(configuration.width/4)) + ",0 " +
@@ -1689,7 +1628,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         "0," + (height/2);
 
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         var cell = new structurizr.shapes.Hexagon({
@@ -1707,38 +1645,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     stroke: stroke,
                     'stroke-width': configuration.strokeWidth,
                     points: points
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+nameFontSizeDifference,
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize,
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+metaDataFontSizeDifference,
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -1748,65 +1654,17 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrHexagon']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, width, width * 0.2, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
 
     function createDiamond(view, element, configuration, x, y) {
-        var verticalOffset = 0;
         var width = configuration.width;
         var height = configuration.height;
-
-        var config = {
-            width: configuration.width * 0.90,
-            height: configuration.height,
-            fontSize: configuration.fontSize,
-            metadata: configuration.metadata,
-            description: configuration.description
-        };
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, config, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, config, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, config, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
-
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
 
         var points =
             (width/2) + ",0 " +
@@ -1815,7 +1673,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             "0," + (height/2);
 
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         var cell = new structurizr.shapes.Diamond({
@@ -1833,38 +1690,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     stroke: stroke,
                     'stroke-width': configuration.strokeWidth,
                     points: points
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+nameFontSizeDifference,
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize,
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+metaDataFontSizeDifference,
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -1874,61 +1699,19 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrDiamond']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, width, width * 0.3, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
 
     function createPerson(view, element, configuration, x, y) {
-        var verticalOffset = 0;
         var width = configuration.width;
         var height = configuration.width - (configuration.width/2.5);
 
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, configuration, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, configuration, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, configuration, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
-
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
-
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         var cell = new structurizr.shapes.Person({
@@ -1944,7 +1727,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrPersonHead': {
                     fill: fill,
                     stroke: stroke,
-                    'stroke-width': configuration.strokeWidth,
                     'stroke-width': configuration.strokeWidth,
                     cx: configuration.width/2,
                     cy: configuration.width/4.5,
@@ -1974,38 +1756,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     y1: configuration.width/1.5,
                     x2: configuration.width-(configuration.width/5),
                     y2: configuration.width
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': (configuration.fontSize + nameFontSizeDifference) + 'px',
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize + 'px',
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': (configuration.fontSize + metaDataFontSizeDifference) + 'px',
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -2018,61 +1768,19 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrPersonLeftArm']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
 
     function createRobot(view, element, configuration, x, y) {
-        var verticalOffset = 0;
         var width = configuration.width;
         var height = configuration.width - (configuration.width/2.5);
 
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, configuration, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, configuration, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, configuration, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
-
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
-
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         var cell = new structurizr.shapes.Robot({
@@ -2127,38 +1835,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     y1: configuration.width/1.5,
                     x2: configuration.width-(configuration.width/5),
                     y2: configuration.width
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': (configuration.fontSize + nameFontSizeDifference) + 'px',
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize + 'px',
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': (configuration.fontSize + metaDataFontSizeDifference) + 'px',
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -2171,62 +1847,20 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrRobotLeftArm']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
 
     function createCylinder(view, element, configuration, x, y) {
         var ry = 60;
-        var verticalOffset = 0;
         var width = configuration.width;
         var height = configuration.height - (ry/2);
 
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, configuration, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, configuration, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, configuration, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
-
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
-
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         // M 0,10
@@ -2265,38 +1899,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     height: (configuration.height - (ry/2)),
                     x: 0,
                     y: (ry/2)
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': (configuration.fontSize + nameFontSizeDifference) + 'px',
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize + 'px',
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': (configuration.fontSize + metaDataFontSizeDifference) + 'px',
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -2306,63 +1908,20 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrCylinderPath']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 15);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
 
     function createPipe(view, element, configuration, x, y) {
         var rx = 60;
-        var horizontalOffset = rx/2;
         var width = configuration.width - (rx/2);
         var height = configuration.height;
-        var verticalOffset = 0;
-
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, configuration, elementPadding + (2 * rx), elementPadding);
-        var metaDataLabel = formatMetaData(element, configuration, elementPadding + (2 * rx), elementPadding);
-        var descriptionLabel = formatDescription(element, configuration, elementPadding + (2 * rx), elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
-
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
 
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         // M 10,0
@@ -2401,38 +1960,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     height: configuration.height,
                     x: (rx/2),
                     y: 0
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': (configuration.fontSize + nameFontSizeDifference) + 'px',
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize + 'px',
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': (configuration.fontSize + metaDataFontSizeDifference) + 'px',
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -2442,63 +1969,21 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrPipePath']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
 
     function createFolder(view, element, configuration, x, y) {
-        var verticalOffset = 0;
         var tabHeight = configuration.height/8;
         var tabWidth = configuration.width/3;
         var width = configuration.width;
         var height = configuration.height - tabHeight;
 
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, configuration, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, configuration, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, configuration, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
-
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
-
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         var cell = new structurizr.shapes.Folder({
@@ -2532,38 +2017,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     height: height,
                     rx: 5,
                     ry: 5
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+nameFontSizeDifference,
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize,
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+metaDataFontSizeDifference,
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -2574,24 +2027,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrFolder']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
@@ -2602,43 +2041,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var blockWidth = width / 6;
         var blockHeight = height / 8;
 
-        var config = {
-            width: configuration.width - blockWidth,
-            height: configuration.height,
-            fontSize: configuration.fontSize,
-            metadata: configuration.metadata,
-            description: configuration.description
-        };
-
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, config, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, config, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, config, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfDescriptionLabel + heightOfIcon;
-
-        var verticalOffset = 0;
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
-
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         var cell = new structurizr.shapes.Component({
@@ -2682,38 +2085,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     height: blockHeight,
                     rx: 5,
                     ry: 5
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+nameFontSizeDifference,
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize,
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+metaDataFontSizeDifference,
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -2725,61 +2096,21 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrComponentBlockBottom']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
 
     function createWebBrowser(view, element, configuration, x, y) {
-        var verticalOffset = 20;
         var width = configuration.width;
         var height = configuration.height;
-
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, configuration, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, configuration, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, configuration, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
-
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
+        var webBrowserPanelWidth = configuration.width - 20;
+        var webBrowserPanelHeight = height - 50;
 
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         var cell = new structurizr.shapes.WebBrowser({
@@ -2803,8 +2134,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrWebBrowserPanel': {
                     fill: fill,
                     stroke: stroke,
-                    width: configuration.width - 20,
-                    height: height - 50,
+                    width: webBrowserPanelWidth,
+                    height: webBrowserPanelHeight,
                     x: 10,
                     y: 40,
                     rx: 10,
@@ -2839,38 +2170,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     cy: 20,
                     rx: 10,
                     ry: 10
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+nameFontSizeDifference,
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize,
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+metaDataFontSizeDifference,
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -2880,61 +2179,21 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrWebBrowser']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, webBrowserPanelWidth, webBrowserPanelWidth * 0.1, webBrowserPanelHeight, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
 
     function createWindow(view, element, configuration, x, y) {
-        var verticalOffset = 20;
         var width = configuration.width;
         var height = configuration.height;
-
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, configuration, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, configuration, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, configuration, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
-
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
+        var windowPanelWidth = width - 20;
+        var windowPanelHeight = height - 50;
 
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         var cell = new structurizr.shapes.Window({
@@ -2958,8 +2217,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrWindowPanel': {
                     fill: fill,
                     stroke: stroke,
-                    width: configuration.width - 20,
-                    height: height - 50,
+                    width: windowPanelWidth,
+                    height: windowPanelHeight,
                     x: 10,
                     y: 40,
                     rx: 10,
@@ -2985,38 +2244,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     cy: 20,
                     rx: 10,
                     ry: 10
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+nameFontSizeDifference,
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize,
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+metaDataFontSizeDifference,
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -3026,69 +2253,19 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrWindow']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, windowPanelWidth, windowPanelWidth * 0.1, windowPanelHeight, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
 
     function createMobileDevicePortrait(view, element, configuration, x, y) {
-        var verticalOffset = 0;
         var width = configuration.width;
         var height = configuration.height;
 
-        var config = {
-            width: configuration.width * 0.95,
-            height: configuration.height,
-            fontSize: configuration.fontSize,
-            metadata: configuration.metadata,
-            description: configuration.description
-        };
-
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, config, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, config, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, config, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
-
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
-
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         var speakerLength = 50;
@@ -3134,38 +2311,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     y1: 20,
                     x2: configuration.width - ((configuration.width - speakerLength) / 2),
                     y2: 20
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+nameFontSizeDifference,
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize,
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+metaDataFontSizeDifference,
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -3175,24 +2320,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrMobileDevice']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
@@ -3201,34 +2332,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var width = configuration.width;
         var height = configuration.height;
 
-        var elementPadding = calculateElementPadding(configuration);
-        var nameLabel = formatName(element, configuration, elementPadding, elementPadding);
-        var metaDataLabel = formatMetaData(element, configuration, elementPadding, elementPadding);
-        var descriptionLabel = formatDescription(element, configuration, elementPadding, elementPadding);
-
-        var heightOfNameLabel = calculateHeight(nameLabel, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metaDataLabel, configuration.fontSize, metaDataFontSizeDifference, (configuration.icon === undefined && descriptionLabel.length > 0));
-        var heightOfIcon = (configuration.icon !== undefined ? defaultIconHeight + iconPadding : 0);
-        var heightOfDescriptionLabel = calculateHeight(descriptionLabel, configuration.fontSize, 0, false);
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + heightOfDescriptionLabel;
-
-        var verticalOffset = 0;
-        var nameRefY = (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY = (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-
-        var iconRefX = 0;
-        var iconRefY = 0;
-
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-iconPadding) * iconRatio);
-            iconRefX = (((width - widthOfIcon) / 2) / width);
-            iconRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        }
-        var descriptionRefY = (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfIcon + ((height - totalHeightOfLabels) / 2)) / height;
-
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
 
         var speakerLength = 50;
@@ -3274,38 +2378,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     y1: (configuration.height - speakerLength) / 2,
                     x2: configuration.width - 20,
                     y2: configuration.height - ((configuration.height - speakerLength) / 2)
-                },
-                '.structurizrName': {
-                    text: nameLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+nameFontSizeDifference,
-                    'ref-y': nameRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrDescription': {
-                    text: descriptionLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize,
-                    'ref-y': descriptionRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrMetaData': {
-                    text: metaDataLabel,
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+metaDataFontSizeDifference,
-                    'ref-y': metaDataRefY,
-                    'lineHeight': lineHeight
-                },
-                '.structurizrNavigation': {
-                    'font-family': font.name,
-                    fill: textColor,
-                    'font-size': configuration.fontSize+navigationFontSizeDifference,
-                    'ref-y': (height - (configuration.fontSize+navigationFontSizeDifference+navigationPadding))/height
-                },
-                '.structurizrIcon': {
                 }
             },
             element: element
@@ -3315,24 +2387,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrMobileDevice']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        if (configuration.icon) {
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
-            cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-iconPadding);
-            cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
-        }
+        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
-
-        cell._computedStyle = {};
-        cell._computedStyle.background = fill;
-        cell._computedStyle.color = textColor;
-        cell._computedStyle.borderStyle = configuration.border;
-        cell._computedStyle.stroke = stroke;
-        cell._computedStyle.opacity = configuration.opacity;
 
         return cell;
     }
@@ -3495,11 +2553,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
     }
 
-    function formatName(element, configuration, horizontalPadding, verticalPadding) {
+    function formatName(element, configuration, horizontalPadding) {
         return breakText(element.name ? element.name : "", Math.max(0, configuration.width-horizontalPadding), font.name, (configuration.fontSize + nameFontSizeDifference));
     }
 
-    function formatDescription(element, configuration, horizontalPadding, verticalPadding) {
+    function formatDescription(element, configuration, horizontalPadding) {
         if (descriptionEnabled === false) {
             return '';
         }
@@ -3511,7 +2569,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
     }
 
-    function formatMetaData(element, configuration, horizontalPadding, verticalPadding) {
+    function formatMetaData(element, configuration, horizontalPadding) {
         if (metadataEnabled === false) {
             return '';
         }
@@ -5092,7 +4150,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     function createTextForKey(width, height, offsetX, offsetY, tag, stereotype, textColor, icon, opacity) {
         var fontSize = 30;
-        var heightOfIcon = defaultIconHeight;
+        var heightOfIcon = DEFAULT_ICON_HEIGHT;
         var text = breakText(structurizr.util.escapeHtml(tag), width * 0.8, font.name, fontSize);
 
         var heightOfText = calculateHeight(text, fontSize, 0, false);
@@ -6943,7 +6001,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 structurizr.shapes = {};
 
 structurizr.shapes.Box = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement"><rect class="structurizrBox structurizrHighlightableElement"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement"><rect class="structurizrBox structurizrHighlightableElement"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.box',
         attrs: {
@@ -6978,9 +6036,6 @@ structurizr.shapes.Box = joint.dia.Element.extend({
             },
             '.structurizrNavigation': {
                 ref: 'rect',
-                'font-weight': 'normal',
-                'ref-x': 0.5,
-                'text-anchor': 'middle'
             },
             '.structurizrIcon': {
                 ref: 'rect'
@@ -7152,7 +6207,7 @@ structurizr.shapes.ImageView = joint.dia.Element.extend({
 structurizr.shapes.Relationship = joint.dia.Link.extend();
 
 structurizr.shapes.Person = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement structurizrPerson"><rect class="structurizrPersonBody structurizrHighlightableElement" x="0" y="175" width="450" height="250" rx="70" /><circle class="structurizrPersonHead structurizrHighlightableElement" cx="225" cy="100" r="100" /><line class="structurizrPersonRightArm" x1="90" y1="300" x2="90" y2="450" /><line class="structurizrPersonLeftArm" x1="360" y1="300" x2="360" y2="450" /><text class="structurizrName"/><text class="structurizrMetaData" /><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement structurizrPerson"><rect class="structurizrPersonBody structurizrHighlightableElement" x="0" y="175" width="450" height="250" rx="70" /><circle class="structurizrPersonHead structurizrHighlightableElement" cx="225" cy="100" r="100" /><line class="structurizrPersonRightArm" x1="90" y1="300" x2="90" y2="450" /><line class="structurizrPersonLeftArm" x1="360" y1="300" x2="360" y2="450" /><text class="structurizrName"/><text class="structurizrMetaData" /><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.person',
         attrs: {
@@ -7168,39 +6223,39 @@ structurizr.shapes.Person = joint.dia.Element.extend({
             },
             '.structurizrName': {
                 'font-weight': 'bold',
-                ref: 'rect',
+                ref: '.structurizrPersonBody',
                 'ref-x': 0.5,
                 'ref-y': 0.25,
                 'text-anchor': 'middle',
                 'pointer-events': 'visible'
             },
             '.structurizrMetaData': {
-                ref: 'rect',
+                ref: '.structurizrPersonBody',
                 'ref-x': 0.5,
                 'ref-y': 0.40,
                 'text-anchor': 'middle'
             },
             '.structurizrDescription': {
-                ref: 'rect',
+                ref: '.structurizrPersonBody',
                 'ref-x': 0.5,
                 'ref-y': 0.60,
                 'text-anchor': 'middle'
             },
             '.structurizrNavigation': {
-                ref: 'rect',
+                ref: '.structurizrPersonBody',
                 'font-weight': 'normal',
                 'ref-x': 0.5,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
-                ref: 'rect'
+                ref: '.structurizrPersonBody'
             }
         }
     }, joint.dia.Element.prototype.defaults)
 });
 
 structurizr.shapes.Robot = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement structurizrRobot"><rect class="structurizrRobotBody structurizrHighlightableElement" x="0" y="175" width="450" height="250" rx="30" /><rect class="structurizrRobotEars structurizrHighlightableElement" rx="10" /><rect class="structurizrRobotHead structurizrHighlightableElement" rx="30" /><line class="structurizrRobotRightArm" x1="90" y1="300" x2="90" y2="450" /><line class="structurizrRobotLeftArm" x1="360" y1="300" x2="360" y2="450" /><text class="structurizrName"/><text class="structurizrMetaData" /><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement structurizrRobot"><rect class="structurizrRobotBody structurizrHighlightableElement" x="0" y="175" width="450" height="250" rx="30" /><rect class="structurizrRobotEars structurizrHighlightableElement" rx="10" /><rect class="structurizrRobotHead structurizrHighlightableElement" rx="30" /><line class="structurizrRobotRightArm" x1="90" y1="300" x2="90" y2="450" /><line class="structurizrRobotLeftArm" x1="360" y1="300" x2="360" y2="450" /><text class="structurizrName"/><text class="structurizrMetaData" /><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.robot',
         attrs: {
@@ -7221,39 +6276,39 @@ structurizr.shapes.Robot = joint.dia.Element.extend({
             },
             '.structurizrName': {
                 'font-weight': 'bold',
-                ref: 'rect',
+                ref: '.structurizrRobotBody',
                 'ref-x': 0.5,
                 'ref-y': 0.25,
                 'text-anchor': 'middle',
                 'pointer-events': 'visible'
             },
             '.structurizrMetaData': {
-                ref: 'rect',
+                ref: '.structurizrRobotBody',
                 'ref-x': 0.5,
                 'ref-y': 0.40,
                 'text-anchor': 'middle'
             },
             '.structurizrDescription': {
-                ref: 'rect',
+                ref: '.structurizrRobotBody',
                 'ref-x': 0.5,
                 'ref-y': 0.60,
                 'text-anchor': 'middle'
             },
             '.structurizrNavigation': {
-                ref: 'rect',
+                ref: '.structurizrRobotBody',
                 'font-weight': 'normal',
                 'ref-x': 0.5,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
-                ref: 'rect'
+                ref: '.structurizrRobotBody'
             }
         }
     }, joint.dia.Element.prototype.defaults)
 });
 
 structurizr.shapes.Cylinder = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement structurizrCylinder"><path class="structurizrCylinderPath structurizrHighlightableElement" d=""></path><rect class="structurizrCylinderFace"></rect><text class="structurizrName"/><text class="structurizrMetaData" /><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement structurizrCylinder"><path class="structurizrCylinderPath structurizrHighlightableElement" d=""></path><rect class="structurizrCylinderFace"></rect><text class="structurizrName"/><text class="structurizrMetaData" /><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.cylinder',
         attrs: {
@@ -7300,7 +6355,7 @@ structurizr.shapes.Cylinder = joint.dia.Element.extend({
 });
 
 structurizr.shapes.Pipe = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement structurizrPipe"><path class="structurizrPipePath structurizrHighlightableElement" d=""></path><rect class="structurizrPipeFace"></rect><text class="structurizrName"/><text class="structurizrMetaData" /><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement structurizrPipe"><path class="structurizrPipePath structurizrHighlightableElement" d=""></path><rect class="structurizrPipeFace"></rect><text class="structurizrName"/><text class="structurizrMetaData" /><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.pipe',
         attrs: {
@@ -7315,7 +6370,7 @@ structurizr.shapes.Pipe = joint.dia.Element.extend({
             },
             '.structurizrName': {
                 'font-weight': 'bold',
-                ref: 'rect',
+                ref: '.structurizrPipeFace',
                 'ref-x': 0.5,
                 'ref-y': 0.25,
                 'text-anchor': 'middle',
@@ -7347,7 +6402,7 @@ structurizr.shapes.Pipe = joint.dia.Element.extend({
 });
 
 structurizr.shapes.Folder = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement"><rect class="structurizrFolderTab structurizrHighlightableElement" /><rect class="structurizrFolder structurizrHighlightableElement"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement"><rect class="structurizrFolderTab structurizrHighlightableElement" /><rect class="structurizrFolder structurizrHighlightableElement"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.folder',
         attrs: {
@@ -7401,7 +6456,7 @@ structurizr.shapes.Folder = joint.dia.Element.extend({
 });
 
 structurizr.shapes.Component = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement"><rect class="structurizrComponent structurizrHighlightableElement"/><rect class="structurizrComponentBlockTop structurizrHighlightableElement" /><rect class="structurizrComponentBlockBottom structurizrHighlightableElement" /><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement"><rect class="structurizrComponent structurizrHighlightableElement"/><rect class="structurizrComponentBlockTop structurizrHighlightableElement" /><rect class="structurizrComponentBlockBottom structurizrHighlightableElement" /><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.component',
         attrs: {
@@ -7461,7 +6516,7 @@ structurizr.shapes.Component = joint.dia.Element.extend({
 });
 
 structurizr.shapes.Ellipse = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement"><ellipse class="structurizrEllipse structurizrHighlightableElement"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement"><ellipse class="structurizrEllipse structurizrHighlightableElement"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.ellipse',
         attrs: {
@@ -7506,7 +6561,7 @@ structurizr.shapes.Ellipse = joint.dia.Element.extend({
 });
 
 structurizr.shapes.Hexagon = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement"><polygon class="structurizrHexagon structurizrHighlightableElement"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement"><polygon class="structurizrHexagon structurizrHighlightableElement"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.hexagon',
         attrs: {
@@ -7551,7 +6606,7 @@ structurizr.shapes.Hexagon = joint.dia.Element.extend({
 });
 
 structurizr.shapes.Diamond = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement"><polygon class="structurizrDiamond structurizrHighlightableElement"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement"><polygon class="structurizrDiamond structurizrHighlightableElement"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.diamond',
         attrs: {
@@ -7596,7 +6651,7 @@ structurizr.shapes.Diamond = joint.dia.Element.extend({
 });
 
 structurizr.shapes.WebBrowser = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement"><rect class="structurizrWebBrowser structurizrHighlightableElement"/><rect class="structurizrWebBrowserPanel"/><ellipse class="structurizrWebBrowserButton1"/><ellipse class="structurizrWebBrowserButton2"/><ellipse class="structurizrWebBrowserButton3"/><rect class="structurizrWebBrowserUrlBar"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement"><rect class="structurizrWebBrowser structurizrHighlightableElement"/><rect class="structurizrWebBrowserPanel"/><ellipse class="structurizrWebBrowserButton1"/><ellipse class="structurizrWebBrowserButton2"/><ellipse class="structurizrWebBrowserButton3"/><rect class="structurizrWebBrowserUrlBar"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.webBrowser',
         attrs: {
@@ -7621,39 +6676,39 @@ structurizr.shapes.WebBrowser = joint.dia.Element.extend({
             },
             '.structurizrName': {
                 'font-weight': 'bold',
-                ref: 'rect',
+                ref: '.structurizrWebBrowserPanel',
                 'ref-x': 0.5,
                 'ref-y': 0.15,
                 'text-anchor': 'middle',
                 'pointer-events': 'visible'
             },
             '.structurizrMetaData': {
-                ref: 'rect',
+                ref: '.structurizrWebBrowserPanel',
                 'ref-x': 0.5,
                 'ref-y': 0.30,
                 'text-anchor': 'middle'
             },
             '.structurizrDescription': {
-                ref: 'rect',
+                ref: '.structurizrWebBrowserPanel',
                 'ref-x': 0.5,
                 'ref-y': 0.45,
                 'text-anchor': 'middle'
             },
             '.structurizrNavigation': {
-                ref: 'rect',
+                ref: '.structurizrWebBrowserPanel',
                 'font-weight': 'normal',
                 'ref-x': 0.5,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
-                ref: 'rect'
+                ref: '.structurizrWebBrowserPanel'
             }
         }
     }, joint.dia.Element.prototype.defaults)
 });
 
 structurizr.shapes.Window = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement"><rect class="structurizrWindow structurizrHighlightableElement"/><rect class="structurizrWindowPanel"/><ellipse class="structurizrWindowButton1"/><ellipse class="structurizrWindowButton2"/><ellipse class="structurizrWindowButton3"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement"><rect class="structurizrWindow structurizrHighlightableElement"/><rect class="structurizrWindowPanel"/><ellipse class="structurizrWindowButton1"/><ellipse class="structurizrWindowButton2"/><ellipse class="structurizrWindowButton3"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.window',
         attrs: {
@@ -7673,39 +6728,39 @@ structurizr.shapes.Window = joint.dia.Element.extend({
             },
             '.structurizrName': {
                 'font-weight': 'bold',
-                ref: 'rect',
+                ref: '.structurizrWindowPanel',
                 'ref-x': 0.5,
                 'ref-y': 0.15,
                 'text-anchor': 'middle',
                 'pointer-events': 'visible'
             },
             '.structurizrMetaData': {
-                ref: 'rect',
+                ref: '.structurizrWindowPanel',
                 'ref-x': 0.5,
                 'ref-y': 0.30,
                 'text-anchor': 'middle'
             },
             '.structurizrDescription': {
-                ref: 'rect',
+                ref: '.structurizrWindowPanel',
                 'ref-x': 0.5,
                 'ref-y': 0.45,
                 'text-anchor': 'middle'
             },
             '.structurizrNavigation': {
-                ref: 'rect',
+                ref: '.structurizrWindowPanel',
                 'font-weight': 'normal',
                 'ref-x': 0.5,
                 'text-anchor': 'middle'
             },
             '.structurizrIcon': {
-                ref: 'rect'
+                ref: '.structurizrWindowPanel'
             }
         }
     }, joint.dia.Element.prototype.defaults)
 });
 
 structurizr.shapes.MobileDevice = joint.dia.Element.extend({
-    markup: '<g class="structurizrElement"><rect class="structurizrMobileDevice structurizrHighlightableElement"/><rect class="structurizrMobileDeviceDisplay"/><ellipse class="structurizrMobileDeviceButton"/><line class="structurizrMobileDeviceSpeaker" style="stroke-width:2px" /><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><text class="structurizrNavigation"/><image class="structurizrIcon" /></g>',
+    markup: '<g class="structurizrElement"><rect class="structurizrMobileDevice structurizrHighlightableElement"/><rect class="structurizrMobileDeviceDisplay"/><ellipse class="structurizrMobileDeviceButton"/><line class="structurizrMobileDeviceSpeaker" style="stroke-width:2px" /><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
     defaults: joint.util.deepSupplement({
         type: 'structurizr.mobileDevice',
         attrs: {
