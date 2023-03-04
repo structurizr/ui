@@ -6,9 +6,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     const DEFAULT_ICON_HEIGHT = 60;
     const ICON_PADDING = 5;
     const nameFontSizeDifference = +10;
-    const metaDataFontSizeDifference = -5;
-    const navigationPadding = 15;
-    const navigationFontSizeDifference = 10;
+    const metaDataFontSizeDifference = -7;
 
     const darkenPercentage = -10;
     const borderStyles = {
@@ -1080,18 +1078,28 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         const url = relationship.url;
 
         if (url) {
-
-            $('#' + linkView.id + ' .connection-wrap').attr('style', 'cursor: pointer !important');
-            linkView.model.label(2, { attrs: { text: { text: '#' } } });
-
             const domElement = $('#' + linkView.id);
+
+            const svg =
+                '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" opacity="0.75" class="structurizrNavigation" viewBox="0 0 16 16">' +
+                '<path d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9c-.086 0-.17.01-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z"/>' +
+                '<path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4.02 4.02 0 0 1-.82 1H12a3 3 0 1 0 0-6H9z"/>' +
+                '</svg>';
+
+            $('#' + linkView.id + " .structurizrNavigation").parent().css('color', linkView.model._computedStyle.color );
+            $('#' + linkView.id + " .structurizrNavigation").parent().html(svg);
+
+            $('#' + linkView.id + ' .connection-wrap').css('cursor', 'pointer');
+            $('#' + linkView.id + ' .label').css('cursor', 'pointer');
+
             domElement.dblclick(function(event) {
                 if (relationshipDoubleClickedHandler !== undefined) {
                     relationshipDoubleClickedHandler(event, relationship.id);
                 }
             });
         } else {
-            $('#' + linkView.id + ' .connection-wrap').attr('style', 'cursor: default !important');
+            $('#' + linkView.id + ' .connection-wrap').css('cursor', 'default');
+            $('#' + linkView.id + ' .label').css('cursor', 'default');
         }
     }
 
@@ -1527,7 +1535,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         cell._computedStyle.stroke = stroke;
         cell._computedStyle.opacity = configuration.opacity;
     }
-    
+
     function createBox(view, element, configuration, x, y, cornerRadius) {
         var width = configuration.width;
         var height = configuration.height;
@@ -2535,7 +2543,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function calculateHeight(text, fontSize, fontSizeDelta, addPadding) {
-        var lineSpacing = 1.25;
+        var lineSpacing = 1.2;
         if (text) {
             text = text.trim();
 
@@ -2796,6 +2804,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function createArrow(relationshipInView) {
+        var internalPadding = 10;
         var relationship = structurizr.workspace.findRelationshipById(relationshipInView.id);
 
         if (!includeRelationshipOnDiagram(relationship)) {
@@ -2834,28 +2843,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 description = relationshipInView.order + ": " + description;
             }
 
-            var descriptionLabel = breakText(description, configuration.width, font.name, configuration.fontSize);
-            var technologyLabel = formatTechnologyForRelationship(relationship);
-
-            var numberOfLineBreaksInDescription = descriptionLabel.split("\n").length;
-            var multiplier = 1.3;
-            if (numberOfLineBreaksInDescription > 2) {
-                multiplier = 1.4;
-            } else if (numberOfLineBreaksInDescription > 4) {
-                    multiplier = 1.6;
-            }
-
-            var technologyLabelOffset = configuration.fontSize * multiplier;
-            technologyLabelOffset += (numberOfLineBreaksInDescription - 1) * (0.5 * configuration.fontSize);
-
-            var numberOfLineBreaksInTechnology = technologyLabel.split("\n").length;
-            var navigationLabelOffset = technologyLabelOffset;
-            navigationLabelOffset += (numberOfLineBreaksInTechnology * configuration.fontSize);
-
-            if (window.navigator.userAgent.indexOf("Edge") > -1) {
-                // add some padding ... because pre-Chrome Edge renders the white rect behind the labels too large for some reason
-                technologyLabelOffset += (configuration.fontSize * 0.4);
-            }
+            description = breakText(description, configuration.width, font.name, configuration.fontSize);
+            var heightOfDescription = calculateHeight(description, configuration.fontSize, 0, false);
 
             var fill = structurizr.util.shadeColor(configuration.color, 100 - configuration.opacity, darkMode);
 
@@ -2880,6 +2869,72 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 destinationBox = mapOfIdToBox[relationship.destinationId];
             }
 
+            var labels = [];
+            var verticalOffset = 0;
+            labels.push({
+                    position: {
+                        distance: position / 100,
+                            offset: { x: 0, y: verticalOffset }
+                    },
+                    attrs: {
+                        rect: {
+                            fill: canvasColor,
+                                stroke: canvasColor,
+                                'stroke-width': '20px',
+                                'pointer-events': 'none'
+                        },
+                        text: {
+                            text: description,
+                                fill: fill,
+                                'font-family': font.name,
+                                'font-weight': 'normal',
+                                'font-size': configuration.fontSize + 'px',
+                                'pointer-events': 'none',
+                                'lineHeight': lineHeight
+                        }
+                    }
+                });
+            verticalOffset = (heightOfDescription / 2) + internalPadding;
+
+            var technology = formatTechnologyForRelationship(relationship);
+            if (technology && technology.trim().length > 0) {
+                labels.push({
+                    position: {
+                        distance: position / 100,
+                        offset: { x: 0, y: verticalOffset }
+                    },
+                    attrs: {
+                        rect: {
+                            fill: canvasColor,
+                            'pointer-events': 'none'
+                        },
+                        text: {
+                            text: technology,
+                            fill: fill,
+                            'font-family': font.name,
+                            'font-weight': 'normal',
+                            'font-size': configuration.fontSize + metaDataFontSizeDifference + 'px',
+                            'pointer-events': 'none',
+                            'lineHeight': lineHeight
+                        }
+                    }
+                });
+                var heightOfTechnology = calculateHeight(technology, configuration.fontSize, metaDataFontSizeDifference, false);
+                verticalOffset += heightOfTechnology;
+            }
+
+            labels.push({
+                position: {
+                    distance: position / 100,
+                    offset: { x: -10, y: verticalOffset }
+                },
+                attrs: {
+                    rect: {
+                        'class': 'structurizrNavigation'
+                    }
+                }
+            });
+
             var link = new structurizr.shapes.Relationship({
                 source: {
                     id: sourceBox.id
@@ -2887,75 +2942,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 target: {
                     id: destinationBox.id
                 },
-                labels: [
-                    {
-                        position: {
-                            distance: position / 100,
-                            offset: { x: 0, y: 0 }
-                        },
-                        attrs: {
-                            rect: {
-                                fill: canvasColor,
-                                stroke: canvasColor,
-                                'stroke-width': '20px',
-                                'pointer-events': 'none'
-                            },
-                            text: {
-                                text: descriptionLabel,
-                                fill: fill,
-                                'font-family': font.name,
-                                'font-weight': 'normal',
-                                'font-size': configuration.fontSize + 'px',
-                                'pointer-events': 'none',
-                                'lineHeight': lineHeight
-                            }
-                        }
-                    },
-                    {
-                        position: {
-                            distance: position / 100,
-                            offset: { x: 0, y: technologyLabelOffset }
-                        },
-                        attrs: {
-                            rect: {
-                                fill: canvasColor,
-                                'pointer-events': 'none'
-                            },
-                            text: {
-                                text: technologyLabel,
-                                fill: fill,
-                                'font-family': font.name,
-                                'font-weight': 'normal',
-                                'font-size': configuration.fontSize + metaDataFontSizeDifference + 'px',
-                                'pointer-events': 'none',
-                                'lineHeight': lineHeight
-                            }
-                        }
-                    },
-                    {
-                        position: {
-                            distance: position / 100,
-                            offset: { x: 0, y: navigationLabelOffset }
-                        },
-                        attrs: {
-                            rect: {
-                                fill: canvasColor,
-                                'pointer-events': 'none',
-                                'class': 'structurizrNavigation'
-                            },
-                            text: {
-                                text: '',
-                                fill: fill,
-                                'font-family': font.name,
-                                'font-weight': 'normal',
-                                'font-size': configuration.fontSize + metaDataFontSizeDifference + 'px',
-                                'pointer-events': 'none',
-                                'lineHeight': lineHeight,
-                                'class': 'structurizrNavigation'
-                            }
-                        }
-                    }
-                ]
+                labels: labels
             });
 
             if (configuration.style === undefined || configuration.style === 'Dashed' || configuration.style === 'Dotted') {
