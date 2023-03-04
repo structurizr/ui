@@ -104,9 +104,7 @@
     </div>
 
     <div class="btn-group">
-        <c:if test="${showDiagramSelector eq true}">
         <button class="btn btn-default backButton" title="Go back to previous diagram" onclick="back()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/arrow-90deg-left.svg" class="icon-btn" /></button>
-        </c:if>
 
         <c:if test="${workspace.id > 0 && (embed eq true && workspace.editable eq false)}">
         <button class="btn btn-default" title="Link to this diagram" onclick="openCurrentDiagramInNewWindow()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/link.svg" class="icon-btn" /></button>
@@ -247,7 +245,7 @@
 
         structurizr.diagram.setTooltip(tooltip);
         structurizr.diagram.setLasso(lasso);
-        structurizr.diagram.setNavigationEnabled(${(embed eq true && workspace.id == 0) || embed eq false || showDiagramSelector eq true});
+        structurizr.diagram.setNavigationEnabled(true);
         structurizr.diagram.onWorkspaceChanged(workspaceChanged);
         structurizr.diagram.onElementDoubleClicked(elementDoubleClicked);
         structurizr.diagram.onRelationshipDoubleClicked(relationshipDoubleClicked);
