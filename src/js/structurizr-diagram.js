@@ -3591,7 +3591,17 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             this.zoomTo(viewport.width() / contentWidth);
         }
 
-        this.scrollToCentre();
+        var viewportWidth = viewport.innerWidth();
+        var viewportHeight = viewport.innerHeight();
+
+        var viewpointCentreX = viewport.offset().left + (viewportWidth/2);
+        var viewpointCentreY = viewport.offset().top + (viewportHeight/2);
+        var clientTarget = { x: viewpointCentreX, y: viewpointCentreY };
+
+        var centreX = contentArea.minX + ((contentArea.maxX - contentArea.minX)/2);
+        var centreY = contentArea.minY + ((contentArea.maxY - contentArea.minY)/2);
+
+        this.scrollToPoint(centreX, centreY, clientTarget.x, clientTarget.y);
     };
 
     this.zoomIn = function(evt) {
