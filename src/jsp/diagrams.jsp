@@ -849,8 +849,10 @@
                     return;
                 }
             } else if (e.which === i) {
-                showKey();
-                return;
+                if (structurizr.diagram.getCurrentView().type !== structurizr.constants.IMAGE_VIEW_TYPE) {
+                    showKey();
+                    return;
+                }
             } else if (e.which === p && !e.metaKey) {
                 enterPresentationMode();
                 return;
