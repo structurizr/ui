@@ -142,10 +142,7 @@
 
         structurizr.workspace.model.softwareSystems.forEach(function(softwareSystem) {
             if (softwareSystem.documentation.decisions.length > 0) {
-                const elementId = softwareSystem.id;
-                if (elementsWithDecisions.indexOf(elementId) === -1) {
-                    elementsWithDecisions.push(elementId);
-                }
+                elementsWithDecisions.push(softwareSystem.id);
 
                 var scope = toScope(softwareSystem);
                 if (requestedScope === scope) {
@@ -157,16 +154,27 @@
             if (softwareSystem.containers) {
                 softwareSystem.containers.forEach(function(container) {
                     if (container.documentation.decisions.length > 0) {
-                        const elementId = container.id;
-                        if (elementsWithDecisions.indexOf(elementId) === -1) {
-                            elementsWithDecisions.push(elementId);
-                        }
+                        elementsWithDecisions.push(container.id);
 
                         const scope = toScope(container);
                         if (requestedScope === scope) {
                             decisions = container.documentation.decisions;
                             contentRenderer.setScope(container);
                         }
+                    }
+
+                    if (container.components) {
+                        container.components.forEach(function(component) {
+                            if (component.documentation.decisions.length > 0) {
+                                elementsWithDecisions.push(component.id);
+
+                                const scope = toScope(component);
+                                if (requestedScope === scope) {
+                                    decisions = component.documentation.decisions;
+                                    contentRenderer.setScope(component);
+                                }
+                            }
+                        });
                     }
                 });
             }
@@ -194,7 +202,10 @@
             return structurizr.util.escapeHtml(element.name);
         } else if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
             const softwareSystem = structurizr.workspace.findElementById(element.parentId);
-            return structurizr.util.escapeHtml(softwareSystem.name) + '/' + structurizr.util.escapeHtml(element.name);
+            return toScope(softwareSystem) + '/' + structurizr.util.escapeHtml(element.name);
+        } else if (element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
+            const container = structurizr.workspace.findElementById(element.parentId);
+            return toScope(container) + '/' + structurizr.util.escapeHtml(element.name);
         }
 
         return undefined;

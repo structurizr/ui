@@ -217,6 +217,21 @@
                             $('#documentationScopeName').html(structurizr.util.escapeHtml(container.name));
                         }
                     }
+
+                    if (container.components) {
+                        container.components.forEach(function(component) {
+                            if (component.documentation.sections.length > 0) {
+                                elementsWithDocumentation.push(component.id);
+
+                                const scope = toScope(component);
+                                if (requestedScope === scope) {
+                                    sections = component.documentation.sections;
+                                    contentRenderer.setScope(component);
+                                    $('#documentationScopeName').html(structurizr.util.escapeHtml(component.name));
+                                }
+                            }
+                        });
+                    }
                 });
             }
         });
@@ -239,7 +254,10 @@
             return structurizr.util.escapeHtml(element.name);
         } else if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
             const softwareSystem = structurizr.workspace.findElementById(element.parentId);
-            return structurizr.util.escapeHtml(softwareSystem.name) + '/' + structurizr.util.escapeHtml(element.name);
+            return toScope(softwareSystem) + '/' + structurizr.util.escapeHtml(element.name);
+        } else if (element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
+            const container = structurizr.workspace.findElementById(element.parentId);
+            return toScope(container) + '/' + structurizr.util.escapeHtml(element.name);
         }
 
         return undefined;
