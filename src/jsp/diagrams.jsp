@@ -1091,7 +1091,10 @@
             return structurizr.util.escapeHtml(element.name);
         } else if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
             const softwareSystem = structurizr.workspace.findElementById(element.parentId);
-            return structurizr.util.escapeHtml(softwareSystem.name) + '/' + structurizr.util.escapeHtml(element.name);
+            return toScope(softwareSystem) + '/' + structurizr.util.escapeHtml(element.name);
+        } else if (element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
+            const container = structurizr.workspace.findElementById(element.parentId);
+            return toScope(container) + '/' + structurizr.util.escapeHtml(element.name);
         }
 
         return undefined;
