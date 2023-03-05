@@ -223,13 +223,7 @@
 
         if (sections.length > 0) {
             sections.sort(function (a, b) {
-                var result = a.order - b.order;
-
-                if (result === 0) {
-                    result = a.title.toLowerCase().localeCompare(b.title.toLowerCase());
-                }
-
-                return result;
+                return a.order - b.order;
             });
 
             // assign section numbers
