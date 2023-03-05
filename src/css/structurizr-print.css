@@ -61,3 +61,11 @@ iframe {
 .highlightedLink {
     display: none;
 }
+
+#documentationNavigationDropDown, #decisionLogNavigationDropDown {
+    display: none;
+}
+
+button {
+    display: none;
+}
