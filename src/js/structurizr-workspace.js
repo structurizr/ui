@@ -105,6 +105,16 @@ structurizr.Workspace = class Workspace {
                         if (container.documentation.sections.length > 0) {
                             result = true;
                         }
+
+                        if (result === false) {
+                            if (container.components) {
+                                container.components.forEach(function (component) {
+                                    if (component.documentation.sections.length > 0) {
+                                        result = true;
+                                    }
+                                });
+                            }
+                        }
                     });
                 }
             }
@@ -130,6 +140,16 @@ structurizr.Workspace = class Workspace {
                     softwareSystem.containers.forEach(function (container) {
                         if (container.documentation.decisions.length > 0) {
                             result = true;
+                        }
+
+                        if (result === false) {
+                            if (container.components) {
+                                container.components.forEach(function (component) {
+                                    if (component.documentation.decisions.length > 0) {
+                                        result = true;
+                                    }
+                                });
+                            }
                         }
                     });
                 }
