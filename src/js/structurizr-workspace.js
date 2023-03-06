@@ -188,6 +188,9 @@ structurizr.Workspace = class Workspace {
                                 var component = container.components[k];
                                 component.parentId = container.id;
                                 this.#registerElement(component, structurizr.constants.COMPONENT_ELEMENT_TYPE);
+
+
+                                this.#initDocumentation(component);
                             }
                         }
 
