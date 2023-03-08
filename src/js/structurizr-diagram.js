@@ -3697,11 +3697,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     this.getPossibleViewportWidth = function() {
-        return $('#' + id).outerWidth();
+        return parentElement.innerWidth();
     };
 
     this.getPossibleViewportHeight = function() {
-        return $('#' + id).outerHeight();
+        return parentElement.innerHeight();
     };
 
     this.zoomToWidthOrHeight = function() {
