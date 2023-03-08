@@ -661,6 +661,24 @@
     }
 
     function initSizing() {
+        structurizr.diagram.getPossibleViewportWidth = function() {
+            const diagramNavigation = $('#diagramNavigationPanel');
+            var diagramNavigationWidth = 0;
+            if (diagramNavigation && diagramNavigation.is(':visible')) {
+                diagramNavigationWidth = diagramNavigation.outerWidth();
+            }
+
+            if (structurizr.ui.isFullScreen()) {
+                return screen.width - diagramNavigationWidth;
+            } else {
+                if (${embed}) {
+                    return window.innerWidth - diagramNavigationWidth;
+                } else {
+                    return $('#diagram').innerWidth();
+                }
+            }
+        };
+
         structurizr.diagram.getPossibleViewportHeight = function() {
             const diagramControlsHeight = $('#diagramControls').outerHeight(true);
 
