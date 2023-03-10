@@ -44,7 +44,7 @@ define(
                     },
                     {
                         token: "structurizr_keyword_disabled",
-                        regex: '(!include|!docs|!adrs) .*$'
+                        regex: '(!include|!docs|!adrs|!plugin|!script) .*$'
                     },
                     {
                         token: ["structurizr_keyword", "structurizr_keyword"],
