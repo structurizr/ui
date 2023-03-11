@@ -574,7 +574,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 if (includeGroup(element, view) === true) {
                     if (element.group !== undefined) {
-                        const group = findOrCreateGroup(element.group);
+                        const group = findOrCreateGroup(element.group, element.parentId);
                         group.embed(box);
                         box.toFront();
                     }
@@ -592,7 +592,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         }
 
                         if (element.group !== undefined) {
-                            enterpriseBoundary.embed(findRootGroup(element.group));
+                            const rootGroup = findRootGroup(element.group, element.parentId);
+                            if (rootGroup) {
+                                enterpriseBoundary.embed(rootGroup);
+                            } else {
+                                enterpriseBoundary.embed(box);
+                            }
                         } else {
                             enterpriseBoundary.embed(box);
                         }
@@ -607,12 +612,14 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 if (view.type === structurizr.constants.CONTAINER_VIEW_TYPE && element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
                     // container on a container diagram - add a boundary to represent the parent software system
-                    addElementToBoundary(element, box);
+                    const includeParentBoundary = false;
+                    addElementToBoundary(element, box, includeParentBoundary);
                 }
 
                 if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE && element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
                     // component on a component diagram - add a boundary to represent the parent container
-                    addElementToBoundary(element, box);
+                    const includeParentBoundary = (currentView.properties && currentView.properties['structurizr.softwareSystemBoundaries'] === 'true');
+                    addElementToBoundary(element, box, includeParentBoundary);
                 }
 
                 if (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE && view.elementId) {
@@ -626,7 +633,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         // dynamic view with container scope and element is a component
                         //
                         // in both cases, add a boundary to represent the scoped element
-                        addElementToBoundary(element, box);
+                        const includeParentBoundary = (element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) && (currentView.properties && currentView.properties['structurizr.softwareSystemBoundaries'] === 'true');
+                        addElementToBoundary(element, box, includeParentBoundary);
                     }
                 }
 
@@ -845,6 +853,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         // - dynamic diagram: depends on scope
         var renderGroupForElement = false;
 
+        // have groups been forced off?
+        if (currentView.properties && currentView.properties['structurizr.groups'] === 'false') {
+            return false;
+        }
+
         if (element.type === 'Custom') {
             renderGroupForElement = true;
         } else if (view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE) {
@@ -870,7 +883,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         return renderGroupForElement;
     }
 
-    function addElementToBoundary(element, cell) {
+    function addElementToBoundary(element, cell, includeParentBoundary) {
         var boundary = boundariesByElementId[element.parentId];
         if (boundary === undefined) {
             var boundaryElement = structurizr.workspace.findElementById(element.parentId);
@@ -879,27 +892,66 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 boundary.elementInView = boundaryElement;
                 boundariesByElementId[element.parentId] = boundary;
             }
+
+            if (includeParentBoundary && boundaryElement.parentId) {
+                var parentBoundary = boundariesByElementId[boundaryElement.parentId];
+                if (parentBoundary === undefined) {
+                    var parentBoundaryElement = structurizr.workspace.findElementById(boundaryElement.parentId);
+                    if (parentBoundaryElement) {
+                        parentBoundary = createBoundary(parentBoundaryElement.name, structurizr.ui.getMetadataForElement(parentBoundaryElement), undefined, parentBoundaryElement);
+                        parentBoundary.elementInView = parentBoundaryElement;
+                        boundariesByElementId[boundaryElement.parentId] = parentBoundary;
+                    }
+                }
+
+                parentBoundary.embed(boundary);
+            }
         }
 
         if (element.group !== undefined) {
-            boundary.embed(findRootGroup(element.group));
+            const rootGroup = findRootGroup(element.group, element.parentId);
+            if (rootGroup) {
+                boundary.embed(rootGroup);
+            } else {
+                boundary.embed(cell);
+            }
         } else {
             boundary.embed(cell);
         }
+
+        boundary.toFront({ deep: true });
     }
 
-    function findRootGroup(name) {
+    function findRootGroup(name, scope) {
         if (useNestedGroups()) {
             const separator = getGroupSeparator();
 
             if (name.indexOf(separator) > -1) {
-                return groupsByName[name.substring(0, name.indexOf(separator))];
+                return findGroup(name.substring(0, name.indexOf(separator)), scope);
             } else {
-                return groupsByName[name];
+                return findGroup(name, scope);
             }
         } else {
-            return groupsByName[name];
+            return findGroup(name, scope);
         }
+    }
+
+    function findGroup(name, scope) {
+        if (scope === undefined) {
+            scope = ""
+        }
+        const identifier = scope + "_" + name;
+
+        return groupsByName[identifier];
+    }
+
+    function registerGroup(name, scope, boundary) {
+        if (scope === undefined) {
+            scope = ""
+        }
+        const identifier = scope + "_" + name;
+
+        groupsByName[identifier] = boundary;
     }
 
     function getGroupSeparator() {
@@ -910,34 +962,34 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         return getGroupSeparator() !== undefined;
     }
 
-    function findOrCreateGroup(name) {
+    function findOrCreateGroup(name, scope) {
         if (useNestedGroups()) {
             const separator = getGroupSeparator();
-            var group = groupsByName[name];
+            var group = findGroup(name, scope);
             if (group === undefined) {
                 if (name.indexOf(separator) > -1) {
                     var parentGroupName = name.substring(0, name.lastIndexOf(separator));
                     var groupName = name.substring(name.lastIndexOf(separator) + separator.length);
-                    var parentGroup = findOrCreateGroup(parentGroupName);
+                    var parentGroup = findOrCreateGroup(parentGroupName, scope);
 
                     group = createBoundaryForGroup(name);
                     parentGroup.embed(group);
                     group._name = groupName;
-                    groupsByName[name] = group;
+                    registerGroup(name, scope, group);
                 } else {
                     group = createBoundaryForGroup(name);
                     group._name = name;
-                    groupsByName[name] = group;
+                    registerGroup(name, scope, group);
                 }
             }
 
             return group;
         } else {
-            var group = groupsByName[name];
+            var group = findGroup(name, scope);
             if (group === undefined) {
                 group = createBoundaryForGroup(name);
                 group._name = name;
-                groupsByName[name] = group;
+                registerGroup(name, scope, group);
             }
 
             return group;
@@ -3866,9 +3918,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         relationshipStylesInUse.sort(function(a, b){ return a.localeCompare(b); });
 
         var numberOfItemsInKey = elementStylesInUse.length + relationshipStylesInUse.length;
-        if (Object.keys(groupsByName).length > 0) {
-            numberOfItemsInKey++;
-        }
         if (currentView.type === "Deployment") {
             numberOfItemsInKey++;
         }
