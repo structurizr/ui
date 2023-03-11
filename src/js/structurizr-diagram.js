@@ -64,12 +64,9 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     var diagramMetadata;
     var diagramMetadataWidth = 0;
     var brandingLogo;
-    var primaryBoundary;
-    var primaryBoundaryElement;
-    var secondaryBoundaries = [];
-    var secondaryBoundaryElements = [];
-    var secondaryBoundariesByElementId = {};
-    var groupsById = {};
+    var enterpriseBoundary; // for backwards compatibility with older workspace definitions
+    var boundariesByElementId = {};
+    var groupsByName = {};
     var mapOfIdToBox = {};
     var mapOfIdToLine = {};
     var cells;
@@ -404,12 +401,9 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         linesByRelationshipId = {};
         diagramMetadataWidth = 0;
         selectedElements = [];
-        primaryBoundary = undefined;
-        primaryBoundaryElement = undefined;
-        secondaryBoundaries = [];
-        secondaryBoundaryElements = [];
-        secondaryBoundariesByElementId = {};
-        groupsById = {};
+        enterpriseBoundary = undefined;
+        boundariesByElementId = {};
+        groupsByName = {};
         linesToAnimate = undefined;
         animationSteps = undefined;
         animationStarted = false;
@@ -508,19 +502,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         self.setPaperSize(view);
 
-        if (view.type === structurizr.constants.CONTAINER_VIEW_TYPE) {
-            primaryBoundaryElement = structurizr.workspace.findElementById(view.softwareSystemId);
-            primaryBoundary = createBoundary(primaryBoundaryElement.name, structurizr.ui.getMetadataForElement(primaryBoundaryElement), 'primary', primaryBoundaryElement);
-        } else if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE) {
-            primaryBoundaryElement = structurizr.workspace.findElementById(view.containerId);
-            primaryBoundary = createBoundary(primaryBoundaryElement.name, structurizr.ui.getMetadataForElement(primaryBoundaryElement), 'primary', primaryBoundaryElement);
-        } else if (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE) {
-            if (view.elementId) {
-                primaryBoundaryElement = structurizr.workspace.findElementById(view.elementId);
-                primaryBoundary = createBoundary(primaryBoundaryElement.name, structurizr.ui.getMetadataForElement(primaryBoundaryElement), 'primary', primaryBoundaryElement);
-            }
-        }
-
         removeIllegalElements();
 
         if (view.elements) {
@@ -591,79 +572,29 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 box.elementInView = view.elements[i];
                 box.positionCalculated = false;
 
-                // for rendering groups, we only want to do this as follows:
-                // - system landscape diagram: people, software systems, custom elements
-                // - system context diagram: people, software systems, custom elements
-                // - container diagram: custom elements, containers
-                // - component diagram: custom elements, components
-                // - dynamic diagram: depends on scope
-                var group = undefined;
-
-                var renderGroupForElement = false;
-
-                if (element.type === 'Custom') {
-                    renderGroupForElement = true;
-                } else if (view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE) {
-                    renderGroupForElement = (element.type === structurizr.constants.PERSON_ELEMENT_TYPE || element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE);
-                } else if (view.type === structurizr.constants.CONTAINER_VIEW_TYPE) {
-                    renderGroupForElement = element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE;
-                } else if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE) {
-                    renderGroupForElement = element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE;
-                } else if (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE) {
-                    // find the type of the scoped element
-                    if (view.elementId === undefined) {
-                        renderGroupForElement = (element.type === structurizr.constants.PERSON_ELEMENT_TYPE || element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE);
-                    } else {
-                        var scopedElement = structurizr.workspace.findElementById(view.elementId);
-                        if (scopedElement.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
-                            renderGroupForElement = element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE;
-                        } else if (scopedElement.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
-                            renderGroupForElement = element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE;
-                        }
-                    }
-                }
-
-                if (renderGroupForElement === true) {
+                if (includeGroup(element, view) === true) {
                     if (element.group !== undefined) {
-                        var groupContext = element.parentId;
-                        if (groupContext === undefined) {
-                            if (element.location === 'Internal') {
-                                groupContext = 'Internal';
-                            } else {
-                                groupContext = 'External';
-                            }
-                        }
-                        var groupId = element.group + '/' + groupContext;
-                        group = groupsById[groupId];
-                        if (group === undefined) {
-                            group = createBoundary(element.group, undefined, 'Group');
-                            group._name = element.group;
-                            groupsById[groupId] = group;
-                        }
-
+                        const group = findOrCreateGroup(element.group);
                         group.embed(box);
+                        box.toFront();
                     }
                 }
 
                 // enterprise boundaries need to be drawn for: system landscape, system context, and (high-level) dynamic diagrams
+                // - the "enterprise" concept has been removed, so this is only here to support older workspaces
                 if (view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE || (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE && view.elementId === undefined)) {
                     if (element.location && element.location === 'Internal' && view.enterpriseBoundaryVisible !== false) {
-                        if (!primaryBoundary) {
+                        if (!enterpriseBoundary) {
                             var enterprise = structurizr.workspace.model.enterprise;
                             var boundaryName = (enterprise && enterprise.name) ? enterprise.name : 'Enterprise';
 
-                            primaryBoundary = createBoundary(boundaryName, structurizr.ui.getMetadataForElement({ type: 'Enterprise' }), 'Enterprise');
-
-                            primaryBoundaryElement = {
-                                name: boundaryName,
-                                type: 'Enterprise'
-                            }
+                            enterpriseBoundary = createBoundary(boundaryName, structurizr.ui.getMetadataForElement({ type: 'Enterprise' }), 'Enterprise');
                         }
 
-                        if (group !== undefined) {
-                            primaryBoundary.embed(group);
+                        if (element.group !== undefined) {
+                            enterpriseBoundary.embed(findRootGroup(element.group));
                         } else {
-                            primaryBoundary.embed(box);
+                            enterpriseBoundary.embed(box);
                         }
                     }
                 }
@@ -672,110 +603,30 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     if (!view.elements[i].x) {
                         centreCell(box);
                     }
-                } else if ((view.type === structurizr.constants.CONTAINER_VIEW_TYPE && element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE && element.parentId === view.softwareSystemId) ||
-                           (view.type === "Component" && element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE && element.parentId === view.containerId)) {
-
-                    if (group !== undefined) {
-                        primaryBoundary.embed(group);
-                    } else {
-                        primaryBoundary.embed(box);
-                    }
-
-                    if (!view.elements[i].x) {
-                        centreCell(box);
-                        moveElement(box, 400 - Math.floor((Math.random() * 800) + 1), 400 - Math.floor((Math.random() * 800) + 1))
-                    }
                 }
 
-                if (view.type === "Container" && view.externalSoftwareSystemBoundariesVisible === true && element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE && element.parentId !== view.softwareSystemId) {
-                    // this is a foreign container, so let's add a secondary boundary
-                    var secondaryBoundary = secondaryBoundariesByElementId[element.parentId];
-                    if (secondaryBoundary === undefined) {
-                        var secondaryBoundarySoftwareSystem = structurizr.workspace.findElementById(element.parentId);
-                        if (secondaryBoundarySoftwareSystem) {
-                            secondaryBoundary = createBoundary(secondaryBoundarySoftwareSystem.name, structurizr.ui.getMetadataForElement(secondaryBoundarySoftwareSystem), 'secondary', secondaryBoundarySoftwareSystem);
-                            secondaryBoundaries.push(secondaryBoundary);
-                            secondaryBoundaryElements.push(secondaryBoundarySoftwareSystem);
-                            secondaryBoundariesByElementId[element.parentId] = secondaryBoundary;
-                        }
-                    }
-                    if (group !== undefined) {
-                        secondaryBoundary.embed(group);
-                    } else {
-                        secondaryBoundary.embed(box);
-                    }
+                if (view.type === structurizr.constants.CONTAINER_VIEW_TYPE && element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
+                    // container on a container diagram - add a boundary to represent the parent software system
+                    addElementToBoundary(element, box);
                 }
 
-                if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE && view.externalContainerBoundariesVisible === true && element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE && element.parentId !== view.containerId) {
-                    // this is a foreign component, so let's add a secondary boundary
-                    var secondaryBoundary = secondaryBoundariesByElementId[element.parentId];
-                    if (secondaryBoundary === undefined) {
-                        var secondaryBoundaryContainer = structurizr.workspace.findElementById(element.parentId);
-                        if (secondaryBoundaryContainer) {
-                            secondaryBoundary = createBoundary(secondaryBoundaryContainer.name, structurizr.ui.getMetadataForElement(secondaryBoundaryContainer), 'secondary', secondaryBoundaryContainer);
-                            secondaryBoundaries.push(secondaryBoundary);
-                            secondaryBoundaryElements.push(secondaryBoundaryContainer);
-                            secondaryBoundariesByElementId[element.parentId] = secondaryBoundary;
-                        }
-                    }
-                    if (group !== undefined) {
-                        secondaryBoundary.embed(group);
-                    } else {
-                        secondaryBoundary.embed(box);
-                    }
+                if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE && element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
+                    // component on a component diagram - add a boundary to represent the parent container
+                    addElementToBoundary(element, box);
                 }
 
-                if (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE) {
-                    if (primaryBoundaryElement && primaryBoundary) {
-                        if (primaryBoundaryElement.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE && element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
-                            if (element.parentId === primaryBoundaryElement.id) {
-                                if (group !== undefined) {
-                                    primaryBoundary.embed(group);
-                                } else {
-                                    primaryBoundary.embed(box);
-                                }
-                            } else if (view.externalBoundariesVisible === true) {
-                                var secondaryBoundary = secondaryBoundariesByElementId[element.parentId];
-                                if (secondaryBoundary === undefined) {
-                                    var secondaryBoundarySoftwareSystem = structurizr.workspace.findElementById(element.parentId);
-                                    if (secondaryBoundarySoftwareSystem) {
-                                        secondaryBoundary = createBoundary(secondaryBoundarySoftwareSystem.name, structurizr.ui.getMetadataForElement(secondaryBoundarySoftwareSystem), 'secondary', secondaryBoundarySoftwareSystem);
-                                        secondaryBoundaries.push(secondaryBoundary);
-                                        secondaryBoundaryElements.push(secondaryBoundarySoftwareSystem);
-                                        secondaryBoundariesByElementId[element.parentId] = secondaryBoundary;
-                                    }
-                                }
-                                if (group !== undefined) {
-                                    secondaryBoundary.embed(group);
-                                } else {
-                                    secondaryBoundary.embed(box);
-                                }
-                            }
-                        } else if (primaryBoundaryElement.type === structurizr.constants.CONTAINER_ELEMENT_TYPE && element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
-                            if (element.parentId === primaryBoundaryElement.id) {
-                                if (group !== undefined) {
-                                    primaryBoundary.embed(group);
-                                } else {
-                                    primaryBoundary.embed(box);
-                                }
-                            } else if (view.externalBoundariesVisible === true) {
-                                var secondaryBoundary = secondaryBoundariesByElementId[element.parentId];
-                                if (secondaryBoundary === undefined) {
-                                    var secondaryBoundaryContainer = structurizr.workspace.findElementById(element.parentId);
-                                    if (secondaryBoundaryContainer) {
-                                        secondaryBoundary = createBoundary(secondaryBoundaryContainer.name, structurizr.ui.getMetadataForElement(secondaryBoundaryContainer), 'secondary', secondaryBoundaryContainer);
-                                        secondaryBoundaries.push(secondaryBoundary);
-                                        secondaryBoundaryElements.push(secondaryBoundaryContainer);
-                                        secondaryBoundariesByElementId[element.parentId] = secondaryBoundary;
-                                    }
-                                }
-                                if (group !== undefined) {
-                                    secondaryBoundary.embed(group);
-                                } else {
-                                    secondaryBoundary.embed(box);
-                                }
-                            }
-                        }
+                if (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE && view.elementId) {
+                    var scopedElement = structurizr.workspace.findElementById(view.elementId);
+
+                    if (
+                        scopedElement.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE && element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE ||
+                        scopedElement.type === structurizr.constants.CONTAINER_ELEMENT_TYPE && element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE
+                    ) {
+                        // dynamic view with software system scope and element is a container or
+                        // dynamic view with container scope and element is a component
+                        //
+                        // in both cases, add a boundary to represent the scoped element
+                        addElementToBoundary(element, box);
                     }
                 }
 
@@ -907,7 +758,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
         }
 
-
         var relationships = view.relationships;
         if (relationships === undefined) {
             relationships = [];
@@ -933,17 +783,27 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         diagramKey = createDiagramKey();
 
-        Object.keys(groupsById).forEach(function(key) {
-            var group = groupsById[key];
-            reposition(group);
-        });
+        view.elements.forEach(function (elementView) {
+            var element = structurizr.workspace.findElementById(elementView.id);
+            var cell = cellsByElementId[element.id];
 
-        if (primaryBoundary) {
-            reposition(primaryBoundary);
-            primaryBoundary.toBack();
-        }
-        secondaryBoundaries.forEach(function(boundary) {
-            reposition(boundary);
+            if (
+                element.type === structurizr.constants.CUSTOM_ELEMENT_TYPE ||
+                element.type === structurizr.constants.PERSON_ELEMENT_TYPE ||
+                element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE ||
+                element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE ||
+                element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE
+            ) {
+                cell.toFront();
+
+                var parentId = cell.get('parent');
+                while (parentId) {
+                    var parentCell = graph.getCell(parentId);
+                    reposition(parentCell);
+
+                    parentId = parentCell.get('parent');
+                }
+            }
         });
 
         addGraphEventHandlers();
@@ -973,6 +833,114 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         if (callback !== undefined) {
             callback();
+        }
+    }
+
+    function includeGroup(element, view) {
+        // for rendering groups, we only want to do this as follows:
+        // - system landscape diagram: people, software systems, custom elements
+        // - system context diagram: people, software systems, custom elements
+        // - container diagram: custom elements, containers
+        // - component diagram: custom elements, components
+        // - dynamic diagram: depends on scope
+        var renderGroupForElement = false;
+
+        if (element.type === 'Custom') {
+            renderGroupForElement = true;
+        } else if (view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE) {
+            renderGroupForElement = (element.type === structurizr.constants.PERSON_ELEMENT_TYPE || element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE);
+        } else if (view.type === structurizr.constants.CONTAINER_VIEW_TYPE) {
+            renderGroupForElement = element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE;
+        } else if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE) {
+            renderGroupForElement = element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE;
+        } else if (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE) {
+            // find the type of the scoped element
+            if (view.elementId === undefined) {
+                renderGroupForElement = (element.type === structurizr.constants.PERSON_ELEMENT_TYPE || element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE);
+            } else {
+                var scopedElement = structurizr.workspace.findElementById(view.elementId);
+                if (scopedElement.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
+                    renderGroupForElement = element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE;
+                } else if (scopedElement.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
+                    renderGroupForElement = element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE;
+                }
+            }
+        }
+
+        return renderGroupForElement;
+    }
+
+    function addElementToBoundary(element, cell) {
+        var boundary = boundariesByElementId[element.parentId];
+        if (boundary === undefined) {
+            var boundaryElement = structurizr.workspace.findElementById(element.parentId);
+            if (boundaryElement) {
+                boundary = createBoundary(boundaryElement.name, structurizr.ui.getMetadataForElement(boundaryElement), undefined, boundaryElement);
+                boundary.elementInView = boundaryElement;
+                boundariesByElementId[element.parentId] = boundary;
+            }
+        }
+
+        if (element.group !== undefined) {
+            boundary.embed(findRootGroup(element.group));
+        } else {
+            boundary.embed(cell);
+        }
+    }
+
+    function findRootGroup(name) {
+        if (useNestedGroups()) {
+            const separator = getGroupSeparator();
+
+            if (name.indexOf(separator) > -1) {
+                return groupsByName[name.substring(0, name.indexOf(separator))];
+            } else {
+                return groupsByName[name];
+            }
+        } else {
+            return groupsByName[name];
+        }
+    }
+
+    function getGroupSeparator() {
+        return structurizr.workspace.model.properties['structurizr.group.separator'];
+    }
+
+    function useNestedGroups() {
+        return getGroupSeparator() !== undefined;
+    }
+
+    function findOrCreateGroup(name) {
+        if (useNestedGroups()) {
+            const separator = getGroupSeparator();
+            var group = groupsByName[name];
+            if (group === undefined) {
+                if (name.indexOf(separator) > -1) {
+                    var parentGroupName = name.substring(0, name.lastIndexOf(separator));
+                    var groupName = name.substring(name.lastIndexOf(separator) + separator.length);
+                    var parentGroup = findOrCreateGroup(parentGroupName);
+
+                    group = createBoundaryForGroup(name);
+                    parentGroup.embed(group);
+                    group._name = groupName;
+                    groupsByName[name] = group;
+                } else {
+                    group = createBoundaryForGroup(name);
+                    group._name = name;
+                    groupsByName[name] = group;
+                }
+            }
+
+            return group;
+        } else {
+            var group = groupsByName[name];
+            if (group === undefined) {
+                group = createBoundaryForGroup(name);
+                group._name = name;
+                groupsByName[name] = group;
+            }
+
+            return group;
         }
     }
 
@@ -3094,6 +3062,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
     }
 
+    function createBoundaryForGroup(name) {
+        return createBoundary(name, undefined, 'Group', undefined);
+    }
+
     function createBoundary(name, metadata, type, element) {
         var elementStyle;
 
@@ -3106,12 +3078,18 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var icon;
         var strokeWidth = 2;
         var dashArray = '20,20';
+        var nameText = name;
 
         if (type === 'Group') {
             dashArray = '5,5'; // dotted line
             elementStyle = structurizr.ui.findElementStyle( { type: 'Boundary', tags: 'Group, Group:' + name });
             icon = elementStyle.icon;
             strokeWidth = elementStyle.strokeWidth;
+
+            if (useNestedGroups()) {
+                const separator = getGroupSeparator();
+                nameText = name.substring(name.lastIndexOf(separator) + separator.length);
+            }
 
             stroke = elementStyle.stroke;
             if (stroke === undefined) {
@@ -3132,51 +3110,50 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             // and apply opacity
             textColor = structurizr.util.shadeColor(textColor, 100 - elementStyle.opacity, darkMode);
             stroke = structurizr.util.shadeColor(stroke, 100-elementStyle.opacity, darkMode);
-        } else {
-            if (type === 'Enterprise') {
-                elementStyle = structurizr.ui.findElementStyle({type: 'Boundary', tags: 'Boundary, Boundary:Enterprise'});
-                icon = elementStyle.icon;
-                strokeWidth = elementStyle.strokeWidth;
+        } else if (type === 'Enterprise') {
+            elementStyle = structurizr.ui.findElementStyle({type: 'Boundary', tags: 'Boundary, Boundary:Enterprise'});
+            icon = elementStyle.icon;
+            strokeWidth = elementStyle.strokeWidth;
 
-                stroke = elementStyle.stroke;
-                if (stroke === undefined) {
-                    stroke = elementStyle.color;
-                }
-                if (stroke === undefined) {
-                    stroke = defaultColours[type];
-                }
+            stroke = elementStyle.stroke;
+            if (stroke === undefined) {
+                stroke = elementStyle.color;
+            }
+            if (stroke === undefined) {
+                stroke = defaultColours[type];
+            }
 
-                textColor = elementStyle.color;
-                if (textColor === undefined) {
-                    textColor = defaultColours[type];
-                }
+            textColor = elementStyle.color;
+            if (textColor === undefined) {
+                textColor = defaultColours[type];
+            }
 
+            textColor = structurizr.util.shadeColor(textColor, 100 - elementStyle.opacity, darkMode);
+            stroke = structurizr.util.shadeColor(stroke, 100 - elementStyle.opacity, darkMode);
+        } else if (element !== undefined) {
+            elementStyle = structurizr.ui.findElementStyle({
+                type: 'Boundary',
+                tags: 'Boundary, Boundary:' + element.type
+            });
+            const elementStyleForBoundaryElement = structurizr.ui.findElementStyle(element);
+            strokeWidth = elementStyle.strokeWidth;
 
-            } else if (element !== undefined) {
-                elementStyle = structurizr.ui.findElementStyle({
-                    type: 'Boundary',
-                    tags: 'Boundary, Boundary:' + element.type
-                });
-                const elementStyleForBoundaryElement = structurizr.ui.findElementStyle(element);
-                strokeWidth = elementStyle.strokeWidth;
+            icon = elementStyle.icon;
+            if (icon === undefined) {
+                icon = elementStyleForBoundaryElement.icon;
+            }
 
-                icon = elementStyle.icon;
-                if (icon === undefined) {
-                    icon = elementStyleForBoundaryElement.icon;
-                }
+            stroke = elementStyle.stroke;
+            if (stroke === undefined) {
+                stroke = elementStyle.color;
+            }
+            if (stroke === undefined) {
+                stroke = elementStyleForBoundaryElement.stroke;
+            }
 
-                stroke = elementStyle.stroke;
-                if (stroke === undefined) {
-                    stroke = elementStyle.color;
-                }
-                if (stroke === undefined) {
-                    stroke = elementStyleForBoundaryElement.stroke;
-                }
-
-                textColor = elementStyle.color;
-                if (textColor === undefined) {
-                    textColor = elementStyleForBoundaryElement.stroke;
-                }
+            textColor = elementStyle.color;
+            if (textColor === undefined) {
+                textColor = elementStyleForBoundaryElement.stroke;
             }
 
             textColor = structurizr.util.shadeColor(textColor, 100 - elementStyle.opacity, darkMode);
@@ -3202,7 +3179,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     'stroke-dasharray': dashArray
                 },
                 '.structurizrName': {
-                    text: name,
+                    text: nameText,
                     'font-family': font.name,
                     'font-size': elementStyle.fontSize + 'px',
                     fill: textColor
@@ -3217,7 +3194,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         });
 
         graph.addCell(boundary);
-        boundary.toBack();
 
         boundary._computedStyle = {};
         boundary._computedStyle.background = canvasColor;
@@ -3389,7 +3365,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             metadataText = parentCell.attr('.structurizrMetaData').text;
             fontSize = parentCell._computedStyle.fontSize;
 
-            if (parentCell.elementInView) {
+            if (parentCell.elementInView && parentCell.positionCalculated === false) {
                 // this is an element from the model
                 var element = structurizr.workspace.findElementById(parentCell.elementInView.id);
                 if (element.type === 'DeploymentNode') {
@@ -3890,7 +3866,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         relationshipStylesInUse.sort(function(a, b){ return a.localeCompare(b); });
 
         var numberOfItemsInKey = elementStylesInUse.length + relationshipStylesInUse.length;
-        if (Object.keys(groupsById).length > 0) {
+        if (Object.keys(groupsByName).length > 0) {
             numberOfItemsInKey++;
         }
         if (currentView.type === "Deployment") {
@@ -4199,7 +4175,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         for (var i = 0; i < graph.getElements().length; i++) {
             var cell = graph.getElements()[i];
 
-            if (cell.elementInView !== undefined || cell === primaryBoundary || cell.attributes.type === 'structurizr.boundary') {
+            if (cell.elementInView !== undefined || cell.attributes.type === 'structurizr.boundary') {
                 var bbox = paper.findViewByModel(cell).getBBox();
                 minX = Math.min(minX, bbox.x);
                 minY = Math.min(minY, bbox.y);
@@ -5240,7 +5216,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             if (cell.elementInView && cell.positionCalculated === false) {
                 fireWorkspaceChangedEvent();
 
-                if (opt.translateBy && (!primaryBoundary || opt.translateBy !== primaryBoundary.id)) {
+                if (opt.translateBy) {
+                    const translatedByCell = graph.getCell(opt.translateBy);
+                    if (translatedByCell.attributes.type === 'structurizr.boundary' || translatedByCell.attributes.type === 'structurizr.deploymentNode') {
+                        return;
+                    }
+
                     var cellViewMoved = paper.findViewByModel(cell);
                     if (cellViewMoved.selected !== 'undefined' && cellViewMoved.selected === true) {
                         var dx = newPosition.x - cell.elementInView.x;
@@ -5383,10 +5364,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         showTooltipForElement(structurizr.workspace.findElementById(cell.model.elementInView.id), cell.model._computedStyle, x, y);
                     } else if (cell.model.relationshipInView) {
                         showTooltipForRelationship(structurizr.workspace.findRelationshipById(cell.model.relationshipInView.id), cell.model.relationshipInView, cell.model._computedStyle, x, y);
-                    } else if (cell.model === primaryBoundary) {
-                        showTooltipForElement(primaryBoundaryElement, cell.model._computedStyle, x, y);
-                    } else if (secondaryBoundaries.indexOf(cell.model) > -1) {
-                        showTooltipForElement(secondaryBoundaryElements[secondaryBoundaries.indexOf(cell.model)], cell.model._computedStyle, x, y);
                     }
                 }
             }
