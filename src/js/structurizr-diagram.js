@@ -21,11 +21,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
     const defaultBoundaryColoursLight = {
         'Enterprise': '#444444',
-        'Group': '#cccccc'
+        'Group': '#444444'
     };
     const defaultBoundaryColoursDark = {
         'Enterprise': '#cccccc',
-        'Group': '#444444'
+        'Group': '#cccccc'
     };
 
     var scale = 0.5;
