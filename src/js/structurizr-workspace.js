@@ -164,6 +164,10 @@ structurizr.Workspace = class Workspace {
             this.#workspace.model = {};
         }
 
+        if (this.#workspace.model.properties === undefined) {
+            this.#workspace.model.properties = {};
+        }
+
         var model = this.#workspace.model;
 
         if (model.customElements) {
