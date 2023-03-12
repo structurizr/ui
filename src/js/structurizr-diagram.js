@@ -2616,58 +2616,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         } else {
             var metadata = breakText(structurizr.ui.getMetadataForElement(element, true), configuration.width - horizontalPadding, font.name, (configuration.fontSize + metaDataFontSizeDifference));
 
-            if (currentView.type === 'Container') {
-                if (currentView.externalSoftwareSystemBoundariesVisible === undefined || currentView.externalSoftwareSystemBoundariesVisible === false) {
-                    if (element.type === 'Container' && element.parentId !== currentView.softwareSystemId) {
-                        // this is a container from a "foreign" software system
-                        var softwareSystem = structurizr.workspace.findElementById(element.parentId);
-                        metadata = "from " + softwareSystem.name + "\n" + metadata;
-                    }
-                }
-            } else if (currentView.type === 'Component') {
-                var container = structurizr.workspace.findElementById(currentView.containerId);
-                var softwareSystem = structurizr.workspace.findElementById(container.parentId);
-                if (element.type === 'Container' && element.parentId !== softwareSystem.id) {
-                    // this is a container from a "foreign" software system
-                    var foreignSoftwareSystem = structurizr.workspace.findElementById(element.parentId);
-                    metadata = "from " + foreignSoftwareSystem.name + "\n" + metadata;
-                }
-
-                if (currentView.externalContainerBoundariesVisible === undefined || currentView.externalContainerBoundariesVisible === false) {
-                    if (element.type === 'Component' && element.parentId !== currentView.containerId) {
-                        // this is a component from a "foreign" container
-                        var foreignContainer = structurizr.workspace.findElementById(element.parentId);
-                        metadata = "from " + foreignContainer.name + "\n" + metadata;
-                    }
-                }
-            } else if (currentView.type === "Dynamic") {
-                if (currentView.elementId === undefined) {
-                    // do nothing
-                } else {
-                    var elementInScope = structurizr.workspace.findElementById(currentView.elementId);
-                    if (elementInScope.type === 'SoftwareSystem') {
-                        if (element.type === 'Container' && element.parentId !== currentView.softwareSystemId) {
-                            if (currentView.externalBoundariesVisible === undefined || currentView.externalBoundariesVisible === false) {
-                                // this is a container from a "foreign" software system
-                                var softwareSystem = structurizr.workspace.findElementById(element.parentId);
-                                metadata = "from " + softwareSystem.name + "\n" + metadata;
-                            }
-                        }
-                    } else if (elementInScope.type === 'Container') {
-                        var softwareSystem = structurizr.workspace.findElementById(elementInScope.parentId);
-                        if (element.type === 'Container' && element.parentId !== softwareSystem.id) {
-                            // this is a container from a "foreign" software system
-                            metadata = "from " + softwareSystem.name + "\n" + metadata;
-                        } else if (element.type === 'Component' && element.parentId !== elementInScope.id) {
-                            if (currentView.externalBoundariesVisible === undefined || currentView.externalBoundariesVisible === false) {
-                                // this is a component from a "foreign" container
-                                var foreignContainer = structurizr.workspace.findElementById(element.parentId);
-                                metadata = "from " + foreignContainer.name + "\n" + metadata;
-                            }
-                        }
-                    }
-                }
-            } else if (currentView.type === 'Deployment') {
+            if (currentView.type === 'Deployment') {
                 if (element.type === 'ContainerInstance') {
                     var container = structurizr.workspace.findElementById(element.containerId);
                     if (container) {
