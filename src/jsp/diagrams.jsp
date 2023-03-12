@@ -416,8 +416,8 @@
                     view.automaticLayout.vertices,
                     true
                 );
-                structurizr.diagram.autoPageSize();
             }
+            structurizr.diagram.autoPageSize();
             $('#editDiagramButton').removeClass('hidden');
             $('#diagramNotEditableMessage').addClass('hidden');
         }
