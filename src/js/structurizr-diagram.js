@@ -583,7 +583,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 // enterprise boundaries need to be drawn for: system landscape, system context, and (high-level) dynamic diagrams
                 // - the "enterprise" concept has been removed, so this is only here to support older workspaces
                 if (view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE || (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE && view.elementId === undefined)) {
-                    if (element.location && element.location === 'Internal' && view.enterpriseBoundaryVisible !== false) {
+                    var includeEnterpriseBoundary = (view.enterpriseBoundaryVisible === true);
+                    if (view.properties && view.properties['structurizr.enterpriseBoundary']) {
+                        includeEnterpriseBoundary = (view.properties['structurizr.enterpriseBoundary'] === 'true');
+                    }
+                    if (element.location && element.location === 'Internal' && includeEnterpriseBoundary) {
                         if (!enterpriseBoundary) {
                             var enterprise = structurizr.workspace.model.enterprise;
                             var boundaryName = (enterprise && enterprise.name) ? enterprise.name : 'Enterprise';
@@ -618,7 +622,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE && element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
                     // component on a component diagram - add a boundary to represent the parent container
-                    const includeParentBoundary = (currentView.properties && currentView.properties['structurizr.softwareSystemBoundaries'] === 'true');
+                    const includeParentBoundary = (view.properties && view.properties['structurizr.softwareSystemBoundaries'] === 'true');
                     addElementToBoundary(element, box, includeParentBoundary);
                 }
 
@@ -633,7 +637,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         // dynamic view with container scope and element is a component
                         //
                         // in both cases, add a boundary to represent the scoped element
-                        const includeParentBoundary = (element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) && (currentView.properties && currentView.properties['structurizr.softwareSystemBoundaries'] === 'true');
+                        const includeParentBoundary = (element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) && (view.properties && view.properties['structurizr.softwareSystemBoundaries'] === 'true');
                         addElementToBoundary(element, box, includeParentBoundary);
                     }
                 }
@@ -854,7 +858,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var renderGroupForElement = false;
 
         // have groups been forced off?
-        if (currentView.properties && currentView.properties['structurizr.groups'] === 'false') {
+        if (view.properties && view.properties['structurizr.groups'] === 'false') {
             return false;
         }
 
@@ -894,6 +898,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
 
             if (includeParentBoundary && boundaryElement.parentId) {
+                var parentBoundary = boundariesByElementId[boundaryElement.parentId];
                 var parentBoundary = boundariesByElementId[boundaryElement.parentId];
                 if (parentBoundary === undefined) {
                     var parentBoundaryElement = structurizr.workspace.findElementById(boundaryElement.parentId);
@@ -955,7 +960,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function getGroupSeparator() {
-        return structurizr.workspace.model.properties['structurizr.group.separator'];
+        return structurizr.workspace.model.properties['structurizr.groupSeparator'];
     }
 
     function useNestedGroups() {
