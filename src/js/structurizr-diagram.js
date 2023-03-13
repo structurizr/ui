@@ -852,8 +852,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         // for rendering groups, we only want to do this as follows:
         // - system landscape diagram: people, software systems, custom elements
         // - system context diagram: people, software systems, custom elements
-        // - container diagram: custom elements, containers
-        // - component diagram: custom elements, components
+        // - container diagram: containers
+        // - component diagram: components
         // - dynamic diagram: depends on scope
         var renderGroupForElement = false;
 
@@ -862,10 +862,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             return false;
         }
 
-        if (element.type === 'Custom') {
-            renderGroupForElement = true;
-        } else if (view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE) {
-            renderGroupForElement = (element.type === structurizr.constants.PERSON_ELEMENT_TYPE || element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE);
+        if (view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE) {
+            renderGroupForElement = (element.type === structurizr.constants.PERSON_ELEMENT_TYPE || element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE || element.type === structurizr.constants.CUSTOM_ELEMENT_TYPE);
         } else if (view.type === structurizr.constants.CONTAINER_VIEW_TYPE) {
             renderGroupForElement = element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE;
         } else if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE) {
@@ -873,7 +871,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         } else if (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE) {
             // find the type of the scoped element
             if (view.elementId === undefined) {
-                renderGroupForElement = (element.type === structurizr.constants.PERSON_ELEMENT_TYPE || element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE);
+                renderGroupForElement = (element.type === structurizr.constants.PERSON_ELEMENT_TYPE || element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE || element.type === structurizr.constants.CUSTOM_ELEMENT_TYPE);
             } else {
                 var scopedElement = structurizr.workspace.findElementById(view.elementId);
                 if (scopedElement.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
