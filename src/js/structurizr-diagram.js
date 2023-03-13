@@ -818,6 +818,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
         });
 
+        if (enterpriseBoundary) {
+            enterpriseBoundary.toBack();
+        }
+
         addGraphEventHandlers();
 
         if (embedded) {
