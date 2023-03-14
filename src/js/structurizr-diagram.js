@@ -1394,6 +1394,9 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     this.setPageSize = function(width, height) {
+        width = Math.round(width);
+        height = Math.round(height);
+
         diagramWidth = width;
         diagramHeight = height;
         currentView.dimensions = { width: width, height: height };
