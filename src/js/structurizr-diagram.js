@@ -574,7 +574,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 if (includeGroup(element, view) === true) {
                     if (element.group !== undefined) {
-                        const group = findOrCreateGroup(element.group, element.parentId);
+                        var scope = element.parentId;
+                        if (scope === undefined) {
+                            scope = element.location === 'Internal' ? 'Internal' : 'External';
+                        }
+                        const group = findOrCreateGroup(element.group, scope);
                         group.embed(box);
                         box.toFront();
                     }
@@ -596,7 +600,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         }
 
                         if (element.group !== undefined) {
-                            const rootGroup = findRootGroup(element.group, element.parentId);
+                            const rootGroup = findRootGroup(element.group, 'Internal');
                             if (rootGroup) {
                                 enterpriseBoundary.embed(rootGroup);
                             } else {
