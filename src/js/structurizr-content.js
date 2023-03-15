@@ -160,6 +160,10 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix,
     }
 
     this.render = function(section) {
+        if (section.content === undefined || section.content.trim().length === 0) {
+            return "";
+        }
+
         if (section.format && section.format === "AsciiDoc") {
 
             const inlinePassthroughRegex = /.*pass:.*\[/g;
