@@ -2577,7 +2577,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function calculateHeight(text, fontSize, fontSizeDelta, addPadding) {
-        var lineSpacing = 1.2;
+        var lineSpacing = 1.25;
         if (text) {
             text = text.trim();
 
@@ -2883,7 +2883,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         }
                     }
                 });
-            verticalOffset = (heightOfDescription / 2) + internalPadding;
+            verticalOffset = ((heightOfDescription + configuration.fontSize)/ 2);
 
             var technology = formatTechnologyForRelationship(relationship);
             if (technology && technology.trim().length > 0) {
@@ -2909,7 +2909,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     }
                 });
                 var heightOfTechnology = calculateHeight(technology, configuration.fontSize, metaDataFontSizeDifference, false);
-                verticalOffset += heightOfTechnology;
+                verticalOffset += heightOfTechnology - (configuration.fontSize / 2);
             }
 
             labels.push({
