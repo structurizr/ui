@@ -2668,16 +2668,22 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function calculateStrokeDashArray(thickness) {
-        return (15 * thickness) + " " + (15 * thickness);
+        return "30 30";
     }
 
     function calculateStrokeDottedArray(thickness) {
-        return (2 * thickness) + " " + (2 * thickness);
+        return "5 5";
     }
 
     function calculateArrowHead(thickness) {
+        var width = (thickness * 10);
+        if (width > 50) {
+            width = 50;
+        }
+        var height = width;
+
         // e.g. M 30 0 L 0 15 L 30 30 z
-        return 'M ' + (thickness * 10) + ' 0 L 0 ' + (thickness * 5) + ' L ' + (thickness * 10) + ' ' + (thickness * 10) + ' z';
+        return 'M ' + height + ' 0 L 0 ' + (width/2) + ' L ' + height + ' ' + width + ' z';
     }
 
     function removeIllegalElements() {
