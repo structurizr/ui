@@ -90,6 +90,8 @@
     progressMessage.show('<p>Loading workspace...</p>');
 
     function workspaceLoaded() {
+        resize();
+
         if (structurizr.workspace.hasDecisions()) {
             contentRenderer = new structurizr.ui.ContentRenderer(
                 structurizr.workspace,
@@ -487,23 +489,24 @@
         };
     }
 
-    var topNavigationHeight = $('#topNavigation').outerHeight(true);
-    var padding = 20;
-    $('#documentationPanel').css('height', (window.innerHeight - topNavigationHeight - padding) + 'px');
-    documentationNavigationPanel.css('height', (window.innerHeight - topNavigationHeight - padding) + 'px');
-
-    document.addEventListener("keydown", changeDecision);
-
-    window.addEventListener("resize", function() {
-        const topNavigationHeight = $('#topNavigation').outerHeight(true);
-        const padding = 20;
-        $('#documentationPanel').css('height', (window.innerHeight - topNavigationHeight - padding) + 'px');
-        documentationNavigationPanel.css('height', (window.innerHeight - topNavigationHeight - padding) + 'px');
+    function resize() {
+        var topNavigationHeight = $('#topNavigation').outerHeight(true);
+        var padding = 20;
+        const contentHeight = (window.innerHeight - topNavigationHeight - padding);
+        $('#documentationPanel').css('height', contentHeight + 'px');
+        documentationNavigationPanel.css('height', contentHeight + 'px');
+        structurizr.embed.setMaxHeight(0.8 * contentHeight);
 
         if (graph !== undefined && $('#graphContent').is(':visible')) {
             resizeGraph();
         }
-    }, false);
+    }
+
+    document.addEventListener("keydown", changeDecision);
+
+    $(window).resize(function() {
+        resize();
+    });
 </script>
 
 <%@ include file="/WEB-INF/fragments/decisions/graph.jspf" %>

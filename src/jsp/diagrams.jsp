@@ -680,7 +680,10 @@
         };
 
         structurizr.diagram.getPossibleViewportHeight = function() {
-            const diagramControlsHeight = $('#diagramControls').outerHeight(true);
+            var diagramControlsHeight = $('#diagramControls').outerHeight(true);
+            if (diagramControlsHeight === undefined) {
+                diagramControlsHeight = 0;
+            }
 
             if (structurizr.ui.isFullScreen()) {
                 if (presentationMode) {
