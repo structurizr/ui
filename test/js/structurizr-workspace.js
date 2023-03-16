@@ -11,7 +11,8 @@ QUnit.test("Workspace() initialises an empty JSON document", function( assert ) 
         "customElements": [],
         "deploymentNodes": [],
         "people": [],
-        "softwareSystems": []        
+        "softwareSystems": [],
+        "properties": {}
     });
 
     assert.deepEqual(workspace.views, {
