@@ -810,14 +810,16 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE ||
                 element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE
             ) {
-                cell.toFront();
+                if (cell) {
+                    cell.toFront();
 
-                var parentId = cell.get('parent');
-                while (parentId) {
-                    var parentCell = graph.getCell(parentId);
-                    reposition(parentCell);
+                    var parentId = cell.get('parent');
+                    while (parentId) {
+                        var parentCell = graph.getCell(parentId);
+                        reposition(parentCell);
 
-                    parentId = parentCell.get('parent');
+                        parentId = parentCell.get('parent');
+                    }
                 }
             }
         });
