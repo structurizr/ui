@@ -74,7 +74,7 @@
     </div>
 
     <div class="col-sm-10" style="padding: 0">
-        <div id="diagram" tabindex="1" style="position: relative">
+        <div id="diagram" tabindex="1" style="position: relative; <c:if test="${embed}">background: transparent;</c:if>">
             <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
             <%@ include file="/WEB-INF/fragments/diagrams/key.jspf" %>
             <%@ include file="/WEB-INF/fragments/quick-navigation.jspf" %>
