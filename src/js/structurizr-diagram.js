@@ -3671,8 +3671,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             scale = zoomScale;
         }
 
-        var width = Math.floor(diagramWidth*scale);
-        var height = Math.floor(diagramHeight*scale);
+        var width = Math.round(diagramWidth*scale);
+        var height = Math.round(diagramHeight*scale);
 
         canvas.width(width);
         canvas.height(height);
