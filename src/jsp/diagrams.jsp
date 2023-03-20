@@ -131,6 +131,7 @@
     const DARK_MODE_COOKIE_NAME = 'structurizr.darkMode';
     structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
 
+    var embed = ${embed};
     var views;
     const viewKeys = [];
     var viewsVisited = new structurizr.util.Stack();
@@ -371,6 +372,7 @@
 
         const view = structurizr.workspace.findViewByKey(key);
 
+        $('#diagramControls').removeClass('hidden');
         $('#undoButton').prop('disabled', true);
 
         if (viewsVisited.peek() !== key) {
@@ -384,6 +386,9 @@
         healthCheck.stop();
 
         if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
+            if (embed) {
+                $('#diagramControls').addClass('hidden');
+            }
             $('#diagramEditButtons').addClass('hidden');
             $('#diagramNotEditableMessage').addClass('hidden');
             $('#editDiagramButton').addClass('hidden');
@@ -401,6 +406,10 @@
             $('#diagramEditButtons').removeClass('hidden');
         } else {
             $('#diagramEditButtons').addClass('hidden');
+
+            if (embed) {
+                $('#diagramControls').addClass('hidden');
+            }
         }
 
         if (view.automaticLayout !== undefined) {
@@ -418,6 +427,7 @@
                 );
             }
             structurizr.diagram.autoPageSize();
+        } else {
             $('#editDiagramButton').removeClass('hidden');
             $('#diagramNotEditableMessage').addClass('hidden');
         }
@@ -1239,32 +1249,24 @@
     }
 
     <c:if test="${not empty iframe}">
-    var diagramAspectRatio = undefined;
-    var diagramControlsHeight = 0;
-
-    function postDiagramAspectRatioToParentWindow(force) {
-        if (diagramAspectRatio === undefined || force === true) {
-            var canvasWidth = document.getElementById("diagram-canvas").offsetWidth;
-            var canvasHeight = document.getElementById("diagram-canvas").offsetHeight;
-            diagramAspectRatio = (canvasWidth / canvasHeight);
-        }
+    function postDiagramAspectRatioToParentWindow() {
+        var canvasWidth = document.getElementById("diagram-canvas").offsetWidth;
+        var canvasHeight = document.getElementById("diagram-canvas").offsetHeight;
+        var diagramAspectRatio = (canvasWidth / canvasHeight);
 
         var diagramControls = document.getElementById("diagramControls");
         var controlsHeight = 0;
         if (diagramControls) {
             controlsHeight = diagramControls.offsetHeight;
         }
-        if (diagramControlsHeight !== controlsHeight || force === true) {
-            diagramControlsHeight = controlsHeight;
 
-            parent.postMessage({
-                iframe: '${iframe}',
-                aspectRatio: diagramAspectRatio,
-                controlsHeight: diagramControlsHeight,
-                type: 'diagram',
-                view: structurizr.diagram.getCurrentViewOrFilter().key
-            }, '*');
-        }
+        parent.postMessage({
+            iframe: '${iframe}',
+            aspectRatio: diagramAspectRatio,
+            controlsHeight: controlsHeight,
+            type: 'diagram',
+            view: structurizr.diagram.getCurrentViewOrFilter().key
+        }, '*');
     }
     </c:if>
 
