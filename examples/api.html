@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript" src="../src/js/jquery-3.6.3.min.js"></script>
+    <script type="text/javascript" src="../src/js/crypto-js-4.1.1.min.js"></script>
+    <script type="text/javascript" src="../src/js/structurizr.js"></script>
+    <script type="text/javascript" src="../src/js/structurizr-client.js"></script>
+</head>
+<body>
+    <div id="json"></div>
+</body>
+</html>
+
+<script>
+    const apiUrl = 'https://api.structurizr.com';
+    const workspaceId = 123456;
+    const apiKey = '...';
+    const apiSecret = '...';
+    const structurizrApiClient = new structurizr.io.StructurizrApiClient(apiUrl, workspaceId, apiKey, apiSecret);
+
+    structurizrApiClient.getWorkspace(
+        undefined, // latest version
+        function(response) {
+            if (response.success) {
+                workspaceLoaded(response.json);
+            } else {
+                if (response.message) {
+                    console.log(response.message);
+                }
+            }
+        }
+    );
+
+    function workspaceLoaded(workspace) {
+        $('#json').text(JSON.stringify(workspace));
+    }
+</script>
