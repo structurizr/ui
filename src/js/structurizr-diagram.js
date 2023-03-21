@@ -4186,6 +4186,15 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function findContentArea(crop, margin) {
+        if (currentView && (currentView.elements === undefined || currentView.elements.length === 0)) {
+            return {
+                minX: 0,
+                maxX: 0,
+                minY: 0,
+                maxY: 0
+            };
+        }
+
         var minX = Number.MAX_VALUE;
         var maxX = 0;
         var minY = Number.MAX_VALUE;
