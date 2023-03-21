@@ -30,6 +30,7 @@
     <option value="dynamic-view">&nbsp;&nbsp;&nbsp;- dynamic</option>
     <option value="deployment-view">&nbsp;&nbsp;&nbsp;- deployment</option>
     <option value="custom-view">&nbsp;&nbsp;&nbsp;- custom</option>
+    <option value="image-view">&nbsp;&nbsp;&nbsp;- image</option>
     <option value="styles">&nbsp;&nbsp;&nbsp;- styles</option>
     <option value="element-style">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- element</option>
     <option value="relationship-style">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- relationship</option>
