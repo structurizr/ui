@@ -5918,7 +5918,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     self.moveSelectedElementsLeft();
                     e.preventDefault();
                     return;
-                } else if (canvas.innerWidth() > viewport.innerWidth()) {
+                } else if (Math.round(canvas.innerWidth()) > Math.round(viewport.innerWidth())) {
                     viewport.scrollLeft(viewport.scrollLeft() - (viewport.innerWidth() / 10));
                     e.preventDefault();
                     return;
@@ -5929,7 +5929,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     self.moveSelectedElementsRight();
                     e.preventDefault();
                     return;
-                } else if (canvas.innerWidth() > viewport.innerWidth()) {
+                } else if (Math.round(canvas.innerWidth()) > Math.round(viewport.innerWidth())) {
                     viewport.scrollLeft(viewport.scrollLeft() + (viewport.innerWidth() / 10));
                     e.preventDefault();
                     return;
@@ -5944,7 +5944,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     self.moveSelectedElementsUp();
                     e.preventDefault();
                     return;
-                } else if (canvas.innerHeight() > viewport.innerHeight()) {
+                } else if (Math.round(canvas.innerHeight()) > Math.round(viewport.innerHeight())) {
                     viewport.scrollTop(viewport.scrollTop() - (viewport.innerHeight() / 10));
                     e.preventDefault();
                     return;
@@ -5959,7 +5959,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     self.moveSelectedElementsDown();
                     e.preventDefault();
                     return;
-                } else if (canvas.innerHeight() > viewport.innerHeight()) {
+                } else if (Math.round(canvas.innerHeight()) > Math.round(viewport.innerHeight())) {
                     viewport.scrollTop(viewport.scrollTop() + (viewport.innerHeight() / 10));
                     e.preventDefault();
                     return;
