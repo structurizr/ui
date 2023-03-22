@@ -146,7 +146,7 @@
                         var hash = '#' + $(this).attr('name');
                         highlightNavigation(undefined, hash);
                         if (window.location.hash !== hash) {
-                            window.history.pushState({}, '', hash);
+                            window.history.replaceState({}, '', hash);
                         }
                         done = true;
                     }
