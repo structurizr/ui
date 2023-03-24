@@ -1015,6 +1015,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var documentation = false;
         var decisions = false;
         var url = element.url;
+        const elementDoubleClicked = element;
 
         if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE) {
             element = structurizr.workspace.findElementById(element.softwareSystemId);
@@ -1102,7 +1103,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         domElement.dblclick(function(event) {
             if (elementDoubleClickedHandler !== undefined) {
-                elementDoubleClickedHandler(event, element.id);
+                elementDoubleClickedHandler(event, elementDoubleClicked.id);
             }
         });
     }
