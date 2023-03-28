@@ -199,6 +199,8 @@
 
             if (propertiesHtml.length > 0) {
                 tooltipProperties.html('<div class="smaller"><p>Properties:</p><ul>' + propertiesHtml + '</ul></div>');
+            } else {
+                tooltipProperties.html('')
             }
 
             var urlHtml = '';
