@@ -1047,8 +1047,12 @@
                 } else if (structurizr.diagram.getCurrentView().type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE) {
                     views = structurizr.workspace.findContainerViewsForSoftwareSystem(element.id);
                 }
-            } else if (element.type === "Container") {
+            } else if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
                 views = structurizr.workspace.findComponentViewsForContainer(element.id);
+            } else if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE) {
+                views = structurizr.workspace.findSystemContextViewsForSoftwareSystem(element.softwareSystemId);
+            } else if (element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE) {
+                views = structurizr.workspace.findComponentViewsForContainer(element.containerId);
             }
 
             views = views.concat(structurizr.workspace.findImageViewsForElement(element.id));
