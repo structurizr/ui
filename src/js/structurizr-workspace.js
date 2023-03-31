@@ -271,7 +271,7 @@ structurizr.Workspace = class Workspace {
                 if (softwareSystemInstance.url === undefined) {
                     softwareSystemInstance.url = softwareSystem.url;
                 }
-                softwareSystemInstance.parentId = undefined;
+                softwareSystemInstance.parentId = deploymentNode.id;
 
                 if (softwareSystemInstance.environment === undefined) {
                     softwareSystemInstance.environment = deploymentNode.environment;
@@ -293,7 +293,7 @@ structurizr.Workspace = class Workspace {
                 if (containerInstance.url === undefined) {
                     containerInstance.url = container.url;
                 }
-                containerInstance.parentId = container.parentId;
+                containerInstance.parentId = deploymentNode.id;
 
                 if (containerInstance.environment === undefined) {
                     containerInstance.environment = deploymentNode.environment;

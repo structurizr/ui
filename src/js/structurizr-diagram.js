@@ -665,12 +665,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         if (view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
             var unusedDeploymentNodeCells = [];
 
-            // this first loop creates deployment nodes, nesting any container instances and infrastructure nodes that have already been created
+            // this first loop creates deployment nodes, nesting any software system/container instances and infrastructure nodes that have already been created
             if (view.elements) {
                 view.elements.forEach(function (elementView) {
                     var element = structurizr.workspace.findElementById(elementView.id);
 
-                    if (element.type === 'DeploymentNode') {
+                    if (element.type === structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE) {
                         var deploymentNodeCell = createDeploymentNode(element);
                         deploymentNodeCell.elementInView = elementView;
                         deploymentNodeCell.positionCalculated = true;
@@ -678,12 +678,32 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                         cellsByElementId[element.id] = deploymentNodeCell;
 
+                        if (includeGroup(element, view) === true) {
+                            if (element.group !== undefined) {
+                                var scope = element.parentId;
+                                if (scope === undefined) {
+                                    scope = element.environment;
+                                }
+                                const group = findOrCreateGroup(element.group, scope);
+                                group.embed(deploymentNodeCell);
+                            }
+                        }
+
                         if (element.softwareSystemInstances && element.softwareSystemInstances.length > 0) {
                             element.softwareSystemInstances.forEach(function(softwareSystemInstance) {
                                 // find the software system on the diagram
                                 var softwareSystemBox = cellsByElementId[softwareSystemInstance.id];
                                 if (softwareSystemBox !== undefined) {
-                                    deploymentNodeCell.embed(softwareSystemBox);
+                                    if (softwareSystemInstance.group !== undefined) {
+                                        const rootGroup = findRootGroup(softwareSystemInstance.group, softwareSystemInstance.parentId);
+                                        if (rootGroup) {
+                                            deploymentNodeCell.embed(rootGroup);
+                                        } else {
+                                            deploymentNodeCell.embed(softwareSystemBox);
+                                        }
+                                    } else {
+                                        deploymentNodeCell.embed(softwareSystemBox);
+                                    }
                                 }
                             });
                         }
@@ -693,7 +713,16 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                                 // find the container on the diagram
                                 var containerBox = cellsByElementId[containerInstance.id];
                                 if (containerBox !== undefined) {
-                                    deploymentNodeCell.embed(containerBox);
+                                    if (containerInstance.group !== undefined) {
+                                        const rootGroup = findRootGroup(containerInstance.group, containerInstance.parentId);
+                                        if (rootGroup) {
+                                            deploymentNodeCell.embed(rootGroup);
+                                        } else {
+                                            deploymentNodeCell.embed(containerBox);
+                                        }
+                                    } else {
+                                        deploymentNodeCell.embed(containerBox);
+                                    }
                                 }
                             });
                         }
@@ -703,14 +732,23 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                                 // find the infrastructure node on the diagram
                                 var infrastructureBox = cellsByElementId[infrastructureNode.id];
                                 if (infrastructureBox !== undefined) {
-                                    deploymentNodeCell.embed(infrastructureBox);
+                                    if (infrastructureNode.group !== undefined) {
+                                        const rootGroup = findRootGroup(infrastructureNode.group, infrastructureNode.parentId);
+                                        if (rootGroup) {
+                                            deploymentNodeCell.embed(rootGroup);
+                                        } else {
+                                            deploymentNodeCell.embed(infrastructureBox);
+                                        }
+                                    } else {
+                                        deploymentNodeCell.embed(infrastructureBox);
+                                    }
                                 }
                             });
                         }
                     }
                 });
 
-                // this second loop ensures that all cells are correctly embedded and stacked (back to front)
+                // this second loop ensures that all deployment nodes are correctly embedded (because deployment nodes are created out of order)
                 view.elements.forEach(function (elementView) {
                     var element = structurizr.workspace.findElementById(elementView.id);
                     var cell = cellsByElementId[element.id];
@@ -718,21 +756,27 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     if (element.type === structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE) {
                         if (element.parentId !== undefined) {
                             var parentBox = cellsByElementId[element.parentId];
-                            parentBox.embed(cell);
-                            parentBox.toBack();
-                        }
 
-                        var parentId = cell.get('parent');
-                        while (parentId) {
-                            var parentCell = graph.getCell(parentId);
-                            parentCell.toBack();
-                            parentId = parentCell.get('parent');
+                            if (element.group !== undefined) {
+                                var scope = element.parentId;
+                                if (scope === undefined) {
+                                    scope = element.environment;
+                                }
+                                const rootGroup = findRootGroup(element.group, scope);
+                                if (rootGroup) {
+                                    parentBox.embed(rootGroup);
+                                } else {
+                                    parentBox.embed(cell);
+                                }
+                            } else {
+                                parentBox.embed(cell);
+                            }
                         }
                     }
                 });
 
-                // and this third loop ensures that empty deployment nodes are identified
-                view.elements.forEach(function (elementView) {
+                // and this third loop ensures that empty deployment nodes are identified and removed from the diagram
+                view.elements.forEach(function(elementView) {
                     var element = structurizr.workspace.findElementById(elementView.id);
                     var cell = cellsByElementId[element.id];
 
@@ -754,22 +798,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 unusedDeploymentNodeCells.forEach(function(deploymentNodeCell) {
                     deploymentNodeCell.remove();
                     delete cellsByElementId[deploymentNodeCell.elementInView.id];
-                });
-
-                // and this fourth loop ensures everything is positioned correctly
-                view.elements.forEach(function (elementView) {
-                    var element = structurizr.workspace.findElementById(elementView.id);
-                    var cell = cellsByElementId[element.id];
-
-                    if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE || element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE || element.type === structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE) {
-                        var parentId = cell.get('parent');
-                        while (parentId) {
-                            var parentCell = graph.getCell(parentId);
-                            reposition(parentCell);
-
-                            parentId = parentCell.get('parent');
-                        }
-                    }
                 });
             }
         }
@@ -799,7 +827,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         diagramKey = createDiagramKey();
 
-        view.elements.forEach(function (elementView) {
+        // ensure that all elements are repositioned properly (e.g. groups and deployment nodes are made large enough to fit their content)
+        view.elements.forEach(function(elementView) {
             var element = structurizr.workspace.findElementById(elementView.id);
             var cell = cellsByElementId[element.id];
 
@@ -808,14 +837,15 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 element.type === structurizr.constants.PERSON_ELEMENT_TYPE ||
                 element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE ||
                 element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE ||
-                element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE
+                element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE ||
+                element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE ||
+                element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE ||
+                element.type === structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE
             ) {
                 if (cell) {
-                    cell.toFront();
-
                     var parentId = cell.get('parent');
                     while (parentId) {
-                        var parentCell = graph.getCell(parentId);
+                        const parentCell = graph.getCell(parentId);
                         reposition(parentCell);
 
                         parentId = parentCell.get('parent');
@@ -824,9 +854,16 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
         });
 
-        if (enterpriseBoundary) {
-            enterpriseBoundary.toBack();
-        }
+        // ensure all elements are stacked properly, front to back
+        graph.getElements().forEach(function(element) {
+            if (element.get('parent') === undefined) {
+                element.toFront();
+                const embeddedCells = element.getEmbeddedCells({ deep: true, breadthFirst: true});
+                embeddedCells.forEach(function(embeddedCell) {
+                    embeddedCell.toFront();
+                });
+            }
+        });
 
         addGraphEventHandlers();
 
@@ -843,9 +880,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         self.renderPerspectiveOrTagsFilter();
 
+        // adjust any overlapping vertices, and bring all relationships to the front
         lines.forEach(function(line) {
             try {
                 adjustVertices(graph, line);
+                line.toFront();
             } catch (e) {
                 console.log(e);
             }
@@ -865,6 +904,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         // - container diagram: containers
         // - component diagram: components
         // - dynamic diagram: depends on scope
+        // - deployment diagram: deployment nodes, infrastructure nodes, software system instances, container instances
         var renderGroupForElement = false;
 
         // have groups been forced off?
@@ -890,6 +930,13 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     renderGroupForElement = element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE;
                 }
             }
+        } else if (view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
+            renderGroupForElement = (
+                element.type === structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE ||
+                element.type === structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE ||
+                element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE ||
+                element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE
+            );
         }
 
         return renderGroupForElement;
@@ -3292,7 +3339,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 }
             }
         });
-
 
         if (configuration.border !== 'Solid') {
             cell.attributes.attrs['.structurizrDeploymentNode']['stroke-dasharray'] = borderStyles[configuration.border];
