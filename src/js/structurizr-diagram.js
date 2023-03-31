@@ -2871,14 +2871,20 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             var triangle = calculateArrowHead(configuration.thickness);
 
             var description = "";
-            if (relationshipInView.description) {
-                description = relationshipInView.description;
-            } else if (relationship.description) {
-                description = relationship.description;
-            }
+            if (currentView.type === structurizr.constants.DYNAMIC_VIEW_TYPE) {
+                if (relationshipInView.description) {
+                    description = relationshipInView.description;
+                } else if (relationship.description) {
+                    description = relationship.description;
+                }
 
-            if (currentView.type === structurizr.constants.DYNAMIC_VIEW_TYPE && relationshipInView.order) {
-                description = relationshipInView.order + ": " + description;
+                if (relationshipInView.order) {
+                    description = relationshipInView.order + ": " + description;
+                }
+            } else {
+                if (relationship.description) {
+                    description = relationship.description;
+                }
             }
 
             description = breakText(description, configuration.width, font.name, configuration.fontSize);
