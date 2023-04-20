@@ -1254,11 +1254,8 @@
 
     <c:if test="${not empty iframe}">
     function postDiagramAspectRatioToParentWindow() {
-        var canvasWidth = document.getElementById("diagram-canvas").offsetWidth;
-        var canvasHeight = document.getElementById("diagram-canvas").offsetHeight;
-        var diagramAspectRatio = (canvasWidth / canvasHeight);
-
-        var diagramControls = document.getElementById("diagramControls");
+        const diagramAspectRatio = (structurizr.diagram.getWidth() / structurizr.diagram.getHeight());
+        const diagramControls = document.getElementById("diagramControls");
         var controlsHeight = 0;
         if (diagramControls) {
             controlsHeight = diagramControls.offsetHeight;
