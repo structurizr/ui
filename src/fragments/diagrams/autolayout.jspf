@@ -74,6 +74,11 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="form-group centered" style="margin-top: 40px">
+                    <button class="btn btn-default" title="Bring elements back onto the diagram" onclick="structurizr.diagram.gatherElementsOnCanvas(); closeAutoLayoutModal();"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/magnet.svg" class="icon-btn" /> Bring elements back onto canvas</button>
+                    <button class="btn btn-default" title="Remove all vertices" onclick="structurizr.diagram.removeAllVertices(); closeAutoLayoutModal();"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/slash-lg.svg" class="icon-btn" /> Remove all vertices</button>
+                </div>
             </div>
 
             <div class="modal-footer">

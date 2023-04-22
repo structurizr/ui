@@ -434,7 +434,6 @@
 
         // disable some UI elements based upon whether the diagram is editable
         $('#autoLayoutButton').prop('disabled', !editable);
-        $('#magnetButton').prop('disabled', !editable);
         getPageSizeDropDown().prop('disabled', !editable);
 
         $('.multipleElementsSelectedButton').prop('disabled', true);

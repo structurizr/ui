@@ -105,7 +105,6 @@
         <div class="btn-group">
             <button class="btn btn-default" title="Centre diagram or selected elements" onclick="structurizr.diagram.centreDiagramOrSelectedElements()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/grid.svg" class="icon-btn" /></button>
             <button class="btn btn-default" id="autoLayoutButton" title="Auto-layout" onclick="openAutoLayoutModal()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/magic.svg" class="icon-btn" /></button>
-            <button class="btn btn-default" id="magnetButton" title="Bring elements back onto the diagram" onclick="structurizr.diagram.gatherElementsOnCanvas()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/magnet.svg" class="icon-btn" /></button>
             <button class="btn btn-default" id="undoButton" disabled="disabled" title="Undo layout changes [u]" onclick="structurizr.diagram.undo()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/arrow-counterclockwise.svg" class="icon-btn" /></button>
         </div>
 

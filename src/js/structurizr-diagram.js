@@ -5705,6 +5705,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     this.removeAllVertices = function() {
+        addToUndoBuffer(getCurrentLinkPositions(graph.getLinks()));
+
         graph.getLinks().forEach(function (link) {
             link.set('vertices', []);
         });
