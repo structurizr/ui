@@ -53,8 +53,17 @@ structurizr.ui.Embed = function() {
                 aspectRatio: 1,
                 addition: 0,
                 type: 'diagram',
-                scriptingContext: undefined
+                scriptingContext: undefined,
+                width: window.innerWidth
             };
+
+            const iframe = document.getElementById(embed.elementId);
+            if (iframe) {
+                const parentNode = iframe.parentNode;
+                if (parentNode) {
+                    embed.width = parentNode.offsetWidth;
+                }
+            }
 
             embeds[elementId] = embed;
         }
@@ -64,7 +73,16 @@ structurizr.ui.Embed = function() {
 
     this.resizeEmbeddedDiagrams = function () {
         Object.keys(embeds).forEach(function(key) {
-            resize(embeds[key]);
+            const embed = embeds[key];
+            const iframe = document.getElementById(embed.elementId);
+            if (iframe) {
+                const parentNode = iframe.parentNode;
+                if (parentNode) {
+                    embed.width = parentNode.offsetWidth;
+                }
+            }
+
+            resize(embed);
         });
     };
 
@@ -72,20 +90,17 @@ structurizr.ui.Embed = function() {
         var iframe = document.getElementById(embed.elementId);
         var parentNode = iframe.parentNode;
         if (parentNode) {
-            var width = parentNode.offsetWidth;
+            var width = embed.width;
 
             var aspectRatio = embed.aspectRatio;
             var addition = embed.addition;
             var type = embed.type;
 
-            var height = Math.ceil((width / aspectRatio) + addition);
-            if (maxHeight === undefined) {
-                maxHeight = window.innerHeight * 0.85;
-            }
+            var height = Math.floor((width / aspectRatio) + addition);
 
             if (type !== 'exploration') {
                 if (height > maxHeight) {
-                    width = Math.floor((maxHeight - addition) * aspectRatio);
+                    width = Math.ceil((maxHeight - addition) * aspectRatio);
                     height = maxHeight;
                 }
             }
