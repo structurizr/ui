@@ -11,6 +11,7 @@
 <link href="${structurizrConfiguration.cdnUrl}/css/structurizr-asciidoctor.css" rel="stylesheet" media="screen" />
 <link href="${structurizrConfiguration.cdnUrl}/css/structurizr-decisions.css" rel="stylesheet" media="screen" />
 
+<%@ include file="/WEB-INF/fragments/graphviz.jspf" %>
 <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
 <%@ include file="/WEB-INF/fragments/quick-navigation.jspf" %>
 
@@ -90,6 +91,15 @@
     progressMessage.show('<p>Loading workspace...</p>');
 
     function workspaceLoaded() {
+        // if automatic layout (with Graphviz) needs to be executed, lets do this first
+        if (graphvizRequired()) {
+            runGraphvizForWorkspace(init);
+        } else {
+            init();
+        }
+    }
+
+    function init() {
         resize();
 
         if (structurizr.workspace.hasDecisions()) {
@@ -100,7 +110,7 @@
                 '${urlSuffix}',
                 ${structurizrConfiguration.safeMode});
 
-            init();
+            initDecisionScopeAndOrder();
             renderNavigation();
             show();
 
@@ -130,7 +140,7 @@
         progressMessage.hide();
     }
 
-    function init() {
+    function initDecisionScopeAndOrder() {
         if (structurizr.workspace.documentation.decisions.length > 0) {
             const elementId = '*';
             if (elementsWithDecisions.indexOf(elementId) === -1) {

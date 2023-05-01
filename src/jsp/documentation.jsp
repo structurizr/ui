@@ -12,6 +12,7 @@
 <link href="${structurizrConfiguration.cdnUrl}/css/structurizr-asciidoctor.css" rel="stylesheet" media="screen" />
 <link href="${structurizrConfiguration.cdnUrl}/css/structurizr-documentation.css" rel="stylesheet" media="screen" />
 
+<%@ include file="/WEB-INF/fragments/graphviz.jspf" %>
 <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
 <%@ include file="/WEB-INF/fragments/quick-navigation.jspf" %>
 
@@ -106,6 +107,15 @@
     progressMessage.show('<p>Loading workspace...</p>');
 
     function workspaceLoaded() {
+        // if automatic layout (with Graphviz) needs to be executed, lets do this first
+        if (graphvizRequired()) {
+            runGraphvizForWorkspace(init);
+        } else {
+            init();
+        }
+    }
+
+    function init() {
         resize();
 
         if (structurizr.workspace.hasDocumentation()) {
@@ -126,7 +136,7 @@
                 };
             };
 
-            init();
+            initDocumentationScopeAndSections();
             show();
 
             window.onhashchange = function() {
@@ -183,7 +193,7 @@
         progressMessage.hide();
     }
 
-    function init() {
+    function initDocumentationScopeAndSections() {
         if (structurizr.workspace.documentation.sections.length > 0) {
             elementsWithDocumentation.push(WORKSPACE_SCOPE);
 

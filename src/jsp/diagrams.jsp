@@ -114,6 +114,7 @@
     </c:if>
 </div>
 
+<%@ include file="/WEB-INF/fragments/graphviz.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/embed.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/export.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/publish.jspf" %>
@@ -150,91 +151,12 @@
 
         structurizr.ui.loadThemes(function() {
             // if automatic layout (with Graphviz) needs to be executed, lets do this first
-            if (graphvizRequired()) {
+            if (${loadWorkspaceFromParent eq true} === false && graphvizRequired()) {
                 runGraphvizForWorkspace(init);
             } else {
                 init();
             }
         });
-    }
-
-    function graphvizRequired() {
-        var result = false;
-
-        views.forEach(function(view) {
-            if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
-                view = structurizr.workspace.findViewByKey(view.baseViewKey);
-            }
-            if (view.automaticLayout && (view.automaticLayout.implementation === undefined || view.automaticLayout.implementation === 'Graphviz')) {
-                result = true;
-            }
-        });
-
-        return result && ${structurizrConfiguration.graphvizEnabled};
-    }
-
-    function runGraphvizForWorkspace(callback) {
-        var url = '${structurizrConfiguration.graphvizUrl}';
-        runGraphviz(url, callback);
-    }
-
-    function runGraphvizForView(rankDirection, rankSeparation, nodeSeparation, edgeSeparation, linkVertices, margin, resize, callback) {
-        const view = structurizr.diagram.getCurrentView();
-        var url = '${structurizrConfiguration.graphvizUrl}?view=' + view.key + '&resizePaper=' + resize + '&rankDirection=' + rankDirection + '&rankSeparation=' + rankSeparation + '&nodeSeparation=' + nodeSeparation + '&margin=' + margin
-
-        runGraphviz(url, callback);
-    }
-
-    function runGraphviz(url, callback) {
-        $.ajax({
-            url: url,
-            type: 'POST',
-            contentType: 'application/json; charset=UTF-8',
-            cache: false,
-            headers: {
-                'Content-Type': 'application/json; charset=UTF-8'
-            },
-            dataType: 'json',
-            data: getMinimalJson()
-        })
-        .done(function(data, textStatus, jqXHR) {
-            if (data.views) {
-                structurizr.workspace.copyLayoutFrom(data.views);
-            }
-            callback();
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            progressMessage.hide();
-
-            console.log('Automatic layout failed');
-            logError(jqXHR, textStatus, errorThrown);
-        });
-    }
-
-    function getMinimalJson() {
-        const workspace = structurizr.workspace.getJson();
-
-        if (workspace.properties) {
-            delete workspace.properties['structurizr.dsl'];
-        }
-        delete workspace.documentation;
-
-        if (workspace.model.softwareSystems) {
-            workspace.model.softwareSystems.forEach(function (softwareSystem) {
-                delete softwareSystem.documentation;
-
-                if (softwareSystem.containers) {
-                    softwareSystem.containers.forEach(function (container) {
-                        delete container.documentation;
-                    });
-                }
-            });
-        }
-
-        // and copy across the current layout information
-        workspace.views = structurizr.workspace.views;
-
-        return JSON.stringify(workspace, null, '    ');
     }
 
     function init() {
