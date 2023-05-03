@@ -130,9 +130,9 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix,
         }
 
         if (image) {
-            return '<div style="text-align: center"><img src="data:' + image.type + ';base64,' + image.content + '" alt="' + alt + '" class="img-thumbnail" style="max-height: ' + (window.innerHeight * MAX_HEIGHT_PERCENTAGE) + 'px" />' + imageTitle + '</div>';
+            return '<div style="text-align: center"><img src="data:' + image.type + ';base64,' + image.content + '" alt="' + alt + '" class="img-thumbnail" style="max-width: 100%; height: auto;" />' + imageTitle + '</div>';
         } else {
-            return '<div style="text-align: center"><img src="' + name + '" alt="' + alt + '" class="img-thumbnail" style="max-height: ' + (window.innerHeight * MAX_HEIGHT_PERCENTAGE) + 'px" />' + imageTitle + '</div>';
+            return '<div style="text-align: center"><img src="' + name + '" alt="' + alt + '" class="img-thumbnail" style="max-width: 100%; height: auto;" />' + imageTitle + '</div>';
         }
     }
 

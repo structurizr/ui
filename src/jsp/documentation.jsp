@@ -620,16 +620,28 @@
                 embeddedDiagrams.each(function(index) {
                     var iframe = embeddedDiagrams[index];
                     if (iframe.contentWindow.isExportable && iframe.contentWindow.isExportable()) {
-                        var embeddedDiagramDiv = exportWindow.document.createElement("div");
-                        embeddedDiagramDiv.className = 'img-thumbnail';
+                        if (iframe.contentWindow.structurizr.diagram.getCurrentViewOrFilter().type === structurizr.constants.IMAGE_VIEW_TYPE) {
+                            var imageElement = exportWindow.document.createElement("img");
+                            imageElement.className = 'img-thumbnail';
+                            imageElement.style = 'max-width: 100%; height: auto;';
 
-                        var svgMarkupForDiagram = iframe.contentWindow.structurizr.diagram.exportCurrentDiagramToSVG(true, false);
-                        var svgMarkupForDiagramKey = iframe.contentWindow.structurizr.diagram.exportCurrentDiagramKeyToSVG();
+                            var content = iframe.contentWindow.structurizr.diagram.getCurrentViewOrFilter().content;
+                            var parentDiv = iframe.parentNode;
+                            imageElement.src = content;
+                            parentDiv.insertBefore(imageElement, iframe);
+                            parentDiv.removeChild(iframe);
+                        } else {
+                            var embeddedDiagramDiv = exportWindow.document.createElement("div");
+                            embeddedDiagramDiv.className = 'img-thumbnail';
 
-                        var parentDiv = iframe.parentNode;
-                        embeddedDiagramDiv.innerHTML = svgMarkupForDiagram + '<div class="diagramKey">' + svgMarkupForDiagramKey + '</div>';
-                        parentDiv.insertBefore(embeddedDiagramDiv, iframe);
-                        parentDiv.removeChild(iframe);
+                            var svgMarkupForDiagram = iframe.contentWindow.structurizr.diagram.exportCurrentDiagramToSVG(true, false);
+                            var svgMarkupForDiagramKey = iframe.contentWindow.structurizr.diagram.exportCurrentDiagramKeyToSVG();
+
+                            var parentDiv = iframe.parentNode;
+                            embeddedDiagramDiv.innerHTML = svgMarkupForDiagram + '<div class="diagramKey">' + svgMarkupForDiagramKey + '</div>';
+                            parentDiv.insertBefore(embeddedDiagramDiv, iframe);
+                            parentDiv.removeChild(iframe);
+                        }
                     } else {
                         iframe.parentNode.removeChild(iframe);
                     }
