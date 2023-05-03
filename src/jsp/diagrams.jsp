@@ -144,6 +144,17 @@
     function workspaceLoaded() {
         if (!structurizr.workspace.hasViews()) {
             openNoViewsModal();
+
+            structurizr.scripting = new function() {
+                this.isDiagramRendered = function() {
+                    return true;
+                };
+
+                this.getViews = function() {
+                    return [];
+                };
+            };
+
             return;
         } else {
             views = structurizr.workspace.getViews();
