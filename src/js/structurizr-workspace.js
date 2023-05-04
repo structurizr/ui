@@ -267,7 +267,9 @@ structurizr.Workspace = class Workspace {
                 const softwareSystemInstance = deploymentNode.softwareSystemInstances[i];
                 const softwareSystem = this.findElementById(softwareSystemInstance.softwareSystemId);
                 softwareSystemInstance.name = softwareSystem.name;
-                softwareSystemInstance.description = softwareSystem.description;
+                if (softwareSystemInstance.description === undefined) {
+                    softwareSystemInstance.description = softwareSystem.description;
+                }
                 if (softwareSystemInstance.url === undefined) {
                     softwareSystemInstance.url = softwareSystem.url;
                 }
@@ -288,7 +290,9 @@ structurizr.Workspace = class Workspace {
                 const containerInstance = deploymentNode.containerInstances[i];
                 const container = this.findElementById(containerInstance.containerId);
                 containerInstance.name = container.name;
-                containerInstance.description = container.description;
+                if (containerInstance.description === undefined) {
+                    containerInstance.description = container.description;
+                }
                 containerInstance.technology = container.technology;
                 if (containerInstance.url === undefined) {
                     containerInstance.url = container.url;
