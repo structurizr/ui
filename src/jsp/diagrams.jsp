@@ -133,6 +133,7 @@
     structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
 
     var embed = ${embed};
+    var diagramSelector = ${showDiagramSelector eq true};
     var views;
     const viewKeys = [];
     var viewsVisited = new structurizr.util.Stack();
@@ -340,7 +341,7 @@
         } else {
             $('#diagramEditButtons').addClass('hidden');
 
-            if (embed) {
+            if (embed && !diagramSelector) {
                 $('#diagramControls').addClass('hidden');
             }
         }
