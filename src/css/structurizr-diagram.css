@@ -70,3 +70,18 @@
         color: #ffffff;
     }
 }
+
+.joint-link.joint-theme-default .connection-wrap + .labels .label rect {
+    stroke: #000000;
+    stroke-width: 15;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: #000000;
+    opacity: 0;
+}
+
+.joint-link.joint-theme-default .connection-wrap:hover + .labels .label rect{
+    opacity: .2;
+    stroke-opacity: .1;
+    fill-opacity: .2;
+}
