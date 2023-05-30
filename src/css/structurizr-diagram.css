@@ -56,6 +56,10 @@
     r: 25px;
 }
 
+.joint-link.joint-theme-default .connection-wrap:hover + .labels rect {
+    fill: #d6d6d6;
+}
+
 #navigationModal option {
     padding: 5px;
 }

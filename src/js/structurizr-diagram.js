@@ -2923,9 +2923,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     attrs: {
                         rect: {
                             fill: canvasColor,
-                                stroke: canvasColor,
-                                'stroke-width': '20px',
-                                'pointer-events': 'none'
+                            'pointer-events': 'none'
                         },
                         text: {
                             text: description,
