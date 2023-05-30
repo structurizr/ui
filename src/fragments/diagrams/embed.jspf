@@ -48,6 +48,17 @@
                         This is a client-side encrypted workspace, so viewers will be prompted for the password when diagrams from this workspace are embedded in web pages.
                     </div>
                 </c:if>
+
+                <c:if test="${workspace.shareable && structurizrConfiguration.cloud}">
+                    <div>
+                        <h3>Notion</h3>
+                        <p>
+                            Copy the following URL into Notion to embed this diagram:
+                        </p>
+
+                        <pre class="embedCode"><code id="notionUrl" onclick="structurizr.util.selectText('notionUrl')"><span class="baseUrl"></span>/share/${workspace.id}/${workspace.sharingToken}/diagrams/<span class="diagramEmbedDiagramId"></span></code></pre>
+                    </div>
+                </c:if>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
