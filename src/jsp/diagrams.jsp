@@ -346,17 +346,17 @@
             }
         }
 
-        if (view.automaticLayout !== undefined) {
+        if (structurizr.diagram.getCurrentView().automaticLayout !== undefined) {
             $('#editDiagramButton').addClass('hidden');
             $('#diagramNotEditableMessage').removeClass('hidden');
 
-            if (view.automaticLayout.implementation === 'Dagre') {
+            if (structurizr.diagram.getCurrentView().automaticLayout.implementation === 'Dagre') {
                 structurizr.diagram.runDagre(
-                    view.automaticLayout.rankDirection,
-                    view.automaticLayout.rankSeparation,
-                    view.automaticLayout.nodeSeparation,
-                    view.automaticLayout.edgeSeparation,
-                    view.automaticLayout.vertices,
+                    structurizr.diagram.getCurrentView().automaticLayout.rankDirection,
+                    structurizr.diagram.getCurrentView().automaticLayout.rankSeparation,
+                    structurizr.diagram.getCurrentView().automaticLayout.nodeSeparation,
+                    structurizr.diagram.getCurrentView().automaticLayout.edgeSeparation,
+                    structurizr.diagram.getCurrentView().automaticLayout.vertices,
                     true
                 );
             }

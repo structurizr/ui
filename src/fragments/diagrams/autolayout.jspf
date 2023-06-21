@@ -24,10 +24,10 @@
                         <label class="control-label col-sm-4" for="autoLayoutRankDirection">Direction</label>
                         <div class="col-sm-8">
                             <select class="form-control" id="autoLayoutRankDirection">
-                                <option value="TB">Top to bottom</option>
-                                <option value="BT">Bottom to top</option>
-                                <option value="LR">Left to right</option>
-                                <option value="RL">Right to left</option>
+                                <option value="TopBottom">Top to bottom</option>
+                                <option value="BottomTop">Bottom to top</option>
+                                <option value="LeftRight">Left to right</option>
+                                <option value="RightLeft">Right to left</option>
                             </select>
                         </div>
                     </div>

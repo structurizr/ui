@@ -5723,12 +5723,30 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             this.removeAllVertices();
 
+            var direction;
+            switch(rankDirection) {
+                case 'TopBottom':
+                    direction = 'TB';
+                    break;
+                case 'BottomTop':
+                    direction = 'BT';
+                    break;
+                case 'LeftRight':
+                    direction = 'LR';
+                    break;
+                case 'RightLeft':
+                    direction = 'RL';
+                    break;
+                default:
+                    direction = 'TB';
+            }
+
             joint.layout.DirectedGraph.layout(graph, {
                 nodeSep: nodeSeparation,
                 rankSep: rankSeparation,
                 edgeSep: edgeSeparation,
                 setLinkVertices: linkVertices,
-                rankDir: rankDirection,
+                rankDir: direction,
                 marginX: margin,
                 marginY: margin
             });
