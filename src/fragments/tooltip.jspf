@@ -183,25 +183,7 @@
             tagsHtml += '</div>';
             tooltipTags.html(tagsHtml);
 
-            var propertiesHtml = '';
-            var properties = structurizr.workspace.getAllPropertiesForElement(element);
-            if (Object.keys(properties).length > 0) {
-                Object.keys(properties).forEach(function (key) {
-                    if (key.indexOf('structurizr.') === 0) {
-                        // ignore 'structurizr.' properties
-                    } else {
-                        propertiesHtml += '<li>';
-                        propertiesHtml += (structurizr.util.escapeHtml(key) + ' = ' + structurizr.util.escapeHtml(properties[key]));
-                        propertiesHtml += '</li>';
-                    }
-                });
-            }
-
-            if (propertiesHtml.length > 0) {
-                tooltipProperties.html('<div class="smaller"><p>Properties:</p><ul>' + propertiesHtml + '</ul></div>');
-            } else {
-                tooltipProperties.html('');
-            }
+            renderProperties(structurizr.workspace.getAllPropertiesForElement(element));
 
             var urlHtml = '';
             var url = element.url;
@@ -311,21 +293,7 @@
             tagsHtml += '</div>';
             tooltipTags.html(tagsHtml);
 
-            var propertiesHtml = '';
-            var properties = structurizr.workspace.getAllPropertiesForRelationship(relationship);
-            if (Object.keys(properties).length > 0) {
-                propertiesHtml += '<div class="smaller">';
-                propertiesHtml += '<p>Properties:</p>';
-                propertiesHtml += '<ul>';
-                Object.keys(properties).forEach(function (key) {
-                    propertiesHtml += '<li>';
-                    propertiesHtml += (structurizr.util.escapeHtml(key) + ' = ' + structurizr.util.escapeHtml(properties[key]));
-                    propertiesHtml += '</li>';
-                });
-                propertiesHtml += '</ul>';
-                propertiesHtml += '</div>'
-            }
-            tooltipProperties.html(propertiesHtml);
+            renderProperties(structurizr.workspace.getAllPropertiesForRelationship(relationship));
 
             var urlHtml = '';
             var url = relationship.url;
@@ -350,6 +318,37 @@
 
         this.isVisible = function() {
             return visible;
+        }
+
+        function renderProperties(properties) {
+            var propertiesHtml = '';
+            if (Object.keys(properties).length > 0) {
+                Object.keys(properties).forEach(function (key) {
+                    if (key.indexOf('structurizr.') === 0) {
+                        // ignore 'structurizr.' properties
+                    } else {
+                        var value = properties[key];
+                        if (isUrl(value)) {
+                            value = '<a href="' + structurizr.util.escapeHtml(value) + '" target="_blank">' + structurizr.util.escapeHtml(value) + '</a>';
+                        } else {
+                            value = structurizr.util.escapeHtml(value);
+                        }
+                        propertiesHtml += '<li>';
+                        propertiesHtml += (structurizr.util.escapeHtml(key) + ' = ' + value);
+                        propertiesHtml += '</li>';
+                    }
+                });
+            }
+
+            if (propertiesHtml.length > 0) {
+                tooltipProperties.html('<div class="smaller"><p>Properties:</p><ul>' + propertiesHtml + '</ul></div>');
+            } else {
+                tooltipProperties.html('');
+            }
+        }
+
+        function isUrl(s) {
+            return s !== undefined && (s.indexOf('https://') === 0 || s.indexOf('http://') === 0);
         }
 
     };
