@@ -38,6 +38,7 @@
     <option value="branding">&nbsp;&nbsp;&nbsp;- branding</option>
     <option value="terminology">&nbsp;&nbsp;&nbsp;- terminology</option>
     <option value="configuration">&nbsp;- configuration</option>
+    <option value="visibility">&nbsp;&nbsp;&nbsp;- visibility</option>
     <option value="users">&nbsp;&nbsp;&nbsp;- users</option>
 </select>
 
