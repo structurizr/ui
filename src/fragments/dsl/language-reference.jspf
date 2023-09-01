@@ -37,6 +37,6 @@
 
 <script>
     $('#keywords').change(function () {
-        window.open('https://github.com/structurizr/dsl/blob/master/docs/language-reference.md#' + $('#keywords').val(), "structurizrDslLanguageReference", "top=100,left=300,width=800,height=800,location=no,menubar=no,status=no,toolbar=no");
+        window.open($('#keywords').val(), "structurizrDslLanguageReference", "top=100,left=300,width=800,height=800,location=no,menubar=no,status=no,toolbar=no");
     });
 </script>
