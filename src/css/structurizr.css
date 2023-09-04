@@ -13,12 +13,7 @@ body {
     padding-bottom: 20px;
     padding-left: 0;
     padding-right: 0;
-    background: #438DD5;
-    color: #ffffff;
-    font-size: 20px;
-}
-#footer a, #footer a:hover {
-    color: white;
+    font-size: 13px;
 }
 .container {
     font-size: 18px;
