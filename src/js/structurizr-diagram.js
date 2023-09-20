@@ -2498,7 +2498,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             metadataColor = '#aaaaaa';
         }
 
-        var title = structurizr.ui.getTitleForView(currentView);
+        var title = structurizr.ui.getTitleForView(currentFilter !== undefined ? currentFilter : currentView);
         diagramMetadataWidth = (title.length * 30);
 
         diagramTitle = new structurizr.shapes.DiagramTitle({
