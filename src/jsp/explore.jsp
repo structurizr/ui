@@ -26,7 +26,7 @@
             var html = '';
 
             views.forEach(function(view) {
-                var diagramUrl = '${urlPrefix}/diagrams${urlSuffix}#' + structurizr.util.escapeHtml(view.key);
+                var diagramUrl = '<c:out value="${urlPrefix}" />/diagrams<c:out value="${urlSuffix}" />#' + structurizr.util.escapeHtml(view.key);
                 var graphUrl;
                 var treeUrl;
 
@@ -37,7 +37,7 @@
                     view.type === structurizr.constants.CONTAINER_VIEW_TYPE ||
                     view.type === structurizr.constants.COMPONENT_VIEW_TYPE ||
                     view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
-                    treeUrl = '${urlPrefix}/explore/tree${urlSuffix}#' + structurizr.util.escapeHtml(view.key);
+                    treeUrl = '<c:out value="${urlPrefix}" />/explore/tree<c:out value="${urlSuffix}" />#' + structurizr.util.escapeHtml(view.key);
                 }
 
                 if (
@@ -46,7 +46,7 @@
                     view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE ||
                     view.type === structurizr.constants.CONTAINER_VIEW_TYPE ||
                     view.type === structurizr.constants.COMPONENT_VIEW_TYPE) {
-                    graphUrl = '${urlPrefix}/explore/graph${urlSuffix}#' + structurizr.util.escapeHtml(view.key);
+                    graphUrl = '<c:out value="${urlPrefix}" />/explore/graph<c:out value="${urlSuffix}" />#' + structurizr.util.escapeHtml(view.key);
                 }
 
                 if (graphUrl !== undefined || treeUrl !== undefined) {
@@ -87,7 +87,7 @@
         }
     }
 
-    $('#brandingLogoAnchor').attr('href', '${urlPrefix}');
+    $('#brandingLogoAnchor').attr('href', '<c:out value="${urlPrefix}" />');
     progressMessage.hide();
 </script>
 

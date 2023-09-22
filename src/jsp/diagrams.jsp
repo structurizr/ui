@@ -48,7 +48,7 @@
                 <c:otherwise>
                     <div class="row">
                         <div class="col-sm-2" style="padding: 18px 20px 10px 20px">
-                            <a href="${urlPrefix}${urlSuffix}"><img src="${structurizrConfiguration.cdnUrl}/img/structurizr-banner.png" alt="Structurizr" class="structurizrBannerLight img-responsive brandingLogo" /><img src="${structurizrConfiguration.cdnUrl}/img/structurizr-banner-dark.png" alt="Structurizr" class="structurizrBannerDark img-responsive brandingLogo" /></a>
+                            <a href="<c:out value="${urlPrefix}" /><c:out value="${urlSuffix}" />"><img src="${structurizrConfiguration.cdnUrl}/img/structurizr-banner.png" alt="Structurizr" class="structurizrBannerLight img-responsive brandingLogo" /><img src="${structurizrConfiguration.cdnUrl}/img/structurizr-banner-dark.png" alt="Structurizr" class="structurizrBannerDark img-responsive brandingLogo" /></a>
                         </div>
                         <div class="col-sm-10 centered" style="padding: 20px 30px 0px 30px">
                             <div class="centered">
@@ -274,7 +274,7 @@
         healthCheck = new structurizr.HealthCheck(updateHealth);
 
         <c:if test="${not empty perspective}">
-        structurizr.diagram.changePerspective('${perspective}');
+        structurizr.diagram.changePerspective('<c:out value="${perspective}" />');
         tooltip.disable();
         toggleTooltip();
         </c:if>
@@ -419,16 +419,16 @@
         if (explorationsButton) {
             if (view.type === structurizr.constants.CUSTOM_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE || view.type === structurizr.constants.CONTAINER_VIEW_TYPE || view.type === structurizr.constants.COMPONENT_VIEW_TYPE) {
                 explorationsButton.onclick = function () {
-                    const urlPrefix = '${urlPrefix}';
-                    const urlSuffix = '${urlSuffix}';
+                    const urlPrefix = '<c:out value="${urlPrefix}" />';
+                    const urlSuffix = '<c:out value="${urlSuffix}" />';
                     window.open(urlPrefix + '/explore/graph' + urlSuffix + '#' + encodeURIComponent(view.key));
                 };
 
                 $('#explorationsButton').removeClass('hidden');
             } else if (view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
                 explorationsButton.onclick = function () {
-                    const urlPrefix = '${urlPrefix}';
-                    const urlSuffix = '${urlSuffix}';
+                    const urlPrefix = '<c:out value="${urlPrefix}" />';
+                    const urlSuffix = '<c:out value="${urlSuffix}" />';
                     window.open(urlPrefix + '/explore/tree' + urlSuffix + '#' + encodeURIComponent(view.key));
                 };
 
@@ -597,9 +597,9 @@
     function openCurrentDiagramInNewWindow() {
         var hash = window.location.hash;
         if (hash === undefined || hash.trim().length === 0) {
-            window.open('${urlPrefix}/diagrams${urlSuffix}#${diagramIdentifier}');
+            window.open('<c:out value="${urlPrefix}" />/diagrams<c:out value="${urlSuffix}" />#<c:out value="${diagramIdentifier}" />');
         } else {
-            window.open('${urlPrefix}/diagrams${urlSuffix}#' + window.location.hash.substring(1))
+            window.open('<c:out value="${urlPrefix}" />/diagrams<c:out value="${urlSuffix}" />#' + window.location.hash.substring(1))
         }
     }
 
@@ -837,7 +837,7 @@
             initThumbnails();
         }
 
-        var diagramIdentifier = '${diagramIdentifier}';
+        var diagramIdentifier = '<c:out value="${diagramIdentifier}" />';
 
         if (window.location.hash) {
             const hash = window.location.hash;
@@ -928,7 +928,7 @@
     function initQuickNavigation() {
         views.forEach(function(view) {
             const title = structurizr.util.escapeHtml(structurizr.ui.getTitleForView(view));
-            quickNavigation.addItem(title + ' (#' + structurizr.util.escapeHtml(view.key) + ')', '${urlPrefix}/${quickNavigationPath}${urlSuffix}#' + structurizr.util.escapeHtml(view.key));
+            quickNavigation.addItem(title + ' (#' + structurizr.util.escapeHtml(view.key) + ')', '<c:out value="${urlPrefix}" />/${quickNavigationPath}<c:out value="${urlSuffix}" />#' + structurizr.util.escapeHtml(view.key));
         });
 
         quickNavigation.onOpen(function() {
@@ -952,7 +952,7 @@
                 url = url.substring((structurizr.constants.WORKSPACE_URL_PREFIX + '/diagrams').length);
             } else if (url.indexOf(structurizr.constants.WORKSPACE_URL_PREFIX) === 0) {
                 // convert {workspace}/doc... to /workspace/1234/doc...
-                url = '${urlPrefix}' + url.substring(structurizr.constants.WORKSPACE_URL_PREFIX.length) + '${urlSuffix}';
+                url = '<c:out value="${urlPrefix}" />' + url.substring(structurizr.constants.WORKSPACE_URL_PREFIX.length) + '<c:out value="${urlSuffix}" />';
             }
         }
 
@@ -998,7 +998,7 @@
             });
 
             if (element.documentation && element.documentation.sections && element.documentation.sections.length > 0) {
-                const documentationUrl = '${urlPrefix}/documentation/' + toScope(element) + '${urlSuffix}';
+                const documentationUrl = '<c:out value="${urlPrefix}" />/documentation/' + toScope(element) + '<c:out value="${urlSuffix}" />';
                 options.push({
                     url: documentationUrl,
                     label: 'Documentation'
@@ -1006,7 +1006,7 @@
             }
 
             if (element.documentation && element.documentation.decisions && element.documentation.decisions.length > 0) {
-                const decisionsUrl = '${urlPrefix}/decisions/' + toScope(element) + '${urlSuffix}';
+                const decisionsUrl = '<c:out value="${urlPrefix}" />/decisions/' + toScope(element) + '<c:out value="${urlSuffix}" />';
                 options.push({
                     url: decisionsUrl,
                     label: 'Decisions'
@@ -1151,9 +1151,9 @@
                     var softwareSystem = element;
 
                     if (fn(softwareSystem)) {
-                        window.location.href='${urlPrefix}/' + path + '/' + structurizr.util.escapeHtml(softwareSystem.name) + '${urlSuffix}';
+                        window.location.href='<c:out value="${urlPrefix}" />/' + path + '/' + structurizr.util.escapeHtml(softwareSystem.name) + '<c:out value="${urlSuffix}" />';
                     } else {
-                        window.location.href='${urlPrefix}/' + path + '${urlSuffix}';
+                        window.location.href='<c:out value="${urlPrefix}" />/' + path + '<c:out value="${urlSuffix}" />';
                     }
 
                     return;
@@ -1162,11 +1162,11 @@
                     var softwareSystem = structurizr.workspace.findElementById(container.parentId);
 
                     if (fn(container)) {
-                        window.location.href='${urlPrefix}/' + path + '/' + structurizr.util.escapeHtml(softwareSystem.name) + '/' + structurizr.util.escapeHtml(container.name) + '${urlSuffix}';
+                        window.location.href='<c:out value="${urlPrefix}" />/' + path + '/' + structurizr.util.escapeHtml(softwareSystem.name) + '/' + structurizr.util.escapeHtml(container.name) + '<c:out value="${urlSuffix}" />';
                     } else if (fn(softwareSystem)) {
-                        window.location.href='${urlPrefix}/' + path + '/' + structurizr.util.escapeHtml(softwareSystem.name) + '${urlSuffix}';
+                        window.location.href='<c:out value="${urlPrefix}" />/' + path + '/' + structurizr.util.escapeHtml(softwareSystem.name) + '<c:out value="${urlSuffix}" />';
                     } else {
-                        window.location.href='${urlPrefix}/' + path + '${urlSuffix}';
+                        window.location.href='<c:out value="${urlPrefix}" />/' + path + '<c:out value="${urlSuffix}" />';
                     }
 
                     return;
@@ -1174,7 +1174,7 @@
             }
         }
 
-        window.location.href='${urlPrefix}/' + path + '${urlSuffix}';
+        window.location.href='<c:out value="${urlPrefix}" />/' + path + '<c:out value="${urlSuffix}" />';
     }
 
     function hasDocumentation(element) {
@@ -1195,7 +1195,7 @@
         }
 
         parent.postMessage({
-            iframe: '${iframe}',
+            iframe: '<c:out value="${iframe}" />',
             aspectRatio: diagramAspectRatio,
             controlsHeight: controlsHeight,
             type: 'diagram',

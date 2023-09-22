@@ -122,8 +122,8 @@
             contentRenderer = new structurizr.ui.ContentRenderer(
                 structurizr.workspace,
                 '${structurizrConfiguration.cdnUrl}',
-                '${urlPrefix}',
-                '${urlSuffix}',
+                '<c:out value="${urlPrefix}" />',
+                '<c:out value="${urlSuffix}" />',
                 ${structurizrConfiguration.safeMode});
 
             structurizr.scripting = new function() {
@@ -189,7 +189,7 @@
         }
 
         structurizr.ui.applyBranding();
-        $('#brandingLogoAnchor').attr('href', '${urlPrefix}');
+        $('#brandingLogoAnchor').attr('href', '<c:out value="${urlPrefix}" />');
         progressMessage.hide();
     }
 
@@ -322,7 +322,7 @@
                 const elementId = elementsWithDocumentation[0];
                 const element = structurizr.workspace.findElementById(elementId);
                 const scope = toScope(element);
-                window.location.href = '${urlPrefix}/documentation/' + scope + '${urlSuffix}';
+                window.location.href = '<c:out value="${urlPrefix}" />/documentation/' + scope + '<c:out value="${urlSuffix}" />';
                 return;
             }
         } else {
@@ -381,7 +381,7 @@
 
             if (elementId === WORKSPACE_SCOPE) {
                 scope = WORKSPACE_SCOPE;
-                const uri = '${urlPrefix}/documentation${urlSuffix}';
+                const uri = '<c:out value="${urlPrefix}" />/documentation<c:out value="${urlSuffix}" />';
 
                 documentationNavigation.append('<div class="documentationNavigationLink documentationNavigationHeading"><a href="' + uri + '">' + structurizr.util.escapeHtml(structurizr.workspace.name) + '</a></div>');
                 documentationNavigationDropDown.append(
@@ -392,7 +392,7 @@
                 var element = structurizr.workspace.findElementById(elementId);
                 if (element !== undefined) {
                     scope = toScope(element);
-                    var uri = '${urlPrefix}/documentation/' + scope + '${urlSuffix}';
+                    var uri = '<c:out value="${urlPrefix}" />/documentation/' + scope + '<c:out value="${urlSuffix}" />';
 
                     documentationNavigation.append('<div class="documentationNavigationLink documentationNavigationHeading"><a href="' + uri + '">' + structurizr.util.escapeHtml(element.name) + '</a></div>');
                     documentationNavigationDropDown.append(
@@ -518,7 +518,7 @@
             href = decodeURIComponent(href);
             if (href.indexOf(structurizr.constants.WORKSPACE_URL_PREFIX) === 0) {
                 // convert {workspace}/doc... to /workspace/1234/doc...
-                href = '${urlPrefix}' + href.substring(structurizr.constants.WORKSPACE_URL_PREFIX.length) + '${urlSuffix}';
+                href = '<c:out value="${urlPrefix}" />' + href.substring(structurizr.constants.WORKSPACE_URL_PREFIX.length) + '<c:out value="${urlSuffix}" />';
                 $(this).attr('href', href)
             }
         });
