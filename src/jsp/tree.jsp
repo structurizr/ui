@@ -33,7 +33,7 @@
 <script nonce="${scriptNonce}">
     var margin = 0;
 
-    var viewKey = '${view}';
+    var viewKey = '<c:out value="${view}" />';
     var view;
 
     const sizes = {
@@ -89,7 +89,7 @@
         </c:otherwise>
         </c:choose>
 
-        $('#brandingLogoAnchor').attr('href', '${urlPrefix}');
+        $('#brandingLogoAnchor').attr('href', '<c:out value="${urlPrefix}" />');
         progressMessage.hide();
     }
 
@@ -293,7 +293,7 @@
     }, false);
 
     function openTreeInNewWindow() {
-        window.open('${urlPrefix}/explore/tree#' + encodeURIComponent(viewKey));
+        window.open('<c:out value="${urlPrefix}" />/explore/tree#' + encodeURIComponent(viewKey));
     }
 
     $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange fullscreenChange MSFullscreenChange',function(){

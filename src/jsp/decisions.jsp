@@ -67,7 +67,7 @@
 </div>
 
 <script nonce="${scriptNonce}">
-    const requestedScope = '${scope}';
+    const requestedScope = '<c:out value="${scope}" />';
     structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
 
     const elementsWithDecisions = [];

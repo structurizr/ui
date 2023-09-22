@@ -43,7 +43,7 @@
     var link;
     var nodeHighlighted;
 
-    var viewKey = '${view}';
+    var viewKey = '<c:out value="${view}" />';
     var view;
 
     const relationshipsBySourceAndDestination = [];
@@ -102,7 +102,7 @@
         </c:choose>
 
         structurizr.ui.applyBranding();
-        $('#brandingLogoAnchor').attr('href', '${urlPrefix}');
+        $('#brandingLogoAnchor').attr('href', '<c:out value="${urlPrefix}" />');
         progressMessage.hide();
     }
 
@@ -555,7 +555,7 @@
     );
 
     function openGraphInNewWindow() {
-        window.open('${urlPrefix}/explore/graph#' + encodeURIComponent(viewKey));
+        window.open('<c:out value="${urlPrefix}" />/explore/graph#' + encodeURIComponent(viewKey));
     }
 
     $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange fullscreenChange MSFullscreenChange',function(){

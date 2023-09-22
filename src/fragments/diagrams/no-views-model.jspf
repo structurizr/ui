@@ -19,7 +19,7 @@
     function openNoViewsModal() {
         const modal = $('#noViewsModal');
         modal.on('hidden.bs.modal', function (e) {
-            window.location.href = '${urlPrefix}${urlSuffix}';
+            window.location.href = '<c:out value="${urlPrefix}" /><c:out value="${urlSuffix}" />';
         });
 
         modal.modal('show');

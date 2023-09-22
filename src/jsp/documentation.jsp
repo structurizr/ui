@@ -35,7 +35,7 @@
                 $('#shareLink').click(function(event) {
                     event.preventDefault();
 
-                    var scope = '${scope}';
+                    var scope = '<c:out value="${scope}" />';
                     if (scope === WORKSPACE_SCOPE) {
                         window.open('${sharingUrlPrefix}/documentation/' + window.location.hash);
                     } else {
@@ -85,7 +85,7 @@
 </div>
 
 <script nonce="${scriptNonce}">
-    const requestedScope = '${scope}';
+    const requestedScope = '<c:out value="${scope}" />';
     structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
 
     const documentationNavigation = $('#documentationNavigation');
