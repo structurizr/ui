@@ -46,10 +46,10 @@
                 </div>
 
                 <div class="centered">
-                    <button type="button" class="btn btn-default" onclick="exportCurrentView()">Export current diagram</button>
-                    <button id="exportSelectedViewsButton" type="button" class="btn btn-default" onclick="exportSelectedViews()">Export selected diagrams</button>
-                    <button id="exportAllViewsButton" type="button" class="btn btn-default" onclick="exportAllViews()">Export all diagrams</button>
-                    <button id="publishAllViewsButton" type="button" class="btn btn-default hidden" onclick="publishAllViews()">Publish all diagrams</button>
+                    <button id="exportCurrentViewButton" type="button" class="btn btn-default">Export current diagram</button>
+                    <button id="exportSelectedViewsButton" type="button" class="btn btn-default">Export selected diagrams</button>
+                    <button id="exportAllViewsButton" type="button" class="btn btn-default">Export all diagrams</button>
+                    <button id="publishAllViewsButton" type="button" class="btn btn-default hidden">Publish all diagrams</button>
                 </div>
 
                 <div id="exportAnimation" class="centered hidden" style="margin-top: 5px">
@@ -57,7 +57,7 @@
                         Animated GIF frame duration (seconds)
                     </label>
                     <input type="number" id="animatedGIFInterval" value="3" style="width: 50px" />
-                    <button id="exportAnimatedGIFButton" type="button" class="btn btn-default" onclick="createGIF()">Create animated GIF</button>
+                    <button id="exportAnimatedGIFButton" type="button" class="btn btn-default">Create animated GIF</button>
                 </div>
 
                 <div id="exportedDiagrams" class="centered" style="margin-top: 40px"></div>
@@ -68,6 +68,12 @@
 
 <script nonce="${scriptNonce}">
     var exportFormat = 'png';
+
+    $('#exportCurrentViewButton').click(function() { exportCurrentView(); });
+    $('#exportSelectedViewsButton').click(function() { exportSelectedViews(); });
+    $('#exportAllViewsButton').click(function() { exportAllViews(); });
+    $('#publishAllViewsButton').click(function() { publishAllViews(); });
+    $('#exportAnimatedGIFButton').click(function() { createGIF(); });
 
     function initExports() {
         const viewList = $('#exportViewList');

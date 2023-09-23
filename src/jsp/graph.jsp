@@ -13,7 +13,10 @@
             <div id="graphTitle" style="color: #aaaaaa; font-size: 13px; user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; -o-user-select: none;"></div>
         </c:when>
         <c:otherwise>
-        <select id="viewSelector" class="form-control" onchange="showSelectedView()"></select>
+        <select id="viewSelector" class="form-control"></select>
+        <script nonce="${scriptNonce}">
+            $('#viewSelector').change(function() { showSelectedView(); });
+        </script>
         </c:otherwise>
         </c:choose>
     </div>
@@ -22,12 +25,19 @@
     <%@ include file="/WEB-INF/fragments/quick-navigation.jspf" %>
 
     <div id="embeddedControls" style="text-align: right; position: absolute; bottom: 10px; right: 10px; opacity: 0.1; z-index: 100;">
-        <button class="btn btn-default" id="enterFullScreenButton" title="Enter Full Screen [f]" onclick="structurizr.ui.enterFullScreen('exploreGraphPanel')"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen.svg" class="icon-btn" /></button>
-        <button class="btn btn-default hidden" id="exitFullScreenButton" title="Exit Full Screen [Escape]" onclick="structurizr.ui.exitFullScreen()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen-exit.svg" class="icon-btn" /></button>
         <c:if test="${workspace.id > 0 && (embed eq true && workspace.editable eq false)}">
-        <button class="btn btn-default" title="Open graph in new window" onclick="openGraphInNewWindow()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/link.svg" class="icon-btn" /></button>
+        <button id="openGraphInNewWindowButton" class="btn btn-default" title="Open graph in new window"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/link.svg" class="icon-btn" /></button>
+        <script nonce="${scriptNonce}">
+            $('#openGraphInNewWindowButton').click(function() { openGraphInNewWindow(); });
+        </script>
         </c:if>
+        <button id="enterFullScreenButton" class="btn btn-default" title="Enter Full Screen [f]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen.svg" class="icon-btn" /></button>
+        <button id="exitFullScreenButton" class="btn btn-default hidden" title="Exit Full Screen [Escape]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen-exit.svg" class="icon-btn" /></button>
     </div>
+    <script nonce="${scriptNonce}">
+        $('#enterFullScreenButton').click(function() { structurizr.ui.enterFullScreen('exploreGraphPanel'); });
+        $('#exitFullScreenButton').click(function() { structurizr.ui.exitFullScreen(); });
+    </script>
 </div>
 
 <script nonce="${scriptNonce}">

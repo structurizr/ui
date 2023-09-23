@@ -23,15 +23,20 @@
 
                 <div class="btn-group">
                     <c:if test="${review.locked eq true && admin eq true}">
-                    <button class="btn btn-default" onclick="window.location.href='/review/${review.id}/unlock'" title="Unlock review" ><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/unlock.svg" class="icon-btn" /></button>
+                    <button id="unlockButton" class="btn btn-default" title="Unlock review" ><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/unlock.svg" class="icon-btn" /></button>
                     </c:if>
                     <c:if test="${review.locked eq false && admin eq true}">
-                    <button class="btn btn-default" onclick="window.location.href='/review/${review.id}/lock'" title="Lock review"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/lock.svg" class="icon-btn" /></button>
+                    <button id="lockButton" class="btn btn-default" title="Lock review"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/lock.svg" class="icon-btn" /></button>
                     </c:if>
                     <c:if test="${review.locked eq false or admin eq true}">
-                    <button class="btn btn-default" onclick="window.open('https://structurizr.com/help/diagram-review')" title="Help"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/question-circle.svg" class="icon-btn" /></button>
+                    <button id="helpButton" class="btn btn-default" title="Help"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/question-circle.svg" class="icon-btn" /></button>
                     </c:if>
                 </div>
+                <script nonce="${scriptNonce}">
+                    $('#unlockButton').click(function() { window.location.href='/review/${review.id}/unlock'; });
+                    $('#lockButton').click(function() { window.location.href='/review/${review.id}/lock'; });
+                    $('#helpButton').click(function() { window.open('https://structurizr.com/help/diagram-review'); });
+                </script>
 
                 <div class="btn-group">
                     <c:choose>

@@ -18,14 +18,18 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="clearTags(true)">Clear tags</button>
-                <button type="button" class="btn btn-default" onclick="showTags()">View tags</button>
+                <button id="clearTagsButton" type="button" class="btn btn-default">Clear tags</button>
+                <button id="viewTagsButton" type="button" class="btn btn-default">View tags</button>
             </div>
         </div>
     </div>
 </div>
 
 <script nonce="${scriptNonce}">
+
+    $('#clearTagsButton').click(function() { clearTags(true); });
+    $('#viewTagsButton').click(function() { showTags(); });
+
     function initTags() {
         var tags = structurizr.workspace.getTags();
         var tagsList = $('#tagsList');

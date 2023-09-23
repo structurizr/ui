@@ -17,13 +17,15 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="clearPerspective(true)">Clear perspective</button>
+                <button id="clearPerspectiveButton" type="button" class="btn btn-default">Clear perspective</button>
             </div>
         </div>
     </div>
 </div>
 
 <script nonce="${scriptNonce}">
+
+    $('#clearPerspectiveButton').click(function() { clearPerspective(true); });
 
     $('#perspectivesList').change(function() {
         showPerspective();

@@ -86,31 +86,50 @@
 
 <div id="embeddedControls" style="text-align: right; position: absolute; bottom: 10px; right: 10px; opacity: 0.1; z-index: 100;">
     <div class="btn-group">
-        <button class="btn btn-default" title="Zoom out [-]" onclick="structurizr.diagram.zoomOut()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/zoom-out.svg" class="icon-btn" /></button>
-        <button id="enterPresentationModeButton" class="btn btn-default hidden" title="Enter Presentation Mode [p]" onclick="enterPresentationMode()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/easel.svg" class="icon-btn" /></button>
-        <button class="btn btn-default" title="Zoom in [+]" onclick="structurizr.diagram.zoomIn()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/zoom-in.svg" class="icon-btn" /></button>
+        <button id="zoomOutButton" class="btn btn-default" title="Zoom out [-]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/zoom-out.svg" class="icon-btn" /></button>
+        <button id="enterPresentationModeButton" class="btn btn-default hidden" title="Enter Presentation Mode [p]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/easel.svg" class="icon-btn" /></button>
+        <button id="zoomInButton" class="btn btn-default" title="Zoom in [+]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/zoom-in.svg" class="icon-btn" /></button>
     </div>
+    <script nonce="${scriptNonce}">
+        $('#zoomOutButton').click(function() { structurizr.diagram.zoomOut(); });
+        $('#enterPresentationModeButton').click(function() { enterPresentationMode(); });
+        $('#zoomInButton').click(function() { structurizr.diagram.zoomIn(); });
+    </script>
 
     <div class="btn-group">
-        <button class="btn btn-default hidden dynamicDiagramButton stepBackwardAnimationButton" title="Step backward [,]" onclick="stepBackwardInAnimation()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/skip-backward.svg" class="icon-btn" /></button>
-        <button class="btn btn-default hidden dynamicDiagramButton startAnimationButton" title="Play animation" onclick="startAnimation(true)"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/play.svg" class="icon-btn" /></button>
-        <button class="btn btn-default hidden dynamicDiagramButton stopAnimationButton" title="Stop animation" onclick="stopAnimation(true)"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/stop.svg" class="icon-btn" /></button>
-        <button class="btn btn-default hidden dynamicDiagramButton stepForwardAnimationButton" title="Step forward [.]" onclick="stepForwardInAnimation()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/skip-forward.svg" class="icon-btn" /></button>
+        <button id="stepBackwardInAnimationButton" class="btn btn-default hidden dynamicDiagramButton stepBackwardAnimationButton" title="Step backward [,]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/skip-backward.svg" class="icon-btn" /></button>
+        <button id="startAnimationButton" class="btn btn-default hidden dynamicDiagramButton startAnimationButton" title="Play animation"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/play.svg" class="icon-btn" /></button>
+        <button id="stopAnimationButton" class="btn btn-default hidden dynamicDiagramButton stopAnimationButton" title="Stop animation"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/stop.svg" class="icon-btn" /></button>
+        <button id="stepForwardInAnimationButton" class="btn btn-default hidden dynamicDiagramButton stepForwardAnimationButton" title="Step forward [.]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/skip-forward.svg" class="icon-btn" /></button>
     </div>
+    <script nonce="${scriptNonce}">
+        $('#stepBackwardInAnimationButton').click(function() { stepBackwardInAnimation(); });
+        $('#startAnimationButton').click(function() { startAnimation(true); });
+        $('#stopAnimationButton').click(function() { stopAnimation(true); });
+        $('#stepForwardInAnimationButton').click(function() { stepForwardInAnimation(); });
+    </script>
 
     <c:if test="${embed eq true}">
     <div class="modelViewButtons btn-group">
-        <button class="btn btn-default" title="Diagram key [i]" onclick="showKey()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/info-circle.svg" class="icon-btn" /></button>
+        <button id="embeddedShowKeyButton" class="btn btn-default" title="Diagram key [i]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/info-circle.svg" class="icon-btn" /></button>
     </div>
+    <script nonce="${scriptNonce}">
+        $('#embeddedShowKeyButton').click(function() { showKey(); });
+    </script>
 
     <div class="btn-group">
-        <button class="btn btn-default backButton" title="Go back to previous diagram" onclick="back()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/arrow-90deg-left.svg" class="icon-btn" /></button>
+        <button id="backEmbeddedButton" class="btn btn-default backButton" title="Go back to previous diagram"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/arrow-90deg-left.svg" class="icon-btn" /></button>
 
         <c:if test="${workspace.id > 0 && (embed eq true && workspace.editable eq false)}">
-        <button class="btn btn-default" title="Link to this diagram" onclick="openCurrentDiagramInNewWindow()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/link.svg" class="icon-btn" /></button>
+        <button id="openCurrentDiagramInNewWindowEmbeddedButton" class="btn btn-default" title="Link to this diagram"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/link.svg" class="icon-btn" /></button>
         </c:if>
-        <button class="btn btn-default" title="Export diagram and key/legend to PNG" onclick="exportToPNG()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/filetype-png.svg" class="icon-btn" /></button>
+        <button id="exportToPNGEmbeddedButton" class="btn btn-default" title="Export diagram and key/legend to PNG"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/filetype-png.svg" class="icon-btn" /></button>
     </div>
+    <script nonce="${scriptNonce}">
+        $('#backEmbeddedButton').click(function() { back(); });
+        $('#openCurrentDiagramInNewWindowEmbeddedButton').click(function() { openCurrentDiagramInNewWindow(); });
+        $('#exportToPNGEmbeddedButton').click(function() { exportToPNG(); });
+    </script>
     </c:if>
 </div>
 
@@ -552,14 +571,14 @@
             html += '<div id="' + id + 'Thumbnail" class="diagramThumbnail centered small">';
 
             if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
-                html += '  <img src="' + view.content + '" class="img-thumbnail" style="margin-bottom: 10px;" onerror="this.onerror = null; this.src=\'/static/img/thumbnail-not-available.png\';" /><br />';
+                html += '  <img src="' + view.content + '" class="img-thumbnail viewThumbnail" style="margin-bottom: 10px;" /><br />';
             } else {
             <c:choose>
             <c:when test="${not empty param.version or embed eq true}">
             html += '  <img src="/static/img/thumbnail-not-available.png" class="img-thumbnail" style="margin-bottom: 10px" /></a>';
             </c:when>
             <c:otherwise>
-            html += '  <img src="${thumbnailUrl}' + structurizr.util.escapeHtml(view.key) + '-thumbnail.png" class="img-thumbnail" style="margin-bottom: 10px;" onerror="this.onerror = null; this.src=\'/static/img/thumbnail-not-available.png\';" /><br />';
+            html += '  <img src="${thumbnailUrl}' + structurizr.util.escapeHtml(view.key) + '-thumbnail.png" class="img-thumbnail viewThumbnail" style="margin-bottom: 10px;" /><br />';
             </c:otherwise>
             </c:choose>
             }
@@ -572,6 +591,11 @@
         });
 
         $('#diagramNavigation').append(html);
+
+        $('.viewThumbnail').on('error', function() {
+            $(this).on('error', undefined);
+            $(this).attr('src', '/static/img/thumbnail-not-available.png');
+        });
 
         index = 1;
         views.forEach(function(view) {

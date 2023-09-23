@@ -76,20 +76,25 @@
                 </div>
 
                 <div class="form-group centered" style="margin-top: 40px">
-                    <button class="btn btn-default" title="Bring elements back onto the diagram" onclick="structurizr.diagram.gatherElementsOnCanvas(); closeAutoLayoutModal();"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/magnet.svg" class="icon-btn" /> Bring elements back onto canvas</button>
-                    <button class="btn btn-default" title="Remove all vertices" onclick="structurizr.diagram.removeAllVertices(); closeAutoLayoutModal();"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/slash-lg.svg" class="icon-btn" /> Remove all vertices</button>
+                    <button id="gatherElementsButton" class="btn btn-default" title="Bring elements back onto the diagram"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/magnet.svg" class="icon-btn" /> Bring elements back onto canvas</button>
+                    <button id="removeAllVerticesButton" class="btn btn-default" title="Remove all vertices"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/slash-lg.svg" class="icon-btn" /> Remove all vertices</button>
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="closeAutoLayoutModal()">Cancel</button>
-                <button type="button" class="btn btn-default" onclick="runAutoLayout()">Auto-layout</button>
+                <button id="closeAutoLayoutModalButton" type="button" class="btn btn-default">Cancel</button>
+                <button id="runAutoLayoutButton" type="button" class="btn btn-default">Auto-layout</button>
             </div>
         </div>
     </div>
 </div>
 
 <script nonce="${scriptNonce}">
+
+    $('#gatherElementsButton').click(function() { structurizr.diagram.gatherElementsOnCanvas(); closeAutoLayoutModal(); });
+    $('#removeAllVerticesButton').click(function() { structurizr.diagram.removeAllVertices(); closeAutoLayoutModal(); });
+    $('#closeAutoLayoutModalButton').click(function() { closeAutoLayoutModal(); });
+    $('#runAutoLayoutButton').click(function() { runAutoLayout(); });
 
     function initAutoLayout() {
         $('#autoLayoutImplementation').change(function () {

@@ -59,7 +59,7 @@
                     html += '  <a href="' + diagramUrl + '"><img src="/static/img/thumbnail-not-available.png" class="img-thumbnail" style="margin-bottom: 10px" /></a>';
                     </c:when>
                     <c:otherwise>
-                    html += '  <a href="' + diagramUrl + '"><img src="${thumbnailUrl}' + structurizr.util.escapeHtml(view.key) + '-thumbnail.png" class="img-thumbnail" style="margin-bottom: 10px; max-height: ' + thumbnailSize + 'px" onerror="this.onerror = null; this.src=\'/static/img/thumbnail-not-available.png\';" /></a>';
+                    html += '  <a href="' + diagramUrl + '"><img src="${thumbnailUrl}' + structurizr.util.escapeHtml(view.key) + '-thumbnail.png" class="img-thumbnail viewThumbnail" style="margin-bottom: 10px; max-height: ' + thumbnailSize + 'px" /></a>';
                     </c:otherwise>
                     </c:choose>
 
@@ -84,6 +84,11 @@
 
             viewsDiv.addClass('centered');
             viewsDiv.append(html);
+
+            $('.viewThumbnail').on('error', function() {
+                $(this).on('error', undefined);
+                $(this).attr('src', '/static/img/thumbnail-not-available.png');
+            });
         }
     }
 

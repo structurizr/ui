@@ -57,7 +57,7 @@
                 <div id="decisionDate" class="centered"></div>
                 <div class="centered" style="margin-top: 10px">
                     <span id="decisionStatus" class="centered hidden" style="font-size: 30px"></span>
-                    <button id="graphButton" type="button" class="btn btn-default hidden" style="height: 42px; margin-bottom: 8px;" onclick="openGraphModal()"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/diagram-2.svg" class="icon-btn" /> Decision explorer</button>
+                    <button id="graphButton" type="button" class="btn btn-default hidden" style="height: 42px; margin-bottom: 8px;"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/diagram-2.svg" class="icon-btn" /> Decision explorer</button>
                 </div>
             </div>
 
@@ -69,6 +69,8 @@
 <script nonce="${scriptNonce}">
     const requestedScope = '<c:out value="${scope}" />';
     structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
+
+    $('#graphButton').click(function() { openGraphModal(); });
 
     const elementsWithDecisions = [];
     var decisions = [];

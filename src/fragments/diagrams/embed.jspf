@@ -14,17 +14,17 @@
 
                 <c:choose>
                     <c:when test="${workspace.open}">
-                    <pre class="embedCode"><code id="embedCodeFragment" onclick="structurizr.util.selectText('embedCodeFragment')">&lt;iframe <b>id="myEmbeddedDiagram"</b> src="<span class="baseUrl"></span>/embed/${workspace.id}?diagram=<span class="diagramEmbedDiagramId"></span>&diagramSelector=<span class="diagramEmbedDiagramSelector">false</span>&<b>iframe=myEmbeddedDiagram</b>" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"&gt;&lt;/iframe&gt;
+                    <pre class="embedCode"><code id="embedCodeFragment">&lt;iframe <b>id="myEmbeddedDiagram"</b> src="<span class="baseUrl"></span>/embed/${workspace.id}?diagram=<span class="diagramEmbedDiagramId"></span>&diagramSelector=<span class="diagramEmbedDiagramSelector">false</span>&<b>iframe=myEmbeddedDiagram</b>" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"&gt;&lt;/iframe&gt;
 
 &lt;script type="text/javascript" src="<span class="staticContentUrl"></span>/js/structurizr-embed.js"&gt;&lt;/script&gt;</code></pre>
                     </c:when>
                     <c:when test="${workspace.shareable}">
-                <pre class="embedCode"><code id="embedCodeFragment" onclick="structurizr.util.selectText('embedCodeFragment')">&lt;iframe <b>id="myEmbeddedDiagram"</b> src="<span class="baseUrl"></span>/embed/${workspace.id}/${workspace.sharingToken}?&diagram=<span class="diagramEmbedDiagramId"></span>&diagramSelector=<span class="diagramEmbedDiagramSelector">false</span>&<b>iframe=myEmbeddedDiagram</b>" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"&gt;&lt;/iframe&gt;
+                <pre class="embedCode"><code id="embedCodeFragment">&lt;iframe <b>id="myEmbeddedDiagram"</b> src="<span class="baseUrl"></span>/embed/${workspace.id}/${workspace.sharingToken}?&diagram=<span class="diagramEmbedDiagramId"></span>&diagramSelector=<span class="diagramEmbedDiagramSelector">false</span>&<b>iframe=myEmbeddedDiagram</b>" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"&gt;&lt;/iframe&gt;
 
 &lt;script type="text/javascript" src="<span class="staticContentUrl"></span>/js/structurizr-embed.js"&gt;&lt;/script&gt;</code></pre>
                     </c:when>
                     <c:otherwise>
-                <pre class="embedCode"><code id="embedCodeFragment" onclick="structurizr.util.selectText('embedCodeFragment')">&lt;iframe <b>id="myEmbeddedDiagram"</b> src="<span class="baseUrl"></span>/embed/${workspace.id}?apiKey=${workspace.apiKey}&diagram=<span class="diagramEmbedDiagramId"></span>&diagramSelector=<span class="diagramEmbedDiagramSelector">false</span>&<b>iframe=myEmbeddedDiagram</b>" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"&gt;&lt;/iframe&gt;
+                <pre class="embedCode"><code id="embedCodeFragment">&lt;iframe <b>id="myEmbeddedDiagram"</b> src="<span class="baseUrl"></span>/embed/${workspace.id}?apiKey=${workspace.apiKey}&diagram=<span class="diagramEmbedDiagramId"></span>&diagramSelector=<span class="diagramEmbedDiagramSelector">false</span>&<b>iframe=myEmbeddedDiagram</b>" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"&gt;&lt;/iframe&gt;
 
 &lt;script type="text/javascript" src="<span class="staticContentUrl"></span>/js/structurizr-embed.js"&gt;&lt;/script&gt;</code></pre>
                     </c:otherwise>
@@ -56,7 +56,7 @@
                             Copy the following URL into Notion to embed this diagram:
                         </p>
 
-                        <pre class="embedCode"><code id="notionUrl" onclick="structurizr.util.selectText('notionUrl')"><span class="baseUrl"></span>/share/${workspace.id}/${workspace.sharingToken}/diagrams/<span class="diagramEmbedDiagramId"></span></code></pre>
+                        <pre class="embedCode"><code id="notionUrl"><span class="baseUrl"></span>/share/${workspace.id}/${workspace.sharingToken}/diagrams/<span class="diagramEmbedDiagramId"></span></code></pre>
                     </div>
                 </c:if>
             </div>
@@ -68,6 +68,10 @@
 </div>
 
 <script nonce="${scriptNonce}">
+
+    $('#embedCodeFragment').click(function() { structurizr.util.selectText('embedCodeFragment'); });
+    $('#notionUrl').click(function() { structurizr.util.selectText('notionUrl'); });
+
     $('#diagramSelectorToggle').click(function() {
         if ($('#diagramSelectorToggle').is(':checked')) {
             $('.diagramEmbedDiagramSelector').html('true');

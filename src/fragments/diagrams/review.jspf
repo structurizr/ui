@@ -36,13 +36,15 @@
                 &nbsp;
             </div>
             <div class="modal-footer">
-                <button id="reviewSelectedViewsButton" type="button" class="btn btn-default" onclick="createReviewForSelectedViews()">Create review</button>
+                <button id="reviewSelectedViewsButton" type="button" class="btn btn-default">Create review</button>
             </div>
         </div>
     </div>
 </div>
 
 <script nonce="${scriptNonce}">
+
+    $('#reviewSelectedViewsButton').click(function() { createReviewForSelectedViews(); });
 
     function initReview() {
         const viewList = $('#reviewViewList');
