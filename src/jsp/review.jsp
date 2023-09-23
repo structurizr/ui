@@ -122,7 +122,7 @@
 
 <div id="floatingControls"></div>
 
-<script>
+<script nonce="${scriptNonce}">
     var jsonAsString = '${reviewAsJson}';
     var json;
 

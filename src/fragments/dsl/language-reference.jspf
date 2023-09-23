@@ -35,7 +35,7 @@
     <option value="https://docs.structurizr.com/dsl/language#users">&nbsp;&nbsp;&nbsp;- users</option>
 </select>
 
-<script>
+<script nonce="${scriptNonce}">
     $('#keywords').change(function () {
         window.open($('#keywords').val(), "structurizrDslLanguageReference", "top=100,left=300,width=800,height=800,location=no,menubar=no,status=no,toolbar=no");
     });
