@@ -489,8 +489,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 self.zoomToWidthOrHeight();
             }
 
-            addGraphEventHandlers();
-
             diagramRendered = true;
 
             if (callback !== undefined) {
@@ -571,6 +569,43 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 box.elementInView = view.elements[i];
                 box.positionCalculated = false;
+
+                box.on('change:position', function(cell, newPosition, opt) {
+                    if (opt.translateBy === undefined) {
+                        // cell has moved programmatically
+                        cell.elementInView.x = newPosition.x;
+                        cell.elementInView.y = newPosition.y;
+                    } else {
+                        const translatedByCell = graph.getCell(opt.translateBy);
+                        if (translatedByCell.attributes.type === 'structurizr.boundary' || translatedByCell.attributes.type === 'structurizr.deploymentNode') {
+                            // a boundary/group/deployment node has been dragged, and moved this element
+                            cell.elementInView.x = newPosition.x;
+                            cell.elementInView.y = newPosition.y;
+                        } else {
+                            // an element has been dragged
+                            var cellViewMoved = paper.findViewByModel(cell);
+                            if (cellViewMoved.selected === true && selectedElements.length > 1) {
+                                const dx = newPosition.x - cell.elementInView.x;
+                                const dy = newPosition.y - cell.elementInView.y;
+
+                                selectedElements.forEach(function (cellView) {
+                                    if (cellView !== cellViewMoved) {
+                                        moveElement(cellView.model, dx, dy);
+                                    }
+                                });
+
+                                moveLinksBetweenSelectedElements(dx, dy);
+                            }
+
+                            cell.elementInView.x = newPosition.x;
+                            cell.elementInView.y = newPosition.y;
+                        }
+                    }
+
+                    repositionAllParentCells();
+
+                    fireWorkspaceChangedEvent();
+                });
 
                 if (includeGroup(element, view) === true) {
                     if (element.group !== undefined) {
@@ -827,32 +862,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         diagramKey = createDiagramKey();
 
-        // ensure that all elements are repositioned properly (e.g. groups and deployment nodes are made large enough to fit their content)
-        view.elements.forEach(function(elementView) {
-            var element = structurizr.workspace.findElementById(elementView.id);
-            var cell = cellsByElementId[element.id];
-
-            if (
-                element.type === structurizr.constants.CUSTOM_ELEMENT_TYPE ||
-                element.type === structurizr.constants.PERSON_ELEMENT_TYPE ||
-                element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE ||
-                element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE ||
-                element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE ||
-                element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE ||
-                element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE ||
-                element.type === structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE
-            ) {
-                if (cell) {
-                    var parentId = cell.get('parent');
-                    while (parentId) {
-                        const parentCell = graph.getCell(parentId);
-                        reposition(parentCell);
-
-                        parentId = parentCell.get('parent');
-                    }
-                }
-            }
-        });
+        repositionAllParentCells();
 
         // ensure all elements are stacked properly, front to back
         graph.getElements().forEach(function(element) {
@@ -864,8 +874,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 });
             }
         });
-
-        addGraphEventHandlers();
 
         if (embedded) {
             self.zoomFitWidth();
@@ -895,6 +903,35 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         if (callback !== undefined) {
             callback();
         }
+    }
+
+    function repositionAllParentCells() {
+        // ensure that all elements are repositioned properly (e.g. groups and deployment nodes are made large enough to fit their content)
+        currentView.elements.forEach(function(elementView) {
+            var element = structurizr.workspace.findElementById(elementView.id);
+            var cell = cellsByElementId[element.id];
+
+            if (
+                element.type === structurizr.constants.CUSTOM_ELEMENT_TYPE ||
+                element.type === structurizr.constants.PERSON_ELEMENT_TYPE ||
+                element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE ||
+                element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE ||
+                element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE ||
+                element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE ||
+                element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE ||
+                element.type === structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE
+            ) {
+                if (cell) {
+                    var parentId = cell.get('parent');
+                    while (parentId) {
+                        const parentCell = graph.getCell(parentId);
+                        reposition(parentCell);
+
+                        parentId = parentCell.get('parent');
+                    }
+                }
+            }
+        });
     }
 
     function includeGroup(element, view) {
@@ -3269,6 +3306,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         graph.addCell(boundary);
 
+        boundary.on('change:position', moveLinksBetweenElementsContainedWithin);
+
         boundary._computedStyle = {};
         boundary._computedStyle.background = canvasColor;
         boundary._computedStyle.color = textColor;
@@ -3385,7 +3424,26 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             addDoubleClickHandlerForElement(cellView, element);
         }
 
+        cell.on('change:position', moveLinksBetweenElementsContainedWithin);
+
         return cell;
+    }
+
+    function moveLinksBetweenElementsContainedWithin(cell, newPosition, opt) {
+        if (opt.translateBy === undefined) {
+            // cell has moved programmatically - ignore
+        } else {
+            const translatedByCell = graph.getCell(opt.translateBy);
+            if (cell === translatedByCell) {
+                // the change:position event handler for each element will take care of the element position,
+                // but we still need to move all vertices inside this deployment node
+                var dx = opt.tx;
+                var dy = opt.ty;
+
+                var embeddedCells = cell.getEmbeddedCells({ deep: true }).map(function(cell) { return paper.findViewByModel(cell); });
+                moveLinksBetweenElements(embeddedCells, dx, dy);
+            }
+        }
     }
 
     function centreCell(cell) {
@@ -5278,49 +5336,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         });
         moveLinksBetweenElements(elements, dx, dy);
     };
-
-    function addGraphEventHandlers() {
-        graph.on('change:position', function(cell, newPosition, opt) {
-            if (opt.skipParentHandler) return;
-
-            var parentId = cell.get('parent');
-            while (parentId) {
-                var parentCell = graph.getCell(parentId);
-                reposition(parentCell);
-                parentId = parentCell.get('parent');
-            }
-        });
-
-        graph.on('change:position', function(cell, newPosition, opt) {
-            if (cell.elementInView && cell.positionCalculated === false) {
-                fireWorkspaceChangedEvent();
-
-                if (opt.translateBy) {
-                    const translatedByCell = graph.getCell(opt.translateBy);
-                    if (translatedByCell.attributes.type === 'structurizr.boundary' || translatedByCell.attributes.type === 'structurizr.deploymentNode') {
-                        return;
-                    }
-
-                    var cellViewMoved = paper.findViewByModel(cell);
-                    if (cellViewMoved.selected !== 'undefined' && cellViewMoved.selected === true) {
-                        var dx = newPosition.x - cell.elementInView.x;
-                        var dy = newPosition.y - cell.elementInView.y;
-
-                        selectedElements.forEach(function(cellView) {
-                            if (cellView !== cellViewMoved) {
-                                moveElement(cellView.model, dx, dy);
-                            }
-                        });
-
-                        moveLinksBetweenSelectedElements(dx, dy);
-                    }
-                }
-
-                cell.elementInView.x = newPosition.x;
-                cell.elementInView.y = newPosition.y;
-            }
-        });
-    }
 
     function repositionLasso() {
         if (lasso && lassoStart !== undefined && lassoEnd !== undefined) {
