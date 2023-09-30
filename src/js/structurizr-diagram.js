@@ -602,7 +602,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         }
                     }
 
-                    repositionAllParentCells();
+                    repositionParentCells(cell);
 
                     fireWorkspaceChangedEvent();
                 });
@@ -921,17 +921,21 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE ||
                 element.type === structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE
             ) {
-                if (cell) {
-                    var parentId = cell.get('parent');
-                    while (parentId) {
-                        const parentCell = graph.getCell(parentId);
-                        reposition(parentCell);
-
-                        parentId = parentCell.get('parent');
-                    }
-                }
+                repositionParentCells(cell);
             }
         });
+    }
+
+    function repositionParentCells(cell) {
+        if (cell) {
+            var parentId = cell.get('parent');
+            while (parentId) {
+                const parentCell = graph.getCell(parentId);
+                reposition(parentCell);
+
+                parentId = parentCell.get('parent');
+            }
+        }
     }
 
     function includeGroup(element, view) {
