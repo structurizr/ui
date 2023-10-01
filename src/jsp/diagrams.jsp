@@ -369,7 +369,10 @@
             $('#editDiagramButton').addClass('hidden');
             $('#diagramNotEditableMessage').removeClass('hidden');
 
-            if (structurizr.diagram.getCurrentView().automaticLayout.implementation === 'Dagre') {
+            if (
+                (structurizr.diagram.getCurrentView().automaticLayout.implementation === 'Graphviz' && ${not structurizrConfiguration.graphvizEnabled}) ||
+                structurizr.diagram.getCurrentView().automaticLayout.implementation === 'Dagre'
+            ) {
                 structurizr.diagram.runDagre(
                     structurizr.diagram.getCurrentView().automaticLayout.rankDirection,
                     structurizr.diagram.getCurrentView().automaticLayout.rankSeparation,
