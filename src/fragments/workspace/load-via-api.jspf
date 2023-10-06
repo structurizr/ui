@@ -17,7 +17,7 @@
     );
 
     structurizrApiClient.getWorkspace(
-        "${workspace.internalVersion}",
+        "<c:out value="${workspace.internalVersion}" />",
         function(response) {
             if (response.success) {
                 const json = response.json;
