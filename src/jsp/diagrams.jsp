@@ -181,12 +181,7 @@
         }
 
         structurizr.ui.loadThemes(function() {
-            // if automatic layout (with Graphviz) needs to be executed, lets do this first
-            if (${loadWorkspaceFromParent eq true} === false && graphvizRequired()) {
-                runGraphvizForWorkspace(init);
-            } else {
-                init();
-            }
+            init();
         });
     }
 
@@ -275,9 +270,9 @@
             }
 
             this.changeView = function(viewKey) {
-                var view = structurizr.workspace.findViewByKey(viewKey);
+                const view = structurizr.workspace.findViewByKey(viewKey);
                 if (view) {
-                    structurizr.diagram.changeView(viewKey);
+                    changeView(view);
                 } else {
                     throw 'A view with the key "' + viewKey + '" could not be found.';
                 }
@@ -365,29 +360,6 @@
             }
         }
 
-        if (structurizr.diagram.getCurrentView().automaticLayout !== undefined) {
-            $('#editDiagramButton').addClass('hidden');
-            $('#diagramNotEditableMessage').removeClass('hidden');
-
-            if (
-                (structurizr.diagram.getCurrentView().automaticLayout.implementation === 'Graphviz' && ${not structurizrConfiguration.graphvizEnabled}) ||
-                structurizr.diagram.getCurrentView().automaticLayout.implementation === 'Dagre'
-            ) {
-                structurizr.diagram.runDagre(
-                    structurizr.diagram.getCurrentView().automaticLayout.rankDirection,
-                    structurizr.diagram.getCurrentView().automaticLayout.rankSeparation,
-                    structurizr.diagram.getCurrentView().automaticLayout.nodeSeparation,
-                    structurizr.diagram.getCurrentView().automaticLayout.edgeSeparation,
-                    structurizr.diagram.getCurrentView().automaticLayout.vertices,
-                    true
-                );
-            }
-            structurizr.diagram.autoPageSize();
-        } else {
-            $('#editDiagramButton').removeClass('hidden');
-            $('#diagramNotEditableMessage').addClass('hidden');
-        }
-
         // disable some UI elements based upon whether the diagram is editable
         $('#autoLayoutButton').prop('disabled', !editable);
         getPageSizeDropDown().prop('disabled', !editable);
@@ -461,6 +433,33 @@
         }
 
         configureTooltip(view);
+
+        if (structurizr.diagram.getCurrentView().automaticLayout !== undefined) {
+            $('#editDiagramButton').addClass('hidden');
+            $('#diagramNotEditableMessage').removeClass('hidden');
+
+            if (
+                (structurizr.diagram.getCurrentView().automaticLayout.implementation === 'Graphviz' && ${not structurizrConfiguration.graphvizEnabled}) ||
+                structurizr.diagram.getCurrentView().automaticLayout.implementation === 'Dagre'
+            ) {
+                structurizr.diagram.runDagre(
+                    structurizr.diagram.getCurrentView().automaticLayout.rankDirection,
+                    structurizr.diagram.getCurrentView().automaticLayout.rankSeparation,
+                    structurizr.diagram.getCurrentView().automaticLayout.nodeSeparation,
+                    structurizr.diagram.getCurrentView().automaticLayout.edgeSeparation,
+                    structurizr.diagram.getCurrentView().automaticLayout.vertices,
+                    true
+                );
+            }
+
+            if (structurizr.diagram.getCurrentViewOrFilter().type !== structurizr.constants.FILTERED_VIEW_TYPE) {
+                structurizr.diagram.autoPageSize();
+            }
+        } else {
+            $('#editDiagramButton').removeClass('hidden');
+            $('#diagramNotEditableMessage').addClass('hidden');
+        }
+
         structurizr.diagram.resize();
         structurizr.diagram.zoomToWidthOrHeight();
         refreshThumbnail();
@@ -890,7 +889,7 @@
         }
 
         if (view) {
-            structurizr.diagram.changeView(view.key);
+            changeView(view);
         }
 
         window.onhashchange = function () {
@@ -905,7 +904,7 @@
                     progressMessage.show('<p>Rendering ' + structurizr.util.escapeHtml(structurizr.ui.getTitleForView(view)) + '</p><p style="font-size: 66%">(#' + structurizr.util.escapeHtml(view.key) + ')</p>');
 
                     setTimeout(function() {
-                        structurizr.diagram.changeView(view.key, function() {
+                        changeView(view, function() {
                             progressMessage.hide();
 
                             <c:if test="${not empty iframe}">
@@ -950,6 +949,24 @@
             {
                 passive: false
             });
+    }
+
+    function changeView(view, callback) {
+        var actualView = view;
+        if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
+            actualView = structurizr.workspace.findViewByKey(view.baseViewKey);
+        }
+
+        if (actualView.automaticLayout && actualView.automaticLayout.implementation === 'Graphviz' && ${structurizrConfiguration.graphvizEnabled}) {
+            runGraphvizForView(
+                actualView,
+                function () {
+                    structurizr.diagram.changeView(view.key, callback);
+                }
+            );
+        } else {
+            structurizr.diagram.changeView(view.key, callback);
+        }
     }
 
     function initQuickNavigation() {

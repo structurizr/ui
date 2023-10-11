@@ -463,12 +463,10 @@ hr {
 
 #progressMessage {
     position: fixed;
-    z-index: 10;
-    width: 400px;
-    opacity: .80;
-    margin-left: -200px;
-    top: 40%;
-    left: 50%;
+    z-index: 1000;
+    opacity: .90;
+    bottom: 10px;
+    right: 10px;
     text-align: center;
     font-size: 30px;
     border-radius: 5px;

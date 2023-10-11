@@ -1,52 +1,50 @@
 <script nonce="${scriptNonce}">
-    function graphvizRequired() {
-        if (${workspace.clientEncrypted} === true) {
-            return false;
+    var viewsWithGraphvizApplied = [];
+
+    function runGraphvizForView(view, callback) {
+        if (viewsWithGraphvizApplied.indexOf(view.key) === -1) {
+            const url = '${structurizrConfiguration.graphvizUrl}?view=' + view.key;
+            runGraphviz(url, callback);
+            viewsWithGraphvizApplied.push(view.key);
+        } else {
+            if (callback) {
+                callback();
+            }
         }
-
-        var result = false;
-
-        structurizr.workspace.getViews().forEach(function(view) {
-            if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
-                view = structurizr.workspace.findViewByKey(view.baseViewKey);
-            }
-            if (view.automaticLayout && (view.automaticLayout.implementation === undefined || view.automaticLayout.implementation === 'Graphviz')) {
-                result = true;
-            }
-        });
-
-        return result && ${structurizrConfiguration.graphvizEnabled};
     }
 
-    function runGraphvizForWorkspace(callback) {
-        var url = '${structurizrConfiguration.graphvizUrl}';
-        runGraphviz(url, callback);
-    }
-
-    function runGraphvizForView(rankDirection, rankSeparation, nodeSeparation, edgeSeparation, linkVertices, margin, resize, callback) {
+    function runGraphvizWithParameters(rankDirection, rankSeparation, nodeSeparation, edgeSeparation, linkVertices, margin, resize, callback) {
         const view = structurizr.diagram.getCurrentView();
-        var url = '${structurizrConfiguration.graphvizUrl}?view=' + view.key + '&resizePaper=' + resize + '&rankDirection=' + rankDirection + '&rankSeparation=' + rankSeparation + '&nodeSeparation=' + nodeSeparation + '&margin=' + margin
+        const url = '${structurizrConfiguration.graphvizUrl}?view=' + view.key + '&resizePaper=' + resize + '&rankDirection=' + rankDirection + '&rankSeparation=' + rankSeparation + '&nodeSeparation=' + nodeSeparation + '&margin=' + margin
 
         runGraphviz(url, callback);
     }
 
     function runGraphviz(url, callback) {
-        $.ajax({
-            url: url,
-            type: 'POST',
-            contentType: 'application/json; charset=UTF-8',
-            cache: false,
-            headers: {
-                'Content-Type': 'application/json; charset=UTF-8'
-            },
-            dataType: 'json',
-            data: getMinimalJson()
-        })
-            .done(function(data, textStatus, jqXHR) {
+        if (${workspace.clientEncrypted} === true) {
+            console.log('Graphviz cannot be used on client-side encrypted workspaces - skipping');
+            if (callback) {
+                callback();
+            }
+        } else {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json; charset=UTF-8',
+                cache: false,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                },
+                dataType: 'json',
+                data: getMinimalJson()
+            })
+            .done(function (data, textStatus, jqXHR) {
                 if (data.views) {
                     structurizr.workspace.copyLayoutFrom(data.views);
                 }
-                callback();
+                if (callback) {
+                    callback();
+                }
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 progressMessage.hide();
@@ -54,6 +52,7 @@
                 console.log('Automatic layout failed');
                 logError(jqXHR, textStatus, errorThrown);
             });
+        }
     }
 
     function getMinimalJson() {

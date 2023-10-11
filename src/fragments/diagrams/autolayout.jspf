@@ -146,7 +146,7 @@
                 $('#autoLayoutResizePage').is(':checked')
             )
         } else {
-            runGraphvizForView(
+            runGraphvizWithParameters(
                 $('#autoLayoutRankDirection').val(),
                 $('#autoLayoutRankSeparation').val(),
                 $('#autoLayoutNodeSeparation').val(),
