@@ -59,7 +59,6 @@
             $('#healthOffButton').click(function() { showHealth(false); });
             $('#darkModeOnButton').click(function() { toggleDarkMode(); });
             $('#darkModeOffButton').click(function() { toggleDarkMode(); });
-            $('#explorationsButton').click(function() { window.location.href='<c:out value="${urlPrefix}" />/explore<c:out value="${urlSuffix}" />'; });
         </script>
 
         <div class="btn-group">
