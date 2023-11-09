@@ -5781,7 +5781,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             diagramRendered = true;
         } catch (err) {
             console.error('There was an error applying the automatic layout: ' + err);
-            alert('The automatic layout algorithm could not be applied to this view.');
         }
     }
 

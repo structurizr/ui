@@ -437,24 +437,6 @@
         if (structurizr.diagram.getCurrentView().automaticLayout !== undefined) {
             $('#editDiagramButton').addClass('hidden');
             $('#diagramNotEditableMessage').removeClass('hidden');
-
-            if (
-                (structurizr.diagram.getCurrentView().automaticLayout.implementation === 'Graphviz' && ${not structurizrConfiguration.graphvizEnabled}) ||
-                structurizr.diagram.getCurrentView().automaticLayout.implementation === 'Dagre'
-            ) {
-                structurizr.diagram.runDagre(
-                    structurizr.diagram.getCurrentView().automaticLayout.rankDirection,
-                    structurizr.diagram.getCurrentView().automaticLayout.rankSeparation,
-                    structurizr.diagram.getCurrentView().automaticLayout.nodeSeparation,
-                    structurizr.diagram.getCurrentView().automaticLayout.edgeSeparation,
-                    structurizr.diagram.getCurrentView().automaticLayout.vertices,
-                    true
-                );
-            }
-
-            if (structurizr.diagram.getCurrentViewOrFilter().type !== structurizr.constants.FILTERED_VIEW_TYPE) {
-                structurizr.diagram.autoPageSize();
-            }
         } else {
             $('#editDiagramButton').removeClass('hidden');
             $('#diagramNotEditableMessage').addClass('hidden');
@@ -957,13 +939,45 @@
             actualView = structurizr.workspace.findViewByKey(view.baseViewKey);
         }
 
-        if (actualView.automaticLayout && actualView.automaticLayout.implementation === 'Graphviz' && ${structurizrConfiguration.graphvizEnabled}) {
-            runGraphvizForView(
-                actualView,
-                function () {
-                    structurizr.diagram.changeView(view.key, callback);
-                }
-            );
+        if (actualView.automaticLayout) {
+            if (actualView.automaticLayout.implementation === 'Graphviz' && ${structurizrConfiguration.graphvizEnabled}) {
+                runGraphvizForView(
+                    actualView,
+                    function () {
+                        structurizr.diagram.changeView(view.key, function() {
+                            if (structurizr.diagram.getCurrentViewOrFilter().type !== structurizr.constants.FILTERED_VIEW_TYPE) {
+                                structurizr.diagram.autoPageSize();
+                            }
+
+                            if (callback) {
+                                callback();
+                            }
+                        });
+                    }
+                );
+            } else if (
+                (actualView.automaticLayout.implementation === 'Graphviz' && ${not structurizrConfiguration.graphvizEnabled}) ||
+                actualView.automaticLayout.implementation === 'Dagre'
+            ) {
+                structurizr.diagram.changeView(view.key, function () {
+                    structurizr.diagram.runDagre(
+                        actualView.automaticLayout.rankDirection,
+                        actualView.automaticLayout.rankSeparation,
+                        actualView.automaticLayout.nodeSeparation,
+                        actualView.automaticLayout.edgeSeparation,
+                        actualView.automaticLayout.vertices,
+                        true
+                    );
+
+                    if (structurizr.diagram.getCurrentViewOrFilter().type !== structurizr.constants.FILTERED_VIEW_TYPE) {
+                        structurizr.diagram.autoPageSize();
+                    }
+
+                    if (callback) {
+                        callback();
+                    }
+                });
+            }
         } else {
             structurizr.diagram.changeView(view.key, callback);
         }

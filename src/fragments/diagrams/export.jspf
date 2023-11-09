@@ -122,7 +122,7 @@
             const includeMetadata = $('#exportSVGDiagramMetadata').is(':checked') === true;
             const download = $('#exportSVGDownload').is(':checked') === true;
 
-            exportDiagramsToSVG([ currentView.key ], includeMetadata, download, currentView.key);
+            exportDiagramsToSVG([ currentView.key ], includeMetadata, download, currentView);
         } else {
             const includeMetadata = $('#exportPNGDiagramMetadata').is(':checked') === true;
             const includeAnimationSteps = $('#exportPNGAnimationSteps').is(':checked') === true;
@@ -134,7 +134,7 @@
             const crop = $('#exportPNGCropDiagrams').is(':checked') === true;
             const download = $('#exportPNGDownload').is(':checked') === true;
 
-            exportDiagramsToPNG([ currentView.key ], includeMetadata, includeAnimationSteps, crop, download, currentView.key);
+            exportDiagramsToPNG([ currentView.key ], includeMetadata, includeAnimationSteps, crop, download, currentView);
         }
     }
 
@@ -150,7 +150,7 @@
                 const includeMetadata = $('#exportSVGDiagramMetadata').is(':checked') === true;
                 const download = $('#exportSVGDownload').is(':checked') === true;
 
-                exportDiagramsToSVG(selectedValues, includeMetadata, download, currentView.key);
+                exportDiagramsToSVG(selectedValues, includeMetadata, download, currentView);
             } else {
                 const includeMetadata = $('#exportPNGDiagramMetadata').is(':checked') === true;
                 const includeAnimationSteps = $('#exportPNGAnimationSteps').is(':checked') === true;
@@ -162,7 +162,7 @@
                 const crop = $('#exportPNGCropDiagrams').is(':checked') === true;
                 const download = $('#exportPNGDownload').is(':checked') === true;
 
-                exportDiagramsToPNG(selectedValues, includeMetadata, includeAnimationSteps, crop, download, currentView.key);
+                exportDiagramsToPNG(selectedValues, includeMetadata, includeAnimationSteps, crop, download, currentView);
             }
         }
     }
@@ -178,7 +178,7 @@
                 const includeMetadata = $('#exportSVGDiagramMetadata').is(':checked') === true;
                 const download = $('#exportSVGDownload').is(':checked') === true;
 
-                exportDiagramsToSVG(selectedValues, includeMetadata, download, currentView.key);
+                exportDiagramsToSVG(selectedValues, includeMetadata, download, currentView);
             } else {
                 const includeMetadata = $('#exportPNGDiagramMetadata').is(':checked') === true;
                 const includeAnimationSteps = $('#exportPNGAnimationSteps').is(':checked') === true;
@@ -190,16 +190,18 @@
                 const crop = $('#exportPNGCropDiagrams').is(':checked') === true;
                 const download = $('#exportPNGDownload').is(':checked') === true;
 
-                exportDiagramsToPNG(selectedValues, includeMetadata, includeAnimationSteps, crop, download, currentView.key);
+                exportDiagramsToPNG(selectedValues, includeMetadata, includeAnimationSteps, crop, download, currentView);
             }
         }
     }
 
-    function exportDiagramsToPNG(viewsToExport, includeDiagramMetadata, includeDiagramAnimations, crop, download, originalViewKey) {
-        if (viewsToExport && viewsToExport.length > 0) {
-            const viewToExport = viewsToExport[0];
+    function exportDiagramsToPNG(viewsToExport, includeDiagramMetadata, includeDiagramAnimations, crop, download, originalView) {
+        structurizr.diagram.onViewChanged(undefined);
 
-            structurizr.diagram.changeView(viewToExport, function () {
+        if (viewsToExport && viewsToExport.length > 0) {
+            const viewToExport = structurizr.workspace.findViewByKey(viewsToExport[0]);
+
+            changeView(viewToExport, function () {
                 if (includeDiagramAnimations === true) {
                     structurizr.diagram.exportCurrentDiagramKeyToPNG(function(diagramKeyAsPNG) {
 
@@ -217,7 +219,7 @@
                                     structurizr.diagram.exportCurrentDiagramToPNG(includeDiagramMetadata, crop, function (diagramAsPNG) {
                                         addExportedPNGToPage(diagramAsPNG, diagramKeyAsPNG, stepNumber, download);
                                         viewsToExport.splice(0, 1);
-                                        exportDiagramsToPNG(viewsToExport, includeDiagramMetadata, includeDiagramAnimations, crop, download, originalViewKey);
+                                        exportDiagramsToPNG(viewsToExport, includeDiagramMetadata, includeDiagramAnimations, crop, download, originalView);
                                     });
                                 } else {
                                     f();
@@ -233,14 +235,15 @@
                             addExportedPNGToPage(diagramAsPNG, diagramKeyAsPNG, undefined, download);
 
                             viewsToExport.splice(0, 1);
-                            exportDiagramsToPNG(viewsToExport, includeDiagramMetadata, includeDiagramAnimations, crop, download, originalViewKey);
+                            exportDiagramsToPNG(viewsToExport, includeDiagramMetadata, includeDiagramAnimations, crop, download, originalView);
                         });
                     });
                 }
             });
         } else {
             setTimeout(function() {
-                structurizr.diagram.changeView(originalViewKey);
+                structurizr.diagram.onViewChanged(viewChanged);
+                changeView(originalView);
             }, 1000);
         }
     }
@@ -311,24 +314,28 @@
         }
     }
 
-    function exportDiagramsToSVG(viewsToExport, includeDiagramMetadata, download, originalViewKey) {
+    function exportDiagramsToSVG(viewsToExport, includeDiagramMetadata, download, originalView) {
+        structurizr.diagram.onViewChanged(undefined);
+
         if (viewsToExport && viewsToExport.length > 0) {
-            const viewToExport = viewsToExport[0];
-            structurizr.diagram.changeView(viewToExport, function () {
+            const viewToExport = structurizr.workspace.findViewByKey(viewsToExport[0]);
+
+            changeView(viewToExport, function () {
                 var diagramAsSVG = structurizr.diagram.exportCurrentDiagramToSVG(includeDiagramMetadata);
                 var diagramKeyAsSVG;
-                if (structurizr.workspace.findViewByKey(viewToExport).type !== structurizr.constants.IMAGE_VIEW_TYPE) {
+                if (viewsToExport.type !== structurizr.constants.IMAGE_VIEW_TYPE) {
                     diagramKeyAsSVG = structurizr.diagram.exportCurrentDiagramKeyToSVG();
                 }
 
                 addExportedSVGToPage(diagramAsSVG, diagramKeyAsSVG, download);
 
                 viewsToExport.splice(0, 1);
-                exportDiagramsToSVG(viewsToExport, includeDiagramMetadata, download, originalViewKey);
+                exportDiagramsToSVG(viewsToExport, includeDiagramMetadata, download, originalView);
             });
         } else {
             setTimeout(function() {
-                structurizr.diagram.changeView(originalViewKey);
+                structurizr.diagram.onViewChanged(viewChanged);
+                changeView(originalView);
             }, 1000);
         }
     }
