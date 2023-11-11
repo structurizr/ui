@@ -472,4 +472,5 @@ hr {
     border-radius: 5px;
     padding: 20px;
     background: #999999;
+    max-width: 80%;
 }
