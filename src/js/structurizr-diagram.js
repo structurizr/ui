@@ -363,6 +363,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
 
         if (currentView !== undefined && view.key === currentView.key) {
+            diagramRendered = true;
             if (callback !== undefined) {
                 callback();
             }
