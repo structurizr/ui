@@ -934,6 +934,7 @@
     }
 
     function changeView(view, callback) {
+        structurizr.diagram.reset();
         var actualView = view;
         if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
             actualView = structurizr.workspace.findViewByKey(view.baseViewKey);

@@ -273,6 +273,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         return diagramRendered;
     };
 
+    this.reset = function() {
+        diagramRendered = false;
+    };
+
     this.isExportable = function() {
         return true;
     };
@@ -489,11 +493,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 self.zoomToWidthOrHeight();
             }
 
-            diagramRendered = true;
-
             if (callback !== undefined) {
                 callback();
             }
+
+            diagramRendered = true;
 
             return;
         }
@@ -898,11 +902,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
         });
 
-        diagramRendered = true;
-
         if (callback !== undefined) {
             callback();
         }
+
+        diagramRendered = true;
     }
 
     function repositionAllParentCells() {
