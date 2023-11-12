@@ -1318,9 +1318,9 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         if (currentPerspective !== undefined) {
             Object.keys(cellsByElementId).forEach(function(elementId) {
-                var cell = cellsByElementId[elementId];
-                var element = structurizr.workspace.findElementById(cell.elementInView.id);
-                var perspective = getPerspectiveForElement(element);
+                const cell = cellsByElementId[elementId];
+                const element = structurizr.workspace.findElementById(cell.elementInView.id);
+                const perspective = getPerspectiveForElement(element);
 
                 changeColourOfCell(cell, cell._computedStyle.background, cell._computedStyle.color, cell._computedStyle.stroke);
 
@@ -1330,57 +1330,64 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     showElement(element.id);
 
                     // and potentially change the background/foreground
-                    var usedElementStyle = false;
-                    var elementStyles = structurizr.workspace.views.configuration.styles.elements;
+                    var elementStyleForPerspective = undefined;
+                    const elementStyleTagForPerspective = 'Perspective:' + currentPerspective;
+                    const elementStyles = structurizr.workspace.views.configuration.styles.elements;
+
+                    // find a style for Perspective:Name
                     elementStyles.forEach(function(elementStyle) {
-                        if (elementStyle.tag.indexOf('Perspective:' + currentPerspective) === 0) {
-                            var useElementStyle = false;
-                            var expression = elementStyle.tag.substring(elementStyle.tag.indexOf('[')+1, elementStyle.tag.length-1);
+                        if (elementStyle.tag === elementStyleTagForPerspective) {
+                            elementStyleForPerspective = elementStyle;
+                        }
+                    });
+
+                    // find a style for Perspective:Name[value==x]
+                    elementStyles.forEach(function(elementStyle) {
+                        if (elementStyle.tag.indexOf(elementStyleTagForPerspective + '[value') === 0) {
+                            const expression = elementStyle.tag.substring(elementStyle.tag.indexOf('[')+1, elementStyle.tag.length-1);
 
                             if (expression.indexOf('value==') === 0) {
-                                var testValue = expression.substring('value=='.length);
+                                const testValue = expression.substring('value=='.length);
 
                                 if (perspective.description === testValue) {
-                                    useElementStyle = true;
+                                    elementStyleForPerspective = elementStyle;
                                 }
-                            } else if (expression.indexOf('value<=') === 0) {
-                                var testValue = expression.substring('value<='.length);
-
-                                if (!isNaN(perspective.description) && !isNaN(testValue)) {
-                                    useElementStyle = (Number(perspective.description) < Number(testValue));
-                                } else {
-                                    useElementStyle = (perspective.description <= testValue);
-                                }
-                            }
-
-                            if (useElementStyle === true && usedElementStyle === false) {
-                                var background = elementStyle.background;
-                                var color = elementStyle.color;
-                                var stroke = elementStyle.stroke;
-
-                                if (background === undefined) {
-                                    background = cell._computedStyle.background;
-                                }
-
-                                if (color === undefined) {
-                                    color = cell._computedStyle.color;
-                                }
-
-                                if (stroke === undefined) {
-                                    stroke = structurizr.util.shadeColor(background, darkenPercentage, darkMode);
-                                }
-
-                                changeColourOfCell(cell, background, color, stroke);
-
-                                usedElementStyle = true;
+                                // } else if (expression.indexOf('value<=') === 0) {
+                                //     const testValue = expression.substring('value<='.length);
+                                //
+                                //     if (!isNaN(perspective.description) && !isNaN(testValue)) {
+                                //         useElementStyle = (Number(perspective.description) < Number(testValue));
+                                //     } else {
+                                //         useElementStyle = (perspective.description <= testValue);
+                                //     }
                             }
                         }
                     });
+
+                    if (elementStyleForPerspective !== undefined) {
+                        var background = elementStyleForPerspective.background;
+                        var color = elementStyleForPerspective.color;
+                        var stroke = elementStyleForPerspective.stroke;
+
+                        if (background === undefined) {
+                            background = cell._computedStyle.background;
+                        }
+
+                        if (color === undefined) {
+                            color = cell._computedStyle.color;
+                        }
+
+                        if (stroke === undefined) {
+                            stroke = structurizr.util.shadeColor(background, darkenPercentage, darkMode);
+                        }
+
+                        changeColourOfCell(cell, background, color, stroke);
+                    }
                 }
             });
 
             lines.forEach(function(line) {
-                var relationship = structurizr.workspace.findRelationshipById(line.relationshipInView.id);
+                const relationship = structurizr.workspace.findRelationshipById(line.relationshipInView.id);
 
                 if (relationshipHasPerspective(relationship) === false) {
                     hideLine(relationship.id, "0.2");
