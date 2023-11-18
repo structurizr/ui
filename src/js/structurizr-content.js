@@ -158,6 +158,9 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix,
             return "";
         }
 
+        // remove leading UTF-8 BOM character if present
+        section.content = section.content.replace(/\uFEFF/g, '');
+
         if (section.format && section.format === "AsciiDoc") {
 
             const inlinePassthroughRegex = /.*pass:.*\[/g;
