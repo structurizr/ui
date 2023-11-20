@@ -1,11 +1,9 @@
 <script nonce="${scriptNonce}">
-    var viewsWithGraphvizApplied = [];
-
     function runGraphvizForView(view, callback) {
-        if (viewsWithGraphvizApplied.indexOf(view.key) === -1) {
+        if (view.automaticLayout.applied !== true) {
             const url = '${structurizrConfiguration.graphvizUrl}?view=' + view.key;
             runGraphviz(url, callback);
-            viewsWithGraphvizApplied.push(view.key);
+            view.automaticLayout.applied = true;
         } else {
             if (callback) {
                 callback();
