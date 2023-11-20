@@ -1349,7 +1349,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                             if (expression.indexOf('value==') === 0) {
                                 const testValue = expression.substring('value=='.length);
 
-                                if (perspective.description === testValue) {
+                                if (perspective.value === testValue) {
                                     elementStyleForPerspective = elementStyle;
                                 }
                                 // } else if (expression.indexOf('value<=') === 0) {
