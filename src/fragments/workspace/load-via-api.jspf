@@ -32,7 +32,7 @@
                 if (response.message) {
                     console.log(response.message);
                     if (progressMessage) {
-                        progressMessage.show('<p>Error</p><p style="font-size: 50%">' + structurizr.util.escapeHtml(response.message) + '</p>');
+                        progressMessage.show('<p>Error</p><p style="font-size: 75%">' + structurizr.util.escapeHtml(response.message) + '</p>');
                     }
                 }
             }
