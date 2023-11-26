@@ -32,6 +32,7 @@
     <option value="https://docs.structurizr.com/dsl/language#terminology">&nbsp;&nbsp;&nbsp;- terminology</option>
     <option value="https://docs.structurizr.com/dsl/language#configuration">&nbsp;- configuration</option>
     <option value="https://docs.structurizr.com/dsl/language#visibility">&nbsp;&nbsp;&nbsp;- visibility</option>
+    <option value="https://docs.structurizr.com/dsl/language#scope">&nbsp;&nbsp;&nbsp;- scope</option>
     <option value="https://docs.structurizr.com/dsl/language#users">&nbsp;&nbsp;&nbsp;- users</option>
 </select>
 
