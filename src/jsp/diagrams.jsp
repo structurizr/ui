@@ -958,7 +958,8 @@
                 );
             } else if (
                 (actualView.automaticLayout.implementation === 'Graphviz' && ${not structurizrConfiguration.graphvizEnabled}) ||
-                actualView.automaticLayout.implementation === 'Dagre'
+                actualView.automaticLayout.implementation === 'Dagre' ||
+                actualView.automaticLayout.implementation === undefined
             ) {
                 structurizr.diagram.changeView(view.key, function () {
                     structurizr.diagram.runDagre(
