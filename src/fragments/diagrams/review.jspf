@@ -8,7 +8,14 @@
             <div class="modal-body">
                 <p>
                     Select the diagram(s) that you would like to include in the review.
-                    See <a href="https://structurizr.com/help/diagram-review" target="_blank">Help - Diagram review</a> for more details.
+                    <c:choose>
+                        <c:when test="${structurizrConfiguration.product eq 'cloud'}">
+                        See <a href="https://docs.structurizr.com/cloud/diagram-review" target="_blank">Cloud service - Diagram review</a> for more details.
+                        </c:when>
+                        <c:otherwise>
+                        See <a href="https://docs.structurizr.com/onpremises/diagram-review" target="_blank">On-premises installation - Diagram review</a> for more details.
+                        </c:otherwise>
+                    </c:choose>
                 </p>
 
                 <form id="createReviewForm" method="post" action="/user/review/create" target="_blank">

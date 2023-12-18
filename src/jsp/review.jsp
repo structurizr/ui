@@ -35,7 +35,7 @@
                 <script nonce="${scriptNonce}">
                     $('#unlockButton').click(function() { window.location.href='/review/${review.id}/unlock'; });
                     $('#lockButton').click(function() { window.location.href='/review/${review.id}/lock'; });
-                    $('#helpButton').click(function() { window.open('https://structurizr.com/help/diagram-review'); });
+                    $('#helpButton').click(function() { window.open('https://docs.structurizr.com/${structurizrConfiguration.product}/diagram-review'); });
                 </script>
 
                 <div class="btn-group">

@@ -83,7 +83,7 @@
         <script nonce="${scriptNonce}">
             $('#exportToPNGButton').click(function() { exportToPNG(); });
             $('#exportToSVGButton').click(function() { exportToSVG(); });
-            $('#helpButton').click(function() { window.open('https://structurizr.com/help/diagrams'); });
+            $('#helpButton').click(function() { window.open('https://docs.structurizr.com/ui/diagrams'); });
         </script>
 
         <c:if test="${workspace.editable}">
@@ -163,7 +163,7 @@
         </script>
 
         </span>
-        <span id="diagramNotEditableMessage" class="smaller hidden" style="margin-left: 10px">This diagram is not editable because automatic layout is enabled - see <a href="https://structurizr.com/help/auto-layout" target="_blank">Help - Automatic layout</a> for more details.</span>
+        <span id="diagramNotEditableMessage" class="smaller hidden" style="margin-left: 10px">This diagram is not editable because automatic layout is enabled - see <a href="https://docs.structurizr.com/ui/diagrams/automatic-layout" target="_blank">Help - Automatic layout</a> for more details.</span>
     </div>
 </div>
 </c:if>

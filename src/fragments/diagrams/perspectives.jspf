@@ -9,7 +9,7 @@
                 <p>
                     The perspectives included in the software architecture model are listed below.
                     Viewing a diagram with a particular perspective will highlight all elements and relationships that have content for that perspective.
-                    See <a href="https://structurizr.com/help/perspectives" target="_blank">Help - Diagrams - Perspectives</a> for more details.
+                    See <a href="https://docs.structurizr.com/ui/diagrams/perspectives" target="_blank">Help - Diagrams - Perspectives</a> for more details.
                 </p>
 
                 <div class="form-group">

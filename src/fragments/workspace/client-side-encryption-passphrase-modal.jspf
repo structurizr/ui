@@ -6,7 +6,7 @@
             </div>
             <div class="modal-body">
                 <p>
-                    The workspace "<span id="clientSideEncryptedWorkspacePassphraseModalName"></span>" has been <a href="/help/client-side-encryption" target="_blank">client-side encrypted</a>, please enter the passphrase to decrypt it.
+                    The workspace "<span id="clientSideEncryptedWorkspacePassphraseModalName"></span>" has been client-side encrypted, please enter the passphrase to decrypt it.
                 </p>
 
                 <div class="form-group">

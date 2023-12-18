@@ -9,7 +9,14 @@
             <div id="diagramEmbed" class="modal-body">
                 <p>
                     The code below allows you to embed your diagram(s) using a responsive iframe.
-                    See <a href="https://structurizr.com/help/embed-iframe" target="_blank">iframe embed</a> for more details.
+                    <c:choose>
+                        <c:when test="${structurizrConfiguration.product eq 'cloud'}">
+                        See <a href="https://docs.structurizr.com/cloud/embed" target="_blank">Cloud service - Embed</a> for more details.
+                        </c:when>
+                        <c:otherwise>
+                        See <a href="https://docs.structurizr.com/onpremises/embed" target="_blank">On-premises installation - Embed</a> for more details.
+                        </c:otherwise>
+                    </c:choose>
                 </p>
 
                 <c:choose>
