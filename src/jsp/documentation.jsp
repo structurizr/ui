@@ -85,7 +85,7 @@
 </div>
 
 <script nonce="${scriptNonce}">
-    const requestedScope = '<c:out value="${scope}" />';
+    const requestedScope = atob('<c:out value="${scope}" />');
     structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
 
     const documentationNavigation = $('#documentationNavigation');
@@ -256,13 +256,13 @@
 
     function toScope(element) {
         if (element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
-            return structurizr.util.escapeHtml(element.name);
+            return element.name;
         } else if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
             const softwareSystem = structurizr.workspace.findElementById(element.parentId);
-            return toScope(softwareSystem) + '/' + structurizr.util.escapeHtml(element.name);
+            return toScope(softwareSystem) + '/' + element.name;
         } else if (element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
             const container = structurizr.workspace.findElementById(element.parentId);
-            return toScope(container) + '/' + structurizr.util.escapeHtml(element.name);
+            return toScope(container) + '/' + element.name;
         }
 
         return undefined;
@@ -317,7 +317,7 @@
                 const elementId = elementsWithDocumentation[0];
                 const element = structurizr.workspace.findElementById(elementId);
                 const scope = toScope(element);
-                window.location.href = '<c:out value="${urlPrefix}" />/documentation/' + scope + '<c:out value="${urlSuffix}" />';
+                window.location.href = '<c:out value="${urlPrefix}" />/documentation/' + encodeURI(scope) + '<c:out value="${urlSuffix}" />';
                 return;
             }
         } else {
@@ -387,7 +387,7 @@
                 var element = structurizr.workspace.findElementById(elementId);
                 if (element !== undefined) {
                     scope = toScope(element);
-                    var uri = '<c:out value="${urlPrefix}" />/documentation/' + scope + '<c:out value="${urlSuffix}" />';
+                    var uri = '<c:out value="${urlPrefix}" />/documentation/' + encodeURI(scope) + '<c:out value="${urlSuffix}" />';
 
                     documentationNavigation.append('<div class="documentationNavigationLink documentationNavigationHeading"><a href="' + uri + '">' + structurizr.util.escapeHtml(element.name) + '</a></div>');
                     documentationNavigationDropDown.append(

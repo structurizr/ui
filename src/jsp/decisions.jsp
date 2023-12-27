@@ -67,7 +67,7 @@
 </div>
 
 <script nonce="${scriptNonce}">
-    const requestedScope = '<c:out value="${scope}" />';
+    const requestedScope = atob('<c:out value="${scope}" />');
     structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
 
     $('#graphButton').click(function() { openGraphModal(); });
@@ -208,13 +208,13 @@
 
     function toScope(element) {
         if (element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
-            return structurizr.util.escapeHtml(element.name);
+            return element.name;
         } else if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
             const softwareSystem = structurizr.workspace.findElementById(element.parentId);
-            return toScope(softwareSystem) + '/' + structurizr.util.escapeHtml(element.name);
+            return toScope(softwareSystem) + '/' + element.name;
         } else if (element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
             const container = structurizr.workspace.findElementById(element.parentId);
-            return toScope(container) + '/' + structurizr.util.escapeHtml(element.name);
+            return toScope(container) + '/' + element.name;
         }
 
         return undefined;
@@ -239,7 +239,7 @@
             } else {
                 var element = structurizr.workspace.findElementById(elementId);
                 scope = toScope(element);
-                const uri = '<c:out value="${urlPrefix}" />/decisions/' + scope + '<c:out value="${urlSuffix}" />';
+                const uri = '<c:out value="${urlPrefix}" />/decisions/' + encodeURI(scope) + '<c:out value="${urlSuffix}" />';
 
                 documentationNavigation.append('<div class="decisionNavigationLink decisionNavigationHeading"><a href="' + uri + '">' + structurizr.util.escapeHtml(element.name) + '</a></div>');
                 decisionLogNavigationDropDown.append(
@@ -318,7 +318,7 @@
 
         if (graph === undefined && window.createGraph) {
             try {
-                graph = createGraph(requestedScope);
+                graph = createGraph();
                 setWidthAndHeight();
                 if (graph) {
                     renderGraph();
@@ -353,7 +353,7 @@
                 const elementId = elementsWithDecisions[0];
                 const element = structurizr.workspace.findElementById(elementId);
                 const scope = toScope(element);
-                window.location.href = '<c:out value="${urlPrefix}" />/decisions/' + scope + '<c:out value="${urlSuffix}" />';
+                window.location.href = '<c:out value="${urlPrefix}" />/decisions/' + encodeURI(scope) + '<c:out value="${urlSuffix}" />';
                 return;
             } else {
                 showNoDecisionsPage();

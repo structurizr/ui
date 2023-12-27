@@ -1058,7 +1058,7 @@
             });
 
             if (element.documentation && element.documentation.sections && element.documentation.sections.length > 0) {
-                const documentationUrl = '<c:out value="${urlPrefix}" />/documentation/' + toScope(element) + '<c:out value="${urlSuffix}" />';
+                const documentationUrl = '<c:out value="${urlPrefix}" />/documentation/' + encodeURI(toScope(element)) + '<c:out value="${urlSuffix}" />';
                 options.push({
                     url: documentationUrl,
                     label: 'Documentation'
@@ -1066,7 +1066,7 @@
             }
 
             if (element.documentation && element.documentation.decisions && element.documentation.decisions.length > 0) {
-                const decisionsUrl = '<c:out value="${urlPrefix}" />/decisions/' + toScope(element) + '<c:out value="${urlSuffix}" />';
+                const decisionsUrl = '<c:out value="${urlPrefix}" />/decisions/' + encodeURI(toScope(element)) + '<c:out value="${urlSuffix}" />';
                 options.push({
                     url: decisionsUrl,
                     label: 'Decisions'
@@ -1098,13 +1098,13 @@
 
     function toScope(element) {
         if (element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
-            return structurizr.util.escapeHtml(element.name);
+            return element.name;
         } else if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
             const softwareSystem = structurizr.workspace.findElementById(element.parentId);
-            return toScope(softwareSystem) + '/' + structurizr.util.escapeHtml(element.name);
+            return toScope(softwareSystem) + '/' + element.name;
         } else if (element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
             const container = structurizr.workspace.findElementById(element.parentId);
-            return toScope(container) + '/' + structurizr.util.escapeHtml(element.name);
+            return toScope(container) + '/' + element.name;
         }
 
         return undefined;
