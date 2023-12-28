@@ -31,7 +31,10 @@ var structurizr = structurizr || {
         CONTENT_TYPE_IMAGE_PNG: 'image/png',
         CONTENT_TYPE_IMAGE_JPG: 'image/jpeg',
 
-        WORKSPACE_URL_PREFIX: '{workspace}'
+        INTRA_WORKSPACE_URL_PREFIX: '{workspace}',
+        INTER_WORKSPACE_URL_PREFIX: '{workspace:',
+        INTER_WORKSPACE_URL_SEPARATOR: ':',
+        INTER_WORKSPACE_URL_SUFFIX: '}'
 
     }
 };

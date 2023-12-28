@@ -511,9 +511,9 @@
         $('.documentationSectionContent a').each(function () {
             var href = $(this).attr('href');
             href = decodeURIComponent(href);
-            if (href.indexOf(structurizr.constants.WORKSPACE_URL_PREFIX) === 0) {
+            if (href.indexOf(structurizr.constants.INTRA_WORKSPACE_URL_PREFIX) === 0) {
                 // convert {workspace}/doc... to /workspace/1234/doc...
-                href = '<c:out value="${urlPrefix}" />' + href.substring(structurizr.constants.WORKSPACE_URL_PREFIX.length) + '<c:out value="${urlSuffix}" />';
+                href = '<c:out value="${urlPrefix}" />' + href.substring(structurizr.constants.INTRA_WORKSPACE_URL_PREFIX.length) + '<c:out value="${urlSuffix}" />';
                 $(this).attr('href', href)
             }
         });

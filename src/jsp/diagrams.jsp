@@ -1005,14 +1005,19 @@
         $('#reviewModal').modal();
     }
 
-    function processInternalWorkspaceLink(url) {
+    function processWorkspaceLink(url) {
         if (url !== undefined) {
-            if (url.indexOf(structurizr.constants.WORKSPACE_URL_PREFIX + '/diagrams#') === 0) {
+            if (url.indexOf(structurizr.constants.INTRA_WORKSPACE_URL_PREFIX + '/diagrams#') === 0) {
                 // convert {workspace}/diagrams#key to #key
-                url = url.substring((structurizr.constants.WORKSPACE_URL_PREFIX + '/diagrams').length);
-            } else if (url.indexOf(structurizr.constants.WORKSPACE_URL_PREFIX) === 0) {
-                // convert {workspace}/doc... to /workspace/1234/doc...
-                url = '<c:out value="${urlPrefix}" />' + url.substring(structurizr.constants.WORKSPACE_URL_PREFIX.length) + '<c:out value="${urlSuffix}" />';
+                url = url.substring((structurizr.constants.INTRA_WORKSPACE_URL_PREFIX + '/diagrams').length);
+            } else if (url.indexOf(structurizr.constants.INTRA_WORKSPACE_URL_PREFIX) === 0) {
+                // convert {workspace}/doc... to /workspace/1234/doc... (where 1234 is the current workspace ID)
+                url = '<c:out value="${urlPrefix}" />' + url.substring(structurizr.constants.INTRA_WORKSPACE_URL_PREFIX.length) + '<c:out value="${urlSuffix}" />';
+            } else if (url.indexOf(structurizr.constants.INTER_WORKSPACE_URL_PREFIX) === 0) {
+                // convert {workspace:123456}/doc... to /workspace/123456/doc...
+                const targetWorkspaceId = url.substring(url.indexOf(structurizr.constants.INTER_WORKSPACE_URL_SEPARATOR) + 1, url.indexOf(structurizr.constants.INTER_WORKSPACE_URL_SUFFIX));
+                url = '<c:out value="${urlPrefix}" />' + url.substring(url.indexOf(structurizr.constants.INTER_WORKSPACE_URL_SUFFIX) + 1);
+                url = url.replace('${workspace.id}', targetWorkspaceId);
             }
         }
 
@@ -1022,7 +1027,7 @@
     function elementDoubleClicked(evt, elementId) {
         const element = structurizr.workspace.findElementById(elementId);
         if (element) {
-            var elementUrl = processInternalWorkspaceLink(element.url);
+            var elementUrl = processWorkspaceLink(element.url);
 
             if (evt.altKey === true && elementUrl !== undefined) {
                 navigateTo(elementUrl);
@@ -1113,7 +1118,7 @@
     function relationshipDoubleClicked(evt, relationshipId) {
         const relationship = structurizr.workspace.findRelationshipById(relationshipId);
         if (relationship && relationship.url) {
-            const relationshipUrl = processInternalWorkspaceLink(relationship.url);
+            const relationshipUrl = processWorkspaceLink(relationship.url);
             navigateTo(relationshipUrl);
         }
     }
