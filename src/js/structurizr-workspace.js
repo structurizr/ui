@@ -1077,7 +1077,7 @@ structurizr.Workspace = class Workspace {
                 highPriorityRecommendations.push(
                     {
                         priority: 1,
-                        message: 'This workspace has no defined scope - the recommendation is to set the workspace scope to one of "landscape" or "software system".',
+                        message: 'This workspace has no defined scope - the recommendation is to set the workspace scope to one of "Landscape" or "SoftwareSystem".',
                         type: structurizr.constants.RECOMMENDATIONS_WORKSPACE_SCOPE,
                         link: 'https://docs.structurizr.com/workspaces'
                     }
