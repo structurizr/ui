@@ -34,7 +34,15 @@ var structurizr = structurizr || {
         INTRA_WORKSPACE_URL_PREFIX: '{workspace}',
         INTER_WORKSPACE_URL_PREFIX: '{workspace:',
         INTER_WORKSPACE_URL_SEPARATOR: ':',
-        INTER_WORKSPACE_URL_SUFFIX: '}'
+        INTER_WORKSPACE_URL_SUFFIX: '}',
+
+        RECOMMENDATIONS: 'structurizr.recommendations',
+        RECOMMENDATIONS_WORKSPACE_SCOPE: 'structurizr.recommendations.workspace.scope',
+        RECOMMENDATIONS_MODEL_PREFIX: 'structurizr.recommendations.model.',
+        RECOMMENDATIONS_RELATIONSHIP_DESCRIPTION: 'structurizr.recommendations.model.relationship.description',
+        RECOMMENDATIONS_RELATIONSHIP_TECHNOLOGY: 'structurizr.recommendations.model.relationship.technology',
+        RECOMMENDATIONS_VIEW_EXTERNAL_ELEMENTS: 'structurizr.recommendations.view.externalElements',
+        RECOMMENDATIONS_VIEW_PREFIX: 'structurizr.recommendations.views.'
 
     }
 };

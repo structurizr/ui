@@ -1068,160 +1068,199 @@ structurizr.Workspace = class Workspace {
 
         const self = this;
 
-        if (this.#workspace.configuration.scope === undefined) {
-            highPriorityRecommendations.push(
-                {
-                    priority: 1,
-                    message: 'This workspace has no defined scope - the recommendation is to set the workspace scope to one of "landscape" or "software system".',
-                    link: 'https://docs.structurizr.com/workspaces'
-                }
-            );
+        if (this.getProperty('structurizr.recommendations') === 'false') {
+            return [];
         }
 
-        var softwareSystemsWithDetails = 0;
-        this.getElements().forEach(function(element) {
-            if (element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
-                if (
-                    (element.containers && element.containers.length > 0) ||
-                    (element.documentation && element.documentation.sections && element.documentation.sections.length > 0) ||
-                    (element.documentation && element.documentation.decisions && element.documentation.decisions.length > 0)
-                ) {
-                    softwareSystemsWithDetails++;
-                }
+        if (this.getProperty(structurizr.constants.RECOMMENDATIONS_WORKSPACE_SCOPE) !== 'false') {
+            if (this.#workspace.configuration.scope === undefined) {
+                highPriorityRecommendations.push(
+                    {
+                        priority: 1,
+                        message: 'This workspace has no defined scope - the recommendation is to set the workspace scope to one of "landscape" or "software system".',
+                        type: structurizr.constants.RECOMMENDATIONS_WORKSPACE_SCOPE,
+                        link: 'https://docs.structurizr.com/workspaces'
+                    }
+                );
             }
-        });
 
-        if (softwareSystemsWithDetails > 1) {
-            highPriorityRecommendations.push(
-                {
-                    priority: 1,
-                    message: 'This workspace describes the internal details of ' + softwareSystemsWithDetails + ' software systems - the recommendation is that a workspace contains the model, views, and documentation for a single software system only.',
-                    link: 'https://docs.structurizr.com/workspaces'
+            var softwareSystemsWithDetails = 0;
+            this.getElements().forEach(function(element) {
+                if (element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
+                    if (
+                        (element.containers && element.containers.length > 0) ||
+                        (element.documentation && element.documentation.sections && element.documentation.sections.length > 0) ||
+                        (element.documentation && element.documentation.decisions && element.documentation.decisions.length > 0)
+                    ) {
+                        softwareSystemsWithDetails++;
+                    }
                 }
-            );
+            });
+
+            if (softwareSystemsWithDetails > 1) {
+                highPriorityRecommendations.push(
+                    {
+                        priority: 1,
+                        message: 'This workspace describes the internal details of ' + softwareSystemsWithDetails + ' software systems - the recommendation is that a workspace contains the model, views, and documentation for a single software system only.',
+                        type: structurizr.constants.RECOMMENDATIONS_WORKSPACE_SCOPE,
+                        link: 'https://docs.structurizr.com/workspaces'
+                    }
+                );
+            }
         }
 
-        this.getElements().forEach(function(element) {
-            if (element.type !== structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE) {
-                if (element.description === undefined || element.description.trim() === '') {
-                    mediumPriorityRecommendations.push(
-                        {
-                            priority: 2,
-                            message: 'Add a description to the ' + self.getTerminologyFor(element).toLowerCase() + ' named "' + element.name + '".'
-                        }
-                    );
-                }
-
-                if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE || element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
-                    if (element.technology === undefined || element.technology.trim() === '') {
+        if (self.model.properties[structurizr.constants.RECOMMENDATIONS] !== 'false') {
+            this.getElements().forEach(function (element) {
+                if (self.model.properties[structurizr.constants.RECOMMENDATIONS_MODEL_PREFIX + element.type.toLowerCase() + '.description'] !== 'false') {
+                    if (element.description === undefined || element.description.trim() === '') {
                         mediumPriorityRecommendations.push(
                             {
                                 priority: 2,
-                                message: 'Add a technology to the ' + self.getTerminologyFor(element) + ' named "' + element.name + '".'
+                                message: 'Add a description to the ' + self.getTerminologyFor(element).toLowerCase() + ' named "' + element.name + '".',
+                                type: structurizr.constants.RECOMMENDATIONS_MODEL_PREFIX + element.type.toLowerCase() + '.description'
                             }
                         );
                     }
                 }
-            }
-        });
 
-        this.getRelationships().forEach(function(relationship) {
-            const source = self.findElementById(relationship.sourceId);
-            const destination = self.findElementById(relationship.destinationId);
-
-            if (relationship.description === undefined || relationship.description.trim() === '') {
-                mediumPriorityRecommendations.push(
-                    {
-                        priority: 2,
-                        message: 'Add a description to the relationship between the ' + self.getTerminologyFor(source).toLowerCase() + ' named "' + source.name + '" and the ' + self.getTerminologyFor(destination).toLowerCase() + ' named "' + destination.name + '".'
-                    }
-                );
-            }
-
-            if (
-                (source.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) && destination.type === structurizr.constants.COMPONENT_ELEMENT_TYPE)
-            {
-                if (relationship.technology === undefined || relationship.technology.trim() === '') {
-                    lowPriorityRecommendations.push(
-                        {
-                            priority: 3,
-                            message: 'Add a technology to the relationship between the ' + self.getTerminologyFor(source).toLowerCase() + ' named "' + source.name + '" and the ' + self.getTerminologyFor(destination).toLowerCase() + ' named "' + destination.name + '".'
+                if (self.model.properties[structurizr.constants.RECOMMENDATIONS_MODEL_PREFIX + element.type.toLowerCase() + '.technology'] !== 'false') {
+                    if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE || element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
+                        if (element.technology === undefined || element.technology.trim() === '') {
+                            mediumPriorityRecommendations.push(
+                                {
+                                    priority: 2,
+                                    message: 'Add a technology to the ' + self.getTerminologyFor(element).toLowerCase() + ' named "' + element.name + '".',
+                                    type: structurizr.constants.RECOMMENDATIONS_MODEL_PREFIX + element.type.toLowerCase() + '.technology'
+                                }
+                            );
                         }
-                    );
-                }
-            } else if (
-                (source.type === structurizr.constants.CONTAINER_ELEMENT_TYPE || source.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) &&
-                (destination.type === structurizr.constants.CONTAINER_ELEMENT_TYPE || destination.type === structurizr.constants.COMPONENT_ELEMENT_TYPE))
-            {
-                if (relationship.technology === undefined || relationship.technology.trim() === '') {
-                    lowPriorityRecommendations.push(
-                        {
-                            priority: 2,
-                            message: 'Add a technology to the relationship between the ' + self.getTerminologyFor(source).toLowerCase() + ' named "' + source.name + '" and the ' + self.getTerminologyFor(destination).toLowerCase() + ' named "' + destination.name + '".'
-                        }
-                    );
-                }
-            }
-        });
-
-        // check for containers that are external to the scoped software system
-        this.#workspace.views.containerViews.forEach(function(view) {
-            const scopedSoftwareSystem = self.findElementById(view.softwareSystemId);
-            var hasContainersExternalToTheScopedSoftwareSystem = false;
-
-            view.elements.forEach(function(elementView) {
-                const element = self.findElementById(elementView.id);
-                if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
-                    if (element.parentId !== scopedSoftwareSystem.id) {
-                        hasContainersExternalToTheScopedSoftwareSystem = true;
                     }
                 }
             });
 
-            if (hasContainersExternalToTheScopedSoftwareSystem) {
-                lowPriorityRecommendations.push(
-                    {
-                        priority: 3,
-                        message: 'The container view "' + view.key + '" for the ' + self.getTerminologyFor(scopedSoftwareSystem).toLowerCase() + ' named "' + scopedSoftwareSystem.name + '" includes containers that are external to the software system - the recommendation is to show external software systems rather than containers to reduce coupling of implementation details on your diagram.',
-                        link: '/diagrams#' + view.key
+            this.getRelationships().forEach(function (relationship) {
+                const source = self.findElementById(relationship.sourceId);
+                const destination = self.findElementById(relationship.destinationId);
+
+                if (self.model.properties[structurizr.constants.RECOMMENDATIONS_RELATIONSHIP_DESCRIPTION] !== 'false') {
+                    if (relationship.description === undefined || relationship.description.trim() === '') {
+                        mediumPriorityRecommendations.push(
+                            {
+                                priority: 2,
+                                message: 'Add a description to the relationship between the ' + self.getTerminologyFor(source).toLowerCase() + ' named "' + source.name + '" and the ' + self.getTerminologyFor(destination).toLowerCase() + ' named "' + destination.name + '".',
+                                type: structurizr.constants.RECOMMENDATIONS_RELATIONSHIP_DESCRIPTION
+                            }
+                        );
                     }
-                );
-            }
-        });
-
-        // check for containers/components that are external to the scoped software system
-        this.#workspace.views.componentViews.forEach(function(view) {
-            const scopedContainer = self.findElementById(view.containerId);
-            var hasElementsExternalToTheScopedSoftwareSystem = false;
-
-            view.elements.forEach(function(elementView) {
-                var softwareSystemId;
-
-                const element = self.findElementById(elementView.id);
-                if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
-                    softwareSystemId = element.parentId;
-                } else if (element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
-                    const container = self.findElementById(element.parentId);
-                    softwareSystemId = container.parentId;
                 }
 
-                if (softwareSystemId && softwareSystemId !== scopedContainer.parentId) {
-                    hasElementsExternalToTheScopedSoftwareSystem = true;
+                if (self.model.properties[structurizr.constants.RECOMMENDATIONS_RELATIONSHIP_TECHNOLOGY] !== 'false') {
+                    if (
+                        (source.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) && destination.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
+                        if (relationship.technology === undefined || relationship.technology.trim() === '') {
+                            lowPriorityRecommendations.push(
+                                {
+                                    priority: 3,
+                                    message: 'Add a technology to the relationship between the ' + self.getTerminologyFor(source).toLowerCase() + ' named "' + source.name + '" and the ' + self.getTerminologyFor(destination).toLowerCase() + ' named "' + destination.name + '".',
+                                    type: structurizr.constants.RECOMMENDATIONS_RELATIONSHIP_TECHNOLOGY
+                                }
+                            );
+                        }
+                    } else if (
+                        (source.type === structurizr.constants.CONTAINER_ELEMENT_TYPE || source.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) &&
+                        (destination.type === structurizr.constants.CONTAINER_ELEMENT_TYPE || destination.type === structurizr.constants.COMPONENT_ELEMENT_TYPE)) {
+                        if (relationship.technology === undefined || relationship.technology.trim() === '') {
+                            mediumPriorityRecommendations.push(
+                                {
+                                    priority: 2,
+                                    message: 'Add a technology to the relationship between the ' + self.getTerminologyFor(source).toLowerCase() + ' named "' + source.name + '" and the ' + self.getTerminologyFor(destination).toLowerCase() + ' named "' + destination.name + '".',
+                                    type: structurizr.constants.RECOMMENDATIONS_RELATIONSHIP_TECHNOLOGY
+                                }
+                            );
+                        }
+                    }
+                }
+            });
+        }
+
+        if (self.#getViewSetProperty(structurizr.constants.RECOMMENDATIONS) !== 'false') {
+            // check for containers that are external to the scoped software system
+            this.#workspace.views.containerViews.forEach(function (view) {
+                if (self.#getViewOrViewSetProperty(view, 'structurizr.recommendations') !== 'false') {
+                    const scopedSoftwareSystem = self.findElementById(view.softwareSystemId);
+                    var hasContainersExternalToTheScopedSoftwareSystem = false;
+
+                    view.elements.forEach(function (elementView) {
+                        const element = self.findElementById(elementView.id);
+                        if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
+                            if (element.parentId !== scopedSoftwareSystem.id) {
+                                hasContainersExternalToTheScopedSoftwareSystem = true;
+                            }
+                        }
+                    });
+
+                    if (hasContainersExternalToTheScopedSoftwareSystem) {
+                        lowPriorityRecommendations.push(
+                            {
+                                priority: 3,
+                                message: 'The container view "' + view.key + '" for the ' + self.getTerminologyFor(scopedSoftwareSystem).toLowerCase() + ' named "' + scopedSoftwareSystem.name + '" includes containers that are external to the software system - the recommendation is to show external software systems rather than containers to reduce coupling of implementation details on your diagram.',
+                                link: '/diagrams#' + view.key
+                            }
+                        );
+                    }
                 }
             });
 
-            if (hasElementsExternalToTheScopedSoftwareSystem) {
-                lowPriorityRecommendations.push(
-                    {
-                        priority: 3,
-                        message: 'The component view "' + view.key + '" for the ' + self.getTerminologyFor(scopedContainer).toLowerCase() + ' named "' + scopedContainer.name + '" includes elements that are external to the software system the container belongs to - the recommendation is to show external software systems rather than containers/components to reduce coupling of implementation details on your diagrams.',
-                        link: '/diagrams#' + view.key
+            // check for containers/components that are external to the scoped software system
+            this.#workspace.views.componentViews.forEach(function (view) {
+                if (self.#getViewOrViewSetProperty(view, 'structurizr.recommendations') !== 'false') {
+                    const scopedContainer = self.findElementById(view.containerId);
+                    var hasElementsExternalToTheScopedSoftwareSystem = false;
+
+                    view.elements.forEach(function (elementView) {
+                        var softwareSystemId;
+
+                        const element = self.findElementById(elementView.id);
+                        if (element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
+                            softwareSystemId = element.parentId;
+                        } else if (element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
+                            const container = self.findElementById(element.parentId);
+                            softwareSystemId = container.parentId;
+                        }
+
+                        if (softwareSystemId && softwareSystemId !== scopedContainer.parentId) {
+                            hasElementsExternalToTheScopedSoftwareSystem = true;
+                        }
+                    });
+
+                    if (hasElementsExternalToTheScopedSoftwareSystem) {
+                        lowPriorityRecommendations.push(
+                            {
+                                priority: 3,
+                                message: 'The component view "' + view.key + '" for the ' + self.getTerminologyFor(scopedContainer).toLowerCase() + ' named "' + scopedContainer.name + '" includes elements that are external to the software system the container belongs to - the recommendation is to show external software systems rather than containers/components to reduce coupling of implementation details on your diagrams.',
+                                link: '/diagrams#' + view.key
+                            }
+                        );
                     }
-                );
-            }
-        });
+                }
+            });
+        }
 
         return highPriorityRecommendations.concat(mediumPriorityRecommendations.concat(lowPriorityRecommendations));
+    }
+
+    #getViewSetProperty(name) {
+        return this.#workspace.views.configuration.properties[name];
+    }
+
+    #getViewOrViewSetProperty(view, name) {
+        var value = this.#getViewSetProperty(name);
+
+        if (view.properties && view.properties[name]) {
+            value = view.properties[name];
+        }
+
+        return value;
     }
 
 }
