@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/fragments/workspace/javascript.jspf" %>
 <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
+<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-recommendations${structurizrConfiguration.versionSuffix}.js"></script>
 
 <style>
     .table>tbody>tr>td {
@@ -9,7 +10,12 @@
 
 <div class="section">
     <div class="container centered">
-        <h1>Recommendations</h1>
+        <h1>Recommendations (<span id="numberOfRecommendations"></span>)</h1>
+        <p>
+            <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/exclamation-triangle.svg" class="icon-sm" /> High: <span id="numberOfHighPriorityRecommendations"></span> |
+            <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/exclamation-circle.svg" class="icon-sm" /> Medium: <span id="numberOfMediumPriorityRecommendations"></span> |
+            <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/info-square.svg" class="icon-sm" /> Low: <span id="numberOfLowPriorityRecommendations"></span>
+        </p>
 
         <br />
 
@@ -19,14 +25,26 @@
 
 <script nonce="${scriptNonce}">
     function workspaceLoaded() {
-        const recommendations = structurizr.workspace.getRecommendations();
+        const recommendations = new structurizr.Recommendations(structurizr.workspace, ${recommendationsMandatory}).getRecommendations();
+
+        $('#numberOfRecommendations').text(recommendations.length);
+        $('#numberOfHighPriorityRecommendations').text(recommendations.filter(function(recommendation){
+            return recommendation.priority === structurizr.constants.RECOMMENDATION_HIGH_PRIORITY;
+        }).length);
+        $('#numberOfMediumPriorityRecommendations').text(recommendations.filter(function(recommendation){
+            return recommendation.priority === structurizr.constants.RECOMMENDATION_MEDIUM_PRIORITY;
+        }).length);
+        $('#numberOfLowPriorityRecommendations').text(recommendations.filter(function(recommendation){
+            return recommendation.priority === structurizr.constants.RECOMMENDATION_LOW_PRIORITY;
+        }).length);
+
         var count = 1;
         var html = '<table class="table"><tbody>';
         recommendations.forEach(function(recommendation) {
-            if (recommendation.priority === 1) {
+            if (recommendation.priority === structurizr.constants.RECOMMENDATION_HIGH_PRIORITY) {
                 html += '<tr class="danger">';
                 html += '<td style="width: 150px"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/exclamation-triangle.svg" class="icon-sm" /> High</td>';
-            } else if (recommendation.priority === 2) {
+            } else if (recommendation.priority === structurizr.constants.RECOMMENDATION_MEDIUM_PRIORITY) {
                 html += '<tr class="warning">';
                 html += '<td style="width: 150px"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/exclamation-circle.svg" class="icon-sm" /> Medium</td>';
             } else {

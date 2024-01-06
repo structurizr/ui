@@ -42,7 +42,11 @@ var structurizr = structurizr || {
         RECOMMENDATIONS_RELATIONSHIP_DESCRIPTION: 'structurizr.recommendations.model.relationship.description',
         RECOMMENDATIONS_RELATIONSHIP_TECHNOLOGY: 'structurizr.recommendations.model.relationship.technology',
         RECOMMENDATIONS_VIEW_EXTERNAL_ELEMENTS: 'structurizr.recommendations.view.externalElements',
-        RECOMMENDATIONS_VIEW_PREFIX: 'structurizr.recommendations.views.'
+        RECOMMENDATIONS_VIEW_PREFIX: 'structurizr.recommendations.views.',
+
+        RECOMMENDATION_LOW_PRIORITY: 3,
+        RECOMMENDATION_MEDIUM_PRIORITY: 2,
+        RECOMMENDATION_HIGH_PRIORITY: 1,
 
     }
 };
