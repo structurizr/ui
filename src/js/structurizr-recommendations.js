@@ -56,18 +56,9 @@ structurizr.Recommendations = class Recommendations {
             return;
         }
 
-        if (!this.#workspace.hasElements() && !this.#workspace.hasViews() && !this.#workspace.hasDocumentation() && !this.#workspace.hasDecisions()) {
-            this.#addHigh(
-                {
-                    message: 'This workspace is empty. The browser-based DSL editor is the easiest way to get started without installing any tooling, but it does not provide access to the full feature set of the Structurizr DSL. It is recommended to use the Structurizr DSL in conjunction with the Structurizr CLI.',
-                    link: '/dsl'
-                }
-            );
-        } else {
-            this.#generateWorkspaceScopeRecommendations();
-            this.#generateModelRecommendations();
-            this.#generateViewRecommendations();
-        }
+        this.#generateWorkspaceScopeRecommendations();
+        this.#generateModelRecommendations();
+        this.#generateViewRecommendations();
     }
 
     #generateWorkspaceScopeRecommendations() {
@@ -232,7 +223,7 @@ structurizr.Recommendations = class Recommendations {
                         if (elementsWithRelationships.indexOf(element.id) === -1) {
                             self.#addMedium(
                                 {
-                                    message: 'The ' + self.#workspace.getTerminologyFor(element).toLowerCase() + ' named "' + element.name + '" is orphaned - add a relationship to/from it.',
+                                    message: 'The ' + self.#workspace.getTerminologyFor(element).toLowerCase() + ' named "' + element.name + '" is orphaned - add a relationship to/from it, or consider removing it from the model.',
                                     type: structurizr.constants.RECOMMENDATIONS_MODEL_ORPHANED_ELEMENTS
                                 }
                             );

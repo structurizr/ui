@@ -6,8 +6,19 @@ QUnit.test("Empty workspace", function(assert) {
         [
             {
                 "id": 1,
-                "link": "/dsl",
-                "message": "This workspace is empty. The browser-based DSL editor is the easiest way to get started without installing any tooling, but it does not provide access to the full feature set of the Structurizr DSL. It is recommended to use the Structurizr DSL in conjunction with the Structurizr CLI.",
+                "link": "https://docs.structurizr.com/workspaces",
+                "message": "This workspace has no defined scope. It is recommended that the workspace scope is set to \"Landscape\" or \"SoftwareSystem\".",
+                "priority": 1,
+                "type": "structurizr.recommendations.workspace.scope"
+            },
+            {
+                "id": 2,
+                "message": "Add some elements to the model.",
+                "priority": 1
+            },
+            {
+                "id": 3,
+                "message": "Add some views to the workspace.",
                 "priority": 1
             }
         ]
@@ -135,6 +146,13 @@ QUnit.test("Elements with no description or technology", function(assert) {
                 }
             ]
         },
+        views: {
+            configuration: {
+                properties: {
+                    'structurizr.recommendations': 'false'
+                }
+            }
+        },
         configuration: {
             scope: 'SoftwareSystem'
         }
@@ -232,11 +250,6 @@ QUnit.test("Elements with no description or technology", function(assert) {
                 "message": "Add a technology to the relationship between the container named \"Container 1\" and the container named \"Container 2\".",
                 "priority": 2,
                 "type": "structurizr.recommendations.model.relationship.technology"
-            },
-            {
-                "id": 16,
-                "message": "Add some views to the workspace.",
-                "priority": 1
             }
         ]
     );
@@ -273,7 +286,7 @@ QUnit.test("Orphaned elements", function(assert) {
         [
             {
                 "id": 1,
-                "message": "The person named \"User\" is orphaned - add a relationship to/from it.",
+                "message": "The person named \"User\" is orphaned - add a relationship to/from it, or consider removing it from the model.",
                 "priority": 2,
                 "type": "structurizr.recommendations.model.element.orphaned"
             }
