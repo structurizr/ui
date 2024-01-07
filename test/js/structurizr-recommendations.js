@@ -39,6 +39,37 @@ QUnit.test("Workspace recommendations can be disabled via a workspace property",
     );
 });
 
+QUnit.test("Workspace recommendations can be disabled via a workspace property, except when forced", function(assert) {
+    const workspace = new structurizr.Workspace({
+        properties: {
+            'structurizr.recommendations': 'false'
+        }
+    });
+    const recommendations = new structurizr.Recommendations(workspace, true).getRecommendations();
+
+    assert.deepEqual(recommendations,
+        [
+            {
+                "id": 1,
+                "link": "https://docs.structurizr.com/workspaces",
+                "message": "This workspace has no defined scope. It is recommended that the workspace scope is set to \"Landscape\" or \"SoftwareSystem\".",
+                "priority": 1,
+                "type": "structurizr.recommendations.workspace.scope"
+            },
+            {
+                "id": 2,
+                "message": "Add some elements to the model.",
+                "priority": 1
+            },
+            {
+                "id": 3,
+                "message": "Add some views to the workspace.",
+                "priority": 1
+            }
+        ]
+    );
+});
+
 QUnit.test("Workspace scope recommendations can be disabled via a workspace property", function(assert) {
     const workspace = new structurizr.Workspace({
         model: {

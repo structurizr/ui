@@ -1,14 +1,20 @@
 structurizr.Recommendations = class Recommendations {
 
     #workspace;
+    #force;
     #recommendations = [];
 
-    constructor(workspace) {
+    constructor(workspace, force) {
         this.#workspace = workspace;
+        this.#force = (force === true);
         this.#generateRecommendations();
     }
 
     #isRecommendationEnabled(name, ...propertyHolders) {
+        if (this.#force === true) {
+            return true;
+        }
+
         var result = 'true';
 
         propertyHolders.forEach(function(propertyHolder) {
