@@ -41,6 +41,7 @@ var structurizr = structurizr || {
         RECOMMENDATIONS_MODEL_PREFIX: 'structurizr.recommendations.model.',
         RECOMMENDATIONS_MODEL_ORPHANED_ELEMENTS: 'structurizr.recommendations.model.element.orphaned',
         RECOMMENDATIONS_MODEL_ELEMENTS_NOT_INCLUDED_ON_VIEW: 'structurizr.recommendations.model.element.noview',
+        RECOMMENDATIONS_MODEL_EMPTY_DEPLOYMENT_NODE: 'structurizr.recommendations.model.deploymentnode.empty',
         RECOMMENDATIONS_RELATIONSHIP_DESCRIPTION: 'structurizr.recommendations.model.relationship.description',
         RECOMMENDATIONS_RELATIONSHIP_TECHNOLOGY: 'structurizr.recommendations.model.relationship.technology',
         RECOMMENDATIONS_VIEW_EXTERNAL_ELEMENTS: 'structurizr.recommendations.view.externalElements',

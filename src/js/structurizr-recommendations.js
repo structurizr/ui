@@ -249,6 +249,23 @@ structurizr.Recommendations = class Recommendations {
                         }
                     }
                 }
+
+                if (self.#isRecommendationEnabled(structurizr.constants.RECOMMENDATIONS_MODEL_EMPTY_DEPLOYMENT_NODE, self.#workspace, self.#workspace.model, parentElement, element)) {
+                    if (element.type === structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE) {
+                        if (
+                            (element.children === undefined || element.children.length === 0) &&
+                            (element.softwareSystemInstances === undefined || element.softwareSystemInstances.length === 0) &&
+                            (element.containerInstances === undefined || element.containerInstances.length === 0)
+                        ) {
+                            self.#addLow(
+                                {
+                                    message: 'The ' + self.#workspace.getTerminologyFor(element).toLowerCase() + ' named "' + element.name + '" is empty.',
+                                    type: structurizr.constants.RECOMMENDATIONS_MODEL_EMPTY_DEPLOYMENT_NODE
+                                }
+                            );
+                        }
+                    }
+                }
             });
 
             this.#workspace.getRelationships().forEach(function(relationship) {

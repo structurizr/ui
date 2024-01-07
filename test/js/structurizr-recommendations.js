@@ -98,11 +98,11 @@ QUnit.test("Workspace scope recommendations can be disabled via a workspace prop
             ]
         },
         views: {
-            systemLandscapeViews: [
-                {
-                    key: 'key'
+            configuration: {
+                properties: {
+                    'structurizr.recommendations': 'false'
                 }
-            ]
+            }
         },
         properties: {
             'structurizr.recommendations.workspace.scope': 'false'
@@ -116,7 +116,7 @@ QUnit.test("Workspace scope recommendations can be disabled via a workspace prop
     );
 });
 
-QUnit.test("Elements with no description or technology", function(assert) {
+QUnit.test("Elements/relationships with no description or technology", function(assert) {
     const workspace = new structurizr.Workspace({
         model: {
             properties: {
@@ -301,11 +301,11 @@ QUnit.test("Orphaned elements", function(assert) {
             ]
         },
         views: {
-            systemLandscapeViews: [
-                {
-                    key: 'landscape'
+            configuration: {
+                properties: {
+                    'structurizr.recommendations': 'false'
                 }
-            ]
+            }
         },
         configuration: {
             scope: 'SoftwareSystem'
@@ -320,6 +320,49 @@ QUnit.test("Orphaned elements", function(assert) {
                 "message": "The person named \"User\" is orphaned - add a relationship to/from it, or consider removing it from the model.",
                 "priority": 2,
                 "type": "structurizr.recommendations.model.element.orphaned"
+            }
+        ]
+    );
+});
+
+QUnit.test("Empty deployment nodes", function(assert) {
+    const workspace = new structurizr.Workspace({
+        model: {
+            properties: {
+                'structurizr.recommendations.model.element.noview': 'false',
+                'structurizr.recommendations.model.deploymentnode.description': 'false',
+                'structurizr.recommendations.model.deploymentnode.technology': 'false'
+            },
+            deploymentNodes: [
+                {
+                    id: 1,
+                    name: 'Name',
+                    children: [],
+                    softwareSystemInstances: [],
+                    containerInstances: []
+                }
+            ]
+        },
+        views: {
+            configuration: {
+                properties: {
+                    'structurizr.recommendations': 'false'
+                }
+            }
+        },
+        configuration: {
+            scope: 'SoftwareSystem'
+        }
+    });
+    const recommendations = new structurizr.Recommendations(workspace).getRecommendations();
+
+    assert.deepEqual(recommendations,
+        [
+            {
+                "id": 1,
+                "message": "The deployment node named \"Name\" is empty.",
+                "priority": 3,
+                "type": "structurizr.recommendations.model.deploymentnode.empty"
             }
         ]
     );
