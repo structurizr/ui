@@ -34,22 +34,7 @@ var structurizr = structurizr || {
         INTRA_WORKSPACE_URL_PREFIX: '{workspace}',
         INTER_WORKSPACE_URL_PREFIX: '{workspace:',
         INTER_WORKSPACE_URL_SEPARATOR: ':',
-        INTER_WORKSPACE_URL_SUFFIX: '}',
-
-        RECOMMENDATIONS: 'structurizr.recommendations',
-        RECOMMENDATIONS_WORKSPACE_SCOPE: 'structurizr.recommendations.workspace.scope',
-        RECOMMENDATIONS_MODEL_PREFIX: 'structurizr.recommendations.model.',
-        RECOMMENDATIONS_MODEL_ORPHANED_ELEMENTS: 'structurizr.recommendations.model.element.orphaned',
-        RECOMMENDATIONS_MODEL_ELEMENTS_NOT_INCLUDED_ON_VIEW: 'structurizr.recommendations.model.element.noview',
-        RECOMMENDATIONS_MODEL_EMPTY_DEPLOYMENT_NODE: 'structurizr.recommendations.model.deploymentnode.empty',
-        RECOMMENDATIONS_RELATIONSHIP_DESCRIPTION: 'structurizr.recommendations.model.relationship.description',
-        RECOMMENDATIONS_RELATIONSHIP_TECHNOLOGY: 'structurizr.recommendations.model.relationship.technology',
-        RECOMMENDATIONS_VIEW_EXTERNAL_ELEMENTS: 'structurizr.recommendations.view.externalElements',
-        RECOMMENDATIONS_VIEW_PREFIX: 'structurizr.recommendations.views.',
-
-        RECOMMENDATION_LOW_PRIORITY: 3,
-        RECOMMENDATION_MEDIUM_PRIORITY: 2,
-        RECOMMENDATION_HIGH_PRIORITY: 1,
+        INTER_WORKSPACE_URL_SUFFIX: '}'
 
     }
 };
