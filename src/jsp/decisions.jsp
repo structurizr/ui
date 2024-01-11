@@ -83,11 +83,11 @@
     const documentationNavigationPanel = $('#documentationNavigationPanel');
 
     const defaultDecisionBackgrounds = {
-        'Proposed': '#5bc0de',
-        'Accepted': '#5cb85c',
-        'Superseded': '#f0ad4e',
-        'Deprecated': '#f0ad4e',
-        'Rejected': '#d9534f'
+        'proposed': '#5bc0de',
+        'accepted': '#5cb85c',
+        'superseded': '#f0ad4e',
+        'deprecated': '#f0ad4e',
+        'rejected': '#d9534f'
     };
 
     progressMessage.show('<p>Loading workspace...</p>');
@@ -474,7 +474,7 @@
     function getDecisionStyle(decision) {
         const status = decision.status;
 
-        var background = defaultDecisionBackgrounds[status];
+        var background = defaultDecisionBackgrounds[status.toLowerCase()];
         if (background === undefined) {
             background = '#777777';
         }
