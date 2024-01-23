@@ -10,6 +10,7 @@
 
         try {
             workspaceLoaded();
+            setBanner()
         } catch (err) {
             if (window.logError) {
                 logError('Error loading workspace', window.href, 1, err);
@@ -27,6 +28,7 @@
 
         try {
             workspaceLoaded();
+            setBanner()
         } catch (err) {
             logError('Error loading workspace', window.href, 1, err);
             console.log(err);
