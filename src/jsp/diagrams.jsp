@@ -638,9 +638,9 @@
 
             if (structurizr.ui.isFullScreen()) {
                 if (presentationMode) {
-                    return screen.height;
+                    return screen.availHeight;
                 } else {
-                    return screen.height - diagramControlsHeight;
+                    return screen.availHeight - diagramControlsHeight;
                 }
             } else {
                 return window.innerHeight - diagramControlsHeight;
