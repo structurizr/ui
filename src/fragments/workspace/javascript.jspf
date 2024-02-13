@@ -6,10 +6,18 @@
 
 <script nonce="${scriptNonce}">
     function loadWorkspace(json) {
-        structurizr.workspace = new structurizr.Workspace(json);
-
         try {
+            if (typeof beforeWorkspaceLoaded === 'function') {
+                beforeWorkspaceLoaded();
+            }
+
+            structurizr.workspace = new structurizr.Workspace(json);
             workspaceLoaded();
+
+            if (typeof afterWorkspaceLoaded === 'function') {
+                afterWorkspaceLoaded(structurizr.workspace.getJson());
+                $(window).trigger('resize');
+            }
         } catch (err) {
             if (window.logError) {
                 logError('Error loading workspace', window.href, 1, err);
@@ -26,7 +34,16 @@
         structurizr.workspace = parent.structurizr.workspace;
 
         try {
+            if (typeof beforeWorkspaceLoaded === 'function') {
+                beforeWorkspaceLoaded();
+            }
+
             workspaceLoaded();
+
+            if (typeof afterWorkspaceLoaded === 'function') {
+                afterWorkspaceLoaded(structurizr.workspace.getJson());
+                $(window).trigger('resize');
+            }
         } catch (err) {
             logError('Error loading workspace', window.href, 1, err);
             console.log(err);

@@ -416,7 +416,6 @@ hr {
 }
 
 #topNavigation, #workspaceSummaryControls {
-    padding: 10px;
     background: #ffffff;
     border-bottom: solid 1px #dddddd;
     box-shadow: 0px 0px 3px #dddddd;
@@ -428,7 +427,6 @@ hr {
     margin-right: 20px;
 }
 #editorControls, #diagramControls, #explorationControls, #documentationControls, #decisionLogControls, #healthControls {
-    padding: 10px;
     background: #ffffff;
     border-bottom: solid 1px #dddddd;
     box-shadow: 0px 0px 3px #dddddd;
@@ -443,8 +441,14 @@ hr {
     border-right: solid 1px #dddddd;
 }
 
+#banner {
+    text-align: center;
+    font-size: 14px;
+}
+
 .brandingLogo {
     max-height: 35px;
+    margin-top: 5px;
 }
 
 .btn-active {

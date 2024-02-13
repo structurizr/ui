@@ -46,6 +46,7 @@
                     </div>
                 </c:when>
                 <c:otherwise>
+                    <div id="banner"></div>
                     <div class="row">
                         <div class="col-sm-2" style="padding: 18px 20px 10px 20px">
                             <a href="<c:out value="${urlPrefix}" /><c:out value="${urlSuffix}" />"><img src="${structurizrConfiguration.cdnUrl}/img/structurizr-banner.png" alt="Structurizr" class="structurizrBannerLight img-responsive brandingLogo" /><img src="${structurizrConfiguration.cdnUrl}/img/structurizr-banner-dark.png" alt="Structurizr" class="structurizrBannerDark img-responsive brandingLogo" /></a>
