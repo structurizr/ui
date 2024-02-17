@@ -321,10 +321,10 @@
             const viewToExport = structurizr.workspace.findViewByKey(viewsToExport[0]);
 
             changeView(viewToExport, function () {
-                var diagramAsSVG = structurizr.diagram.exportCurrentDiagramToSVG(includeDiagramMetadata);
+                var diagramAsSVG = structurizr.diagram.exportCurrentDiagramToSVG(includeDiagramMetadata, true);
                 var diagramKeyAsSVG;
                 if (viewsToExport.type !== structurizr.constants.IMAGE_VIEW_TYPE) {
-                    diagramKeyAsSVG = structurizr.diagram.exportCurrentDiagramKeyToSVG();
+                    diagramKeyAsSVG = structurizr.diagram.exportCurrentDiagramKeyToSVG(true);
                 }
 
                 addExportedSVGToPage(diagramAsSVG, diagramKeyAsSVG, download);

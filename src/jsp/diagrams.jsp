@@ -151,6 +151,7 @@
 
     const DARK_MODE_COOKIE_NAME = 'structurizr.darkMode';
     structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
+    structurizr.ui.DEFAULT_FONT_URL = 'https://fonts.googleapis.com/css?family=Open+Sans:400,700';
 
     var embed = ${embed};
     var diagramSelector = ${showDiagramSelector eq true};
@@ -238,11 +239,11 @@
                     options.includeMetadata = true;
                 }
 
-                return structurizr.diagram.exportCurrentDiagramToSVG(options.includeMetadata);
+                return structurizr.diagram.exportCurrentDiagramToSVG(options.includeMetadata, true);
             };
 
             this.exportCurrentDiagramKeyToSVG = function() {
-                return structurizr.diagram.exportCurrentDiagramKeyToSVG();
+                return structurizr.diagram.exportCurrentDiagramKeyToSVG(true);
             };
 
             this.getViews = function() {
