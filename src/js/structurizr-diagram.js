@@ -63,7 +63,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     var diagramDescription;
     var diagramMetadata;
     var diagramMetadataWidth = 0;
+    var diagramMetadataHeight = 0;
     var brandingLogo;
+    var elementStyleForDiagramTitle;
+    var elementStyleForDiagramDescription;
+    var elementStyleForDiagramMetadata;
+
     var enterpriseBoundary; // for backwards compatibility with older workspace definitions
     var boundariesByElementId = {};
     var groupsByName = {};
@@ -405,6 +410,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         lines = [];
         linesByRelationshipId = {};
         diagramMetadataWidth = 0;
+        diagramMetadataHeight = 0;
         selectedElements = [];
         enterpriseBoundary = undefined;
         boundariesByElementId = {};
