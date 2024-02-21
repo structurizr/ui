@@ -895,6 +895,67 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             self.zoomToWidthOrHeight();
         }
 
+        if (darkMode === true) {
+            elementStyleForDiagramTitle = {
+                color: '#bbbbbb',
+                fontSize: 36
+            };
+            elementStyleForDiagramDescription = {
+                color: '#bbbbbb',
+                fontSize: 22
+            };
+            elementStyleForDiagramMetadata = {
+                color: '#777777',
+                fontSize: 22
+            }
+        } else {
+            elementStyleForDiagramTitle = {
+                color: '#000000',
+                fontSize: 36
+            };
+            elementStyleForDiagramDescription = {
+                color: '#aaaaaa',
+                fontSize: 22
+            };
+            elementStyleForDiagramMetadata = {
+                color: '#aaaaaa',
+                fontSize: 22
+            }
+        }
+
+        structurizr.workspace.views.configuration.styles.elements.forEach(function(elementStyle) {
+            if (elementStyle.tag === 'Diagram:Title') {
+                if (elementStyle.color) {
+                    elementStyleForDiagramTitle.color = elementStyle.color;
+                }
+                if (elementStyle.fontSize) {
+                    elementStyleForDiagramTitle.fontSize = elementStyle.fontSize;
+                }
+            }
+        });
+
+        structurizr.workspace.views.configuration.styles.elements.forEach(function(elementStyle) {
+            if (elementStyle.tag === 'Diagram:Description') {
+                if (elementStyle.color) {
+                    elementStyleForDiagramDescription.color = elementStyle.color;
+                }
+                if (elementStyle.fontSize) {
+                    elementStyleForDiagramDescription.fontSize = elementStyle.fontSize;
+                }
+            }
+        });
+
+        structurizr.workspace.views.configuration.styles.elements.forEach(function(elementStyle) {
+            if (elementStyle.tag === 'Diagram:Metadata') {
+                if (elementStyle.color) {
+                    elementStyleForDiagramMetadata.color = elementStyle.color;
+                }
+                if (elementStyle.fontSize) {
+                    elementStyleForDiagramMetadata.fontSize = elementStyle.fontSize;
+                }
+            }
+        });
+
         createDiagramMetadata();
 
         self.renderPerspectiveOrTagsFilter();
@@ -2546,30 +2607,21 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function createDiagramMetadata() {
-        var titleColor;
-        var metadataColor;
-
-        if (darkMode === true) {
-            titleColor = '#bbbbbb';
-            metadataColor = '#777777';
-        } else {
-            titleColor = '#000000';
-            metadataColor = '#aaaaaa';
-        }
-
-        var title = structurizr.ui.getTitleForView(currentFilter !== undefined ? currentFilter : currentView);
-        diagramMetadataWidth = (title.length * 30);
+        const viewOrFilter = (currentFilter !== undefined ? currentFilter : currentView);
+        const title = structurizr.ui.getTitleForView(viewOrFilter);
 
         diagramTitle = new structurizr.shapes.DiagramTitle({
             attrs: {
                 '.structurizrDiagramTitle': {
                     text: title,
+                    'font-size': elementStyleForDiagramTitle.fontSize + 'px',
                     'font-family': font.name,
-                    fill: titleColor
+                    fill: elementStyleForDiagramTitle.color
                 }
             }});
         graph.addCell(diagramTitle);
         diagramTitle.toBack();
+        diagramMetadataWidth = Math.max(diagramMetadataWidth, calculateWidth(title, elementStyleForDiagramTitle.fontSize));
 
         var description = '';
         if (currentFilter && currentFilter.description) {
@@ -2583,15 +2635,16 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 attrs: {
                     '.structurizrDiagramDescription': {
                         text: description,
+                        'font-size': elementStyleForDiagramDescription.fontSize + 'px',
                         'font-family': font.name,
-                        fill: metadataColor
+                        fill: elementStyleForDiagramDescription.color
                     }
                 }
             });
 
-            diagramMetadataWidth = Math.max(diagramMetadataWidth, description.length * 20);
             graph.addCell(diagramDescription);
             diagramDescription.toBack();
+            diagramMetadataWidth = Math.max(diagramMetadataWidth, calculateWidth(description, elementStyleForDiagramDescription.fontSize));
         } else {
             diagramDescription = undefined;
         }
@@ -2634,22 +2687,44 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             attrs: {
                 '.structurizrDiagramMetadata': {
                     text: metadata,
+                    'font-size': elementStyleForDiagramMetadata.fontSize + 'px',
                     'font-family': font.name,
-                    fill: metadataColor
+                    fill: elementStyleForDiagramMetadata.color
                 }
             }});
         graph.addCell(diagramMetadata);
         diagramMetadata.toBack();
+        diagramMetadataWidth = Math.max(diagramMetadataWidth, calculateWidth(metadata, elementStyleForDiagramMetadata.fontSize));
 
-        var branding = structurizr.ui.getBranding();
+        const showTitle = getViewOrViewSetProperty(viewOrFilter, 'structurizr.title', 'true') === 'true';
+        const showDescription = getViewOrViewSetProperty(viewOrFilter, 'structurizr.description', 'true') === 'true';
+        const showMetadata = getViewOrViewSetProperty(viewOrFilter, 'structurizr.metadata', 'true') === 'true';
+
+        const titleHeight = calculateHeight("Title", elementStyleForDiagramTitle.fontSize, 0, false);
+        const descriptionHeight = calculateHeight("Description", elementStyleForDiagramDescription.fontSize, 0, false);
+        const metadataHeight = calculateHeight("Metadata", elementStyleForDiagramMetadata.fontSize, 0, false);
+
+        if (diagramMetadata !== undefined && showMetadata === true) {
+            diagramMetadataHeight += metadataHeight;
+        }
+
+        if (diagramDescription !== undefined && showDescription === true) {
+            diagramMetadataHeight += descriptionHeight;
+        }
+
+        if (diagramTitle !== undefined && showTitle === true) {
+            diagramMetadataHeight += titleHeight;
+        }
+
+        const branding = structurizr.ui.getBranding();
         if (branding.logo) {
             brandingLogo = new structurizr.shapes.BrandingImage({
-                size: { width: getImageRatio(branding.logo) * 100, height: 100 },
+                size: { width: getImageRatio(branding.logo) * diagramMetadataHeight, height: diagramMetadataHeight },
                 attrs: {
                     image: {
                         'xlink:href': branding.logo,
-                        width: getImageRatio(branding.logo) * 100,
-                        height: 100
+                        width: getImageRatio(branding.logo) * diagramMetadataHeight,
+                        height: diagramMetadataHeight
                     }
                 }
             });
@@ -2660,27 +2735,66 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         repositionDiagramMetadata();
     }
 
+    function getViewOrViewSetProperty(view, name, defaultValue) {
+        var value = defaultValue;
+
+        if (structurizr.workspace.views.configuration.properties && structurizr.workspace.views.configuration.properties[name]) {
+            value = structurizr.workspace.views.configuration.properties[name];
+        }
+
+        if (view.properties && view.properties[name]) {
+            value = view.properties[name];
+        }
+
+        return value;
+    }
+
     function repositionDiagramMetadata() {
-        const verticalOffset = diagramHeight - 120;
-        if (diagramTitle) {
-            var x = 20;
-            const logoPadding = 40;
-            if (brandingLogo) {
-                brandingLogo.set({ position: { x: 20, y: verticalOffset }});
-                x = brandingLogo.get('size').width + logoPadding;
-            }
+        if (elementStyleForDiagramTitle === undefined) {
+            return;
+        }
 
-            const titleHeight = 44;
-            const metadataHeight = 75;
+        const viewOrFilter = (currentFilter !== undefined ? currentFilter : currentView);
+        const showTitle = getViewOrViewSetProperty(viewOrFilter, 'structurizr.title', 'true') === 'true';
+        const showDescription = getViewOrViewSetProperty(viewOrFilter, 'structurizr.description', 'true') === 'true';
+        const showMetadata = getViewOrViewSetProperty(viewOrFilter, 'structurizr.metadata', 'true') === 'true';
 
-            if (diagramDescription !== undefined) {
-                diagramTitle.set({ position: { x: x, y: verticalOffset }});
-                diagramDescription.set({position: {x: x, y: verticalOffset + titleHeight}});
-            } else {
-                diagramTitle.set({ position: { x: x, y: verticalOffset + (metadataHeight-titleHeight) }});
-            }
+        const paddingLeft = 20;
+        const paddingBottom = 10;
+        const paddingLogoRight = 40;
 
-            diagramMetadata.set({ position: { x: x, y: verticalOffset + metadataHeight }});
+        const titleHeight = calculateHeight("Title", elementStyleForDiagramTitle.fontSize, 0, false);
+        const descriptionHeight = calculateHeight("Description", elementStyleForDiagramDescription.fontSize, 0, false);
+        const metadataHeight = calculateHeight("Metadata", elementStyleForDiagramMetadata.fontSize, 0, false);
+
+        var x = paddingLeft;
+        var y = diagramHeight - paddingBottom;
+
+        if (brandingLogo !== undefined) {
+            brandingLogo.set(
+                {
+                    position: { x: x, y: y - diagramMetadataHeight }
+                }
+            );
+            x = brandingLogo.get('size').width + paddingLogoRight;
+        }
+
+        if (diagramMetadata !== undefined && showMetadata === true) {
+            y = y - metadataHeight;
+            diagramMetadata.set({position: {x: x, y: y}});
+            $(".structurizrDiagramMetadata").attr('display', 'block');
+        }
+
+        if (diagramDescription !== undefined && showDescription === true) {
+            y = y - descriptionHeight;
+            diagramDescription.set({position: {x: x, y: y}});
+            $(".structurizrDiagramDescription").attr('display', 'block');
+        }
+
+        if (diagramTitle !== undefined && showTitle === true) {
+            y = y - titleHeight;
+            diagramTitle.set({ position: { x: x, y: y }});
+            $(".structurizrDiagramTitle").attr('display', 'block');
         }
     }
 
@@ -2697,6 +2811,20 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     numberOfLines++;
                 }
                 return (numberOfLines * ((fontSize + fontSizeDelta) * lineSpacing));
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    function calculateWidth(text, fontSize) {
+        if (text) {
+            text = text.trim();
+
+            if (text.length === 0) {
+                return 0;
+            } else {
+                return text.length * (0.6 * fontSize);
             }
         } else {
             return 0;
@@ -4439,7 +4567,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         this.zoomTo(1.0);
 
         if (!includeDiagramMetadata) {
-            $(".structurizrMetadata").attr('display', 'none');
+            $(".structurizrMetadata>tspan").attr('display', 'none');
         }
 
         $(".structurizrNavigation").attr('display', 'none');
@@ -4473,7 +4601,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         this.zoomTo(currentScale);
         $(".structurizrNavigation").attr('display', 'block');
-        $(".structurizrMetadata").attr('display', 'block');
+        $(".structurizrMetadata>tspan").attr('display', 'block');
 
         return svgMarkup;
     };
@@ -6265,10 +6393,10 @@ structurizr.shapes.DiagramTitle = joint.dia.Element.extend({
         attrs: {
             '.structurizrDiagramTitle': {
                 'font-weight': 'normal',
-                'font-size': '36px',
                 'text-anchor': 'start',
                 fill: '#000000',
-                'pointer-events': 'none'
+                'pointer-events': 'none',
+                'display': 'none'
             }
         }
     }, joint.dia.Element.prototype.defaults)
@@ -6281,10 +6409,10 @@ structurizr.shapes.DiagramDescription = joint.dia.Element.extend({
         attrs: {
             '.structurizrDiagramDescription': {
                 'font-weight': 'normal',
-                'font-size': '22px',
                 'text-anchor': 'start',
                 fill: '#777777',
-                'pointer-events': 'none'
+                'pointer-events': 'none',
+                'display': 'none'
             }
         }
     }, joint.dia.Element.prototype.defaults)
@@ -6297,10 +6425,10 @@ structurizr.shapes.DiagramMetadata = joint.dia.Element.extend({
         attrs: {
             '.structurizrDiagramMetadata': {
                 'font-weight': 'normal',
-                'font-size': '22px',
                 'text-anchor': 'start',
                 fill: '#777777',
-                'pointer-events': 'none'
+                'pointer-events': 'none',
+                'display': 'none'
             }
         }
     }, joint.dia.Element.prototype.defaults)
