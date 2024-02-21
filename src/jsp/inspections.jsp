@@ -38,6 +38,13 @@
 
 <div class="section">
     <div class="container centered">
+        <h1><c:out value="${workspace.name}" escapeXml="true" /></h1>
+        <p>
+            <c:out value="${workspace.description}" escapeXml="true" />
+        </p>
+
+        <br />
+
         <p style="font-size: 25px; margin-top: 20px">
             <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/exclamation-diamond.svg" class="icon-sm" /> Error: <span>${numberOfErrors}</span> |
             <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/exclamation-triangle.svg" class="icon-sm" /> Warning: <span>${numberOfWarnings}</span> |
@@ -58,7 +65,7 @@
         <div style="text-align: left; font-size: 16px">
             <table class="table">
                 <tbody>
-                <c:forEach var="violation" items="${violations}">
+                <c:forEach var="violation" items="${violations}" varStatus="status">
                     <c:choose>
                     <c:when test="${violation.severity eq 'ERROR'}">
                     <tr class="violationError">
@@ -78,7 +85,7 @@
                     </c:otherwise>
                     </c:choose>
                         <td>
-                            <c:out value="${violation.message}" />
+                            ${status.count}. <c:out value="${violation.message}" />
                             <div class="smaller" style="margin-top: 10px"><c:out value="${violation.type}" /></div>
                         </td>
                     </tr>
