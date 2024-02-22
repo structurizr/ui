@@ -323,7 +323,7 @@
             changeView(viewToExport, function () {
                 var diagramAsSVG = structurizr.diagram.exportCurrentDiagramToSVG(includeDiagramMetadata, true);
                 var diagramKeyAsSVG;
-                if (viewsToExport.type !== structurizr.constants.IMAGE_VIEW_TYPE) {
+                if (viewToExport.type !== structurizr.constants.IMAGE_VIEW_TYPE) {
                     diagramKeyAsSVG = structurizr.diagram.exportCurrentDiagramKeyToSVG(true);
                 }
 
