@@ -8,7 +8,7 @@
     function loadWorkspace(json) {
         try {
             if (typeof beforeWorkspaceLoaded === 'function') {
-                beforeWorkspaceLoaded();
+                beforeWorkspaceLoaded(json);
             }
 
             structurizr.workspace = new structurizr.Workspace(json);
@@ -35,7 +35,7 @@
 
         try {
             if (typeof beforeWorkspaceLoaded === 'function') {
-                beforeWorkspaceLoaded();
+                beforeWorkspaceLoaded(structurizr.workspace.getJson());
             }
 
             workspaceLoaded();
