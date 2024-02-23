@@ -524,16 +524,37 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 imageMetadata.contentType = view.contentType;
             }
 
+            var imageWidth = imageMetadata.width;
+            var imageHeight = imageMetadata.height;
+
+            if (imageMetadata.contentType === structurizr.constants.CONTENT_TYPE_IMAGE_SVG) {
+                // scale smaller SVGs, otherwise the diagram title becomes too large
+                const minimumWidth = self.getPossibleViewportWidth() * 2;
+                const minimumHeight = self.getPossibleViewportHeight() * 1;
+
+                if (imageMetadata.ratio >= 1 && imageWidth < minimumWidth) {
+                    // landscape image
+                    const multiplier = minimumWidth / imageWidth;
+                    imageWidth = imageWidth * multiplier;
+                    imageHeight = imageHeight * multiplier;
+                } else if (imageMetadata.ratio < 1 && imageHeight < minimumHeight) {
+                    // portrait image
+                    const multiplier = minimumHeight / imageHeight;
+                    imageWidth = imageWidth * multiplier;
+                    imageHeight = imageHeight * multiplier;
+                }
+            }
+
             const image = new structurizr.shapes.ImageView({
                 size: {
-                    width: imageMetadata.width,
-                    height: imageMetadata.height
+                    width: imageWidth,
+                    height: imageHeight
                 },
                 attrs: {
                     image: {
                         'xlink:href': content,
-                        width: imageMetadata.width,
-                        height: imageMetadata.height
+                        width: imageWidth,
+                        height: imageHeight
                     }
                 }
             });
@@ -546,8 +567,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             domElement.attr('style', 'cursor: default !important');
 
             view.dimensions = {
-                width: imageMetadata.width,
-                height: imageMetadata.height
+                width: imageWidth,
+                height: imageHeight
             }
 
             self.setPaperSize(view);
@@ -557,9 +578,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 minZoomScale = scale;
                 zoomDelta = (maxZoomScale - minZoomScale) / zoomSteps;
             } else {
-                if (imageMetadata.contentType === structurizr.constants.CONTENT_TYPE_IMAGE_SVG) {
-                    maxZoomScale = 10;
-                }
                 self.zoomToWidthOrHeight();
             }
 
@@ -1585,20 +1603,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     function setZoomAndMargins() {
         minZoomScale = scale;
-
-        if (currentView.type === structurizr.constants.IMAGE_VIEW_TYPE) {
-            const imageMetadata = getImageMetadata(currentView.content);
-            if (imageMetadata.contentType === structurizr.constants.CONTENT_TYPE_IMAGE_SVG) {
-                const maxWidth = self.getPossibleViewportWidth();
-                const maxHeight = self.getPossibleViewportHeight();
-                maxZoomScale = 2 * Math.max(maxWidth / imageMetadata.width, maxHeight / imageMetadata.height);
-            } else {
-                maxZoomScale = 1;
-            }
-        } else {
-            maxZoomScale = DEFAULT_MAX_ZOOM_SCALE;
-        }
-
+        maxZoomScale = DEFAULT_MAX_ZOOM_SCALE;
         zoomDelta = (maxZoomScale - minZoomScale) / zoomSteps;
 
         var minimumWidth = minZoomScale * diagramWidth;
@@ -4157,7 +4162,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var counter = 1;
 
         var svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="' + totalWidthOfKey + '" height="' + totalHeightOfKey + '" style="padding: 10px; font-size: ' + fontSize + '; font-family: ' + font.name + '; background: ' + canvasColor + ';">';
-        
+
         for (var i = 0; i < elementStylesInUse.length; i++) {
             elementStyle = elementStylesInUseMap[elementStylesInUse[i]];
             var fill = structurizr.util.shadeColor(elementStyle.background, 100-elementStyle.opacity, darkMode);
