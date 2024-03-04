@@ -1670,32 +1670,55 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function renderElementInternals(element, cell, configuration, width, horizontalPadding, height, verticalOffset) {
-        var internalPadding = 10;
+        const internalPadding = 10;
 
-        var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
-        var color = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
-        var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
-        var navigationColor = color;
+        const fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
+        const color = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
+        const stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
+        const navigationColor = color;
 
-        var name = formatName(element, configuration, horizontalPadding);
-        var metadata = formatMetaData(element, configuration, horizontalPadding);
-        var description = formatDescription(element, configuration, horizontalPadding);
+        const name = formatName(element, configuration, horizontalPadding);
+        const metadata = formatMetaData(element, configuration, horizontalPadding);
+        const description = formatDescription(element, configuration, horizontalPadding);
 
-        var heightOfNameLabel = calculateHeight(name, configuration.fontSize, nameFontSizeDifference, false);
-        var heightOfMetaDataLabel = calculateHeight(metadata, configuration.fontSize, metaDataFontSizeDifference, false) + internalPadding;
-        var heightOfDescriptionLabel = calculateHeight(description, configuration.fontSize, 0, false);
+        const heightOfNameLabel = calculateHeight(name, configuration.fontSize, nameFontSizeDifference, false);
+        const heightOfMetaDataLabel = calculateHeight(metadata, configuration.fontSize, metaDataFontSizeDifference, false);
+        const heightOfDescriptionLabel = calculateHeight(description, configuration.fontSize, 0, false);
         var heightOfIcon = 0;
         if (configuration.icon !== undefined) {
-            heightOfDescriptionLabel +=  + internalPadding;
             heightOfIcon = DEFAULT_ICON_HEIGHT + ICON_PADDING;
         }
-        var totalHeightOfLabels = heightOfNameLabel + heightOfMetaDataLabel + heightOfDescriptionLabel + heightOfIcon;
 
-        var nameRefY =          (verticalOffset + ((height - totalHeightOfLabels) / 2)) / height;
-        var metaDataRefY =      (verticalOffset + heightOfNameLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        var descriptionRefY =   (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + ((height - totalHeightOfLabels) / 2)) / height;
-        var iconRefY =          (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfDescriptionLabel + (height - totalHeightOfLabels) / 2) / height;
-        var navigationRefY =    (verticalOffset + heightOfNameLabel + heightOfMetaDataLabel + heightOfDescriptionLabel + heightOfIcon + internalPadding + ((height - totalHeightOfLabels) / 2)) / height;
+        const nameY = verticalOffset + (internalPadding / 2);
+
+        const metadataY = nameY + heightOfNameLabel;
+
+        var descriptionY = metadataY + heightOfMetaDataLabel;
+        if (heightOfDescriptionLabel > 0) {
+            if (heightOfMetaDataLabel > 0) {
+                descriptionY += internalPadding;
+            }
+        }
+
+        var iconY = descriptionY + heightOfDescriptionLabel;
+        if (heightOfIcon > 0) {
+            if (heightOfMetaDataLabel > 0 || heightOfDescriptionLabel > 0) {
+                iconY += internalPadding;
+            }
+        }
+
+        const totalY = iconY + heightOfIcon;
+        const offset = (height - totalY) / 2;
+
+        if (totalY > height) {
+            console.log('The height of the element named "' + element.name + '" is too small to fit the content (' + Math.ceil(totalY) + 'px)');
+        }
+
+        var nameRefY =          (nameY + offset) / height;
+        var metaDataRefY =      (metadataY + offset) / height;
+        var descriptionRefY =   (descriptionY + offset) / height;
+        var iconRefY =          (iconY + offset) / height;
+        var navigationRefY =    (height - 32) / height;
 
         if (configuration.icon) {
             var iconRatio = getImageRatio(configuration.icon);
@@ -2802,7 +2825,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function calculateHeight(text, fontSize, fontSizeDelta, addPadding) {
-        var lineSpacing = 1.25;
+        var lineSpacing = 1.20;
         if (text) {
             text = text.trim();
 
