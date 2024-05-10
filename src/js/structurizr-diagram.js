@@ -925,6 +925,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 unusedDeploymentNodeCells.forEach(function(deploymentNodeCell) {
                     deploymentNodeCell.remove();
                     delete cellsByElementId[deploymentNodeCell.elementInView.id];
+                    delete mapOfIdToBox[deploymentNodeCell.elementInView.id]
                 });
             }
         }
