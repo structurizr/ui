@@ -153,7 +153,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
         }),
         linkConnectionPoint: (editable ? undefined : shapePerimeterConnectionPoint),
-        clickThreshold: 1
+        clickThreshold: 1,
+        sorting: joint.dia.Paper.sorting.APPROX
     });
 
     addPaperEventHandlers();
