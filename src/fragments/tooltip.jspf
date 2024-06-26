@@ -218,7 +218,8 @@
                 }
 
                 $('#tooltip .tag').css("border-color", style.color);
-                $('#tooltipUrl a').css("color", '#ffffff');
+                $('#tooltip a').css("color", style.color);
+                $('#tooltip a').css("text-decoration", "underline");
                 $('#tooltip hr').css("border-color", style.stroke);
             } else {
                 tooltip.css("background", '#ffffff');
@@ -226,6 +227,8 @@
                 tooltip.css("color", '#000000');
                 tooltip.css('border-style', 'solid');
                 $('#tooltip .tag').css("border-color", '#000000');
+                $('#tooltip a').css("color", '#000000');
+                $('#tooltip a').css("text-decoration", "underline");
                 $('#tooltip hr').css("border-color", '#000000');
             }
         };
@@ -260,13 +263,6 @@
             if (color === undefined) {
                 color = (darkMode === true ? '#eeeeee' : '#777777');
             }
-            tooltip.css("border-color", color);
-            tooltip.css("color", color);
-            $('#tooltip .tag').css("border-color", color);
-            $('#tooltip hr').css("border-color", color);
-
-            tooltip.css('border-style', style.lineStyle);
-
             var description = '';
             description += '<p style="font-weight: bold">';
             description += structurizr.util.escapeHtml(structurizr.workspace.findElementById(relationship.sourceId).name);
@@ -314,6 +310,15 @@
 
             show();
             this.reposition(x, y);
+
+            tooltip.css("border-color", color);
+            tooltip.css("color", color);
+            $('#tooltip .tag').css("border-color", color);
+            $('#tooltip a').css("color", color);
+            $('#tooltip a').css("text-decoration", "underline");
+            $('#tooltip hr').css("border-color", color);
+
+            tooltip.css('border-style', style.lineStyle);
         }
 
         this.isVisible = function() {

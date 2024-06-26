@@ -1194,7 +1194,18 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var views = [];
         var documentation = false;
         var decisions = false;
-        var url = element.url;
+        var url = false;
+
+        url = element.url !== undefined;
+        if (element.properties) {
+            Object.keys(element.properties).forEach(function(name) {
+                const value = element.properties[name];
+                if (value.indexOf('http://') === 0 || value.indexOf('https://') === 0) {
+                    url = true;
+                }
+            });
+        }
+
         const elementDoubleClicked = element;
 
         if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE) {
@@ -1289,7 +1300,17 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function addDoubleClickHandlerForRelationship(linkView, relationship) {
-        const url = relationship.url;
+        var url = false;
+
+        url = relationship.url !== undefined;
+        if (relationship.properties) {
+            Object.keys(relationship.properties).forEach(function(name) {
+                const value = relationship.properties[name];
+                if (value.indexOf('http://') === 0 || value.indexOf('https://') === 0) {
+                    url = true;
+                }
+            });
+        }
 
         if (url) {
             const domElement = $('#' + linkView.id);
