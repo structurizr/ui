@@ -8,6 +8,7 @@
 <style>
     .model {
         margin-bottom: 200px;
+        text-align: center;
     }
     .element {
         margin: 30px;

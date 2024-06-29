@@ -7,6 +7,11 @@
     <div class="container centered">
         <h1>Explore</h1>
 
+        <c:if test="${structurizrConfiguration.type eq 'lite'}">
+        <a href="${urlPrefix}/explore/model">Model</a>
+        <br />
+        </c:if>
+
         <br />
 
         <div id="views" class="centered">
