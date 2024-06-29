@@ -71,16 +71,16 @@ structurizr.util.toBlob = function(content, contentType) {
 };
 
 structurizr.util.escapeHtml = function(html) {
-    if (html) {
-        return html
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    } else {
-        return undefined;
+    if (html === undefined || html === null) {
+        return '';
     }
+
+    return html
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 };
 
 structurizr.util.trim = function(s) {

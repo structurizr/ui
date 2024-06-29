@@ -204,8 +204,10 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
         defaultStyle = defaultElementStyleForDeploymentNode;
 
         if (darkMode === true) {
+            defaultStyle.background = '#111111';
             defaultStyle.color = '#ffffff';
         } else {
+            defaultStyle.background = '#ffffff';
             defaultStyle.color = '#000000';
         }
     } else if (element.type === 'Boundary') {

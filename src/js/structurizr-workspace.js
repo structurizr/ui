@@ -434,7 +434,9 @@ structurizr.Workspace = class Workspace {
             }
         }
 
-        return tags.split(",");
+        return tags.split(',').filter(function(tag) {
+            return tag !== undefined && tag.length > 0;
+        });
     }
 
     getAllPropertiesForElement(element) {
@@ -486,7 +488,9 @@ structurizr.Workspace = class Workspace {
             linkedRelationshipId = linkedRelationship.linkedRelationshipId;
         }
 
-        return tags.split(',');
+        return tags.split(',').filter(function(tag) {
+            return tag !== undefined && tag.length > 0;
+        });
     }
 
     getAllPropertiesForRelationship(relationship) {
