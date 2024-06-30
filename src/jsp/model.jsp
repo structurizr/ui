@@ -20,6 +20,7 @@
         border-radius: 3px;
     }
     .relationship {
+        padding: 10px 5px 10px 5px;
     }
     .elementName {
         font-weight: bold;
@@ -261,7 +262,7 @@
             relationshipsHtml += '<a name="' + relationship.id + '"></a>';
             relationshipsHtml += '<div id="modelItem' + relationship.id + '" class="relationship" style="color: ' + relationshipStyle.color + ';">';
 
-            relationshipsHtml += '<div style="display: inline-block; width: 70%; text-align: left; vertical-align: top; padding: 5px;">';
+            relationshipsHtml += '<div style="display: inline-block; width: 70%; text-align: left; vertical-align: top; padding: 5px 5px 0 5px;">';
             relationshipsHtml += '<span class="tag id">' + relationship.id + '</span>';
             relationshipsHtml += ' --- ';
             relationshipsHtml += '<span class="relationshipDescription">';
@@ -274,24 +275,52 @@
             relationshipsHtml += '</a></span> <span class="metadata">';
             relationshipsHtml += structurizr.util.escapeHtml(destinationMetadata);
             relationshipsHtml += '</span>';
-            relationshipsHtml += '<div>';
-            if (relationship.linkedRelationshipId !== undefined) {
-                relationshipsHtml += 'implied by <a href="#' + relationship.linkedRelationshipId + '"><span class="tag id">' + relationship.linkedRelationshipId + '</span></a> ';
-            }
-            if (implies.length > 0) {
-                relationshipsHtml += 'implies ';
-                implies.forEach(function(r) {
-                    relationshipsHtml += '<a href="#' + r.id + '"><span class="tag id">' + r.id + '</span></a> ';
-                });
-            }
-            relationshipsHtml += '</div> ';
             relationshipsHtml += '</div> ';
 
-            relationshipsHtml += '<div style="display: inline-block; width: 29%; text-align: right; vertical-align: top; padding: 5px;">';
+            relationshipsHtml += '<div style="display: inline-block; width: 29%; text-align: right; vertical-align: top; padding: 5px 5px 0 5px;">';
             tags.forEach(function(tag) {
                 relationshipsHtml += '<span class="tag">' + tag + '</span>';
             });
             relationshipsHtml += '</div> ';
+
+            if (relationship.linkedRelationshipId !== undefined) {
+                const linkedRelationship = structurizr.workspace.findRelationshipById(relationship.linkedRelationshipId);
+                const linkedSource = structurizr.workspace.findElementById(linkedRelationship.sourceId);
+                const linkedSourceName = source.name;
+                const linkedSourceMetadata = structurizr.ui.getMetadataForElement(linkedSource, true);
+                const linkedDestination = structurizr.workspace.findElementById(linkedRelationship.destinationId);
+                const linkedDestinationName = destination.name;
+                const linkedDestinationMetadata = structurizr.ui.getMetadataForElement(linkedDestination, true);
+                const linkedRelationshipMetadata = structurizr.ui.getMetadataForRelationship(linkedRelationship);
+                const linkedDescription = (linkedRelationship.description ? linkedRelationship.description : '');
+
+                relationshipsHtml += '<div style="font-size: 90%; text-align: left; padding-left: 10px;">';
+                relationshipsHtml += 'implied by <a href="#' + linkedRelationship.id + '"><span class="tag id">' + linkedRelationship.id + '</span></a> ';
+                relationshipsHtml += '<span class="elementName">';
+                relationshipsHtml += structurizr.util.escapeHtml(linkedSourceName);
+                relationshipsHtml += '</a></span> <span class="metadata">';
+                relationshipsHtml += structurizr.util.escapeHtml(linkedSourceMetadata);
+                relationshipsHtml += '</span>';
+                relationshipsHtml += ' --- ';
+                relationshipsHtml += '<span class="relationshipDescription">';
+                relationshipsHtml += structurizr.util.escapeHtml(linkedDescription);
+                relationshipsHtml += '</span> <span class="metadata">';
+                relationshipsHtml += structurizr.util.escapeHtml(linkedRelationshipMetadata);
+                relationshipsHtml += '</span> --&gt; <span class="elementName">';
+                relationshipsHtml += structurizr.util.escapeHtml(linkedDestinationName);
+                relationshipsHtml += '</a></span> <span class="metadata">';
+                relationshipsHtml += structurizr.util.escapeHtml(linkedDestinationMetadata);
+                relationshipsHtml += '</span>';
+                relationshipsHtml += '</div> ';
+            }
+            if (implies.length > 0) {
+                relationshipsHtml += '<div style="font-size: 90%; text-align: left; padding-left: 10px;">';
+                relationshipsHtml += 'implies ';
+                implies.forEach(function(r) {
+                    relationshipsHtml += '<a href="#' + r.id + '"><span class="tag id">' + r.id + '</span></a> ';
+                });
+                relationshipsHtml += '</div> ';
+            }
 
             relationshipsHtml += '</div> ';
 
