@@ -286,10 +286,10 @@
             if (relationship.linkedRelationshipId !== undefined) {
                 const linkedRelationship = structurizr.workspace.findRelationshipById(relationship.linkedRelationshipId);
                 const linkedSource = structurizr.workspace.findElementById(linkedRelationship.sourceId);
-                const linkedSourceName = source.name;
+                const linkedSourceName = linkedSource.name;
                 const linkedSourceMetadata = structurizr.ui.getMetadataForElement(linkedSource, true);
                 const linkedDestination = structurizr.workspace.findElementById(linkedRelationship.destinationId);
-                const linkedDestinationName = destination.name;
+                const linkedDestinationName = linkedDestination.name;
                 const linkedDestinationMetadata = structurizr.ui.getMetadataForElement(linkedDestination, true);
                 const linkedRelationshipMetadata = structurizr.ui.getMetadataForRelationship(linkedRelationship);
                 const linkedDescription = (linkedRelationship.description ? linkedRelationship.description : '');
