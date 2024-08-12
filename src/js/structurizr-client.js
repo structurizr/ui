@@ -44,7 +44,6 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
             type: "GET",
             cache: false,
             headers: {
-                'Content-Type': contentType,
                 'Content-MD5': btoa(contentMd5),
                 'Nonce': nonce,
                 'X-Authorization': this.#apiKey + ":" + btoa(hmac)
