@@ -2,8 +2,10 @@
     function runGraphvizForView(view, callback) {
         if (view.automaticLayout.applied !== true) {
             const url = '${structurizrConfiguration.graphvizUrl}?view=' + view.key;
-            runGraphviz(url, callback);
-            view.automaticLayout.applied = true;
+            runGraphviz(url, function() {
+                view.automaticLayout.applied = true;
+                callback();
+            });
         } else {
             if (callback) {
                 callback();
