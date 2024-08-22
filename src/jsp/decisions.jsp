@@ -2,7 +2,6 @@
 
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-embed.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-content${structurizrConfiguration.versionSuffix}.js"></script>
-<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-ui${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/markdown-it-13.0.1.min.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/katex-0.16.4.min.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/asciidoctor-2.2.6.min.js"></script>
@@ -27,6 +26,13 @@
             <div id="documentationNavigation"></div>
 
             <div class="navigationItemSeparator"></div>
+
+            <div class="navigationItem">
+                <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon.svg" class="icon-sm" />
+                <a id="renderingModeLightLink" href="">Light</a> |
+                <a id="renderingModeDarkLink" href="">Dark</a> |
+                <a id="renderingModeSystemLink" href="">System</a>
+            </div>
 
             <div id="documentationMetadata">
                 <c:if test="${not empty param.version}">
@@ -110,6 +116,22 @@
 
             initDecisionScopeAndOrder();
             renderNavigation();
+
+            $('#renderingModeLightLink').click(function(event) {
+                event.preventDefault();
+                structurizr.ui.setRenderingMode(structurizr.ui.RENDERING_MODE_LIGHT);
+            });
+
+            $('#renderingModeDarkLink').click(function(event) {
+                event.preventDefault();
+                structurizr.ui.setRenderingMode(structurizr.ui.RENDERING_MODE_DARK);
+            });
+
+            $('#renderingModeSystemLink').click(function(event) {
+                event.preventDefault();
+                structurizr.ui.setRenderingMode(structurizr.ui.RENDERING_MODE_SYSTEM);
+            });
+
             show();
 
             window.onhashchange = show;

@@ -16,7 +16,6 @@
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/gifshot-0.4.4.js"></script>
 
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-diagram${structurizrConfiguration.versionSuffix}.js"></script>
-<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-ui${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-healthcheck${structurizrConfiguration.versionSuffix}.js"></script>
 
 <link href="${structurizrConfiguration.cdnUrl}/css/structurizr-diagram.css" rel="stylesheet" media="screen" />
@@ -72,6 +71,13 @@
         </c:if>
 
         <div id="diagramNavigation" style="padding-top: 15px"></div>
+
+        <div class="centered" style="margin-bottom: 20px">
+            <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon.svg" class="icon-sm" />
+            <a id="renderingModeLightLink" href="">Light</a> |
+            <a id="renderingModeDarkLink" href="">Dark</a> |
+            <a id="renderingModeSystemLink" href="">System</a>
+        </div>
     </div>
 
     <div class="col-sm-10" style="padding: 0">
@@ -153,6 +159,30 @@
     structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
     structurizr.ui.DEFAULT_FONT_URL = 'https://fonts.googleapis.com/css?family=Open+Sans:400,700';
 
+    $('#renderingModeLightLink').click(function(event) {
+        event.preventDefault();
+        structurizr.ui.setRenderingMode(structurizr.ui.RENDERING_MODE_LIGHT);
+        structurizr.diagram.setDarkMode(structurizr.ui.isDarkMode());
+    });
+
+    $('#renderingModeDarkLink').click(function(event) {
+        event.preventDefault();
+        structurizr.ui.setRenderingMode(structurizr.ui.RENDERING_MODE_DARK);
+        structurizr.diagram.setDarkMode(structurizr.ui.isDarkMode());
+    });
+
+    $('#renderingModeSystemLink').click(function(event) {
+        event.preventDefault();
+        structurizr.ui.setRenderingMode(structurizr.ui.RENDERING_MODE_SYSTEM);
+        structurizr.diagram.setDarkMode(structurizr.ui.isDarkMode());
+    });
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        if (structurizr.ui.getRenderingMode() === structurizr.ui.RENDERING_MODE_SYSTEM) {
+            structurizr.diagram.setDarkMode(structurizr.ui.isDarkMode());
+        }
+    });
+
     var embed = ${embed};
     var diagramSelector = ${showDiagramSelector eq true};
     var views;
@@ -192,7 +222,7 @@
 
         structurizr.diagram = new structurizr.ui.Diagram('diagram', ${workspace.editable}, diagramCreated);
         structurizr.diagram.setEmbedded(${embed});
-        setDarkMode(document.cookie.indexOf(DARK_MODE_COOKIE_NAME + '=true') > -1);
+        structurizr.diagram.setDarkMode(structurizr.ui.isDarkMode());
 
         structurizr.diagram.setTooltip(tooltip);
         structurizr.diagram.setLasso(lasso);
@@ -661,24 +691,6 @@
 
         if (structurizr.ui.isFullScreenEnabled()) {
             $('#enterPresentationModeButton').removeClass('hidden');
-        }
-    }
-
-    function toggleDarkMode() {
-        setDarkMode(!structurizr.diagram.isDarkMode());
-    }
-
-    function setDarkMode(bool) {
-        if (bool) {
-            structurizr.diagram.setDarkMode(true);
-            document.cookie = DARK_MODE_COOKIE_NAME + '=true; expires=31 Dec 2029 23:59:59 UTC; path=/';
-            $('#darkModeOnButton').addClass('hidden');
-            $('#darkModeOffButton').removeClass('hidden');
-        } else {
-            structurizr.diagram.setDarkMode(false);
-            document.cookie = DARK_MODE_COOKIE_NAME + '=; expires=01 Jan 1970 00:00:00 UTC; path=/';
-            $('#darkModeOnButton').removeClass('hidden');
-            $('#darkModeOffButton').addClass('hidden');
         }
     }
 

@@ -1,6 +1,11 @@
 structurizr.ui.DEFAULT_FONT_NAME = "Arial";
 structurizr.ui.DEFAULT_FONT_URL = undefined;
 
+structurizr.ui.RENDERING_MODE_COOKIE_NAME = 'structurizr.renderingMode';
+structurizr.ui.RENDERING_MODE_SYSTEM = '';
+structurizr.ui.RENDERING_MODE_LIGHT = 'light';
+structurizr.ui.RENDERING_MODE_DARK = 'dark';
+
 structurizr.ui.themes = [];
 structurizr.ui.ignoredImages = [];
 
@@ -596,5 +601,66 @@ structurizr.ui.exitFullScreen = function() {
         document.mozCancelFullScreen();
     } else if (document.webkitExitFullscreen) {
         document.webkitExitFullscreen();
+    }
+};
+
+const darkModeStylesheetLink = document.createElement('link');
+
+structurizr.ui.initDarkMode = function(stylesheet) {
+    darkModeStylesheetLink.setAttribute('rel', 'stylesheet');
+    darkModeStylesheetLink.setAttribute('type', 'text/css');
+    darkModeStylesheetLink.setAttribute('href', stylesheet);
+
+    structurizr.ui.changeRenderingMode();
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        if (structurizr.ui.getRenderingMode() === structurizr.ui.RENDERING_MODE_SYSTEM) {
+            structurizr.ui.changeRenderingMode();
+        }
+    });
+};
+
+structurizr.ui.changeRenderingMode = function() {
+    try {
+        if (structurizr.ui.isDarkMode()) {
+            document.head.appendChild(darkModeStylesheetLink);
+        } else {
+            document.head.removeChild(darkModeStylesheetLink);
+        }
+    } catch (e) {
+        // ignore
+    }
+};
+
+structurizr.ui.setRenderingMode = function(renderingMode) {
+    const nextYear = new Date();
+    nextYear.setFullYear(nextYear.getFullYear() + 1);
+
+    document.cookie = structurizr.ui.RENDERING_MODE_COOKIE_NAME + '=' + renderingMode + '; expires=' + nextYear.toUTCString() + '; path=/';
+    structurizr.ui.changeRenderingMode();
+};
+
+structurizr.ui.getRenderingMode = function() {
+    if (document.cookie.indexOf(structurizr.ui.RENDERING_MODE_COOKIE_NAME + '=' + structurizr.ui.RENDERING_MODE_LIGHT) > -1) {
+        return structurizr.ui.RENDERING_MODE_LIGHT;
+    } else if (document.cookie.indexOf(structurizr.ui.RENDERING_MODE_COOKIE_NAME + '=' + structurizr.ui.RENDERING_MODE_DARK) > -1) {
+        return structurizr.ui.RENDERING_MODE_DARK;
+    } else {
+        return structurizr.ui.RENDERING_MODE_SYSTEM;
+    }
+};
+
+structurizr.ui.isDarkMode = function() {
+    const renderingMode = structurizr.ui.getRenderingMode();
+
+    if (renderingMode === structurizr.ui.RENDERING_MODE_DARK) {
+        // forced dark mode
+        return true;
+    } else if (renderingMode === structurizr.ui.RENDERING_MODE_LIGHT) {
+        // forced light mode
+        return false;
+    } else {
+        // use system rendering mode
+        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
     }
 };

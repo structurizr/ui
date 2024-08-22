@@ -1,7 +1,5 @@
 <%@ include file="/WEB-INF/fragments/workspace/javascript.jspf" %>
 
-<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-ui${structurizrConfiguration.versionSuffix}.js"></script>
-
 <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
 <%@ include file="/WEB-INF/fragments/quick-navigation.jspf" %>
 

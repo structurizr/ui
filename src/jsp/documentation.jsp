@@ -3,7 +3,6 @@
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-embed.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-content${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-documentation${structurizrConfiguration.versionSuffix}.js"></script>
-<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-ui${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/markdown-it-13.0.1.min.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/katex-0.16.4.min.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/asciidoctor-2.2.6.min.js"></script>
@@ -47,6 +46,13 @@
 
             <div class="navigationItem">
                 <a id="exportLink" href="" class="hidden"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/filetype-html.svg" class="icon-sm" /> Export to offline HTML page</a>
+            </div>
+
+            <div class="navigationItem">
+                <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon.svg" class="icon-sm" />
+                <a id="renderingModeLightLink" href="">Light</a> |
+                <a id="renderingModeDarkLink" href="">Dark</a> |
+                <a id="renderingModeSystemLink" href="">System</a>
             </div>
 
             <div id="documentationMetadata">
@@ -330,6 +336,21 @@
         rewriteInternalWorkspaceLinks();
         assignSectionNumbers();
         renderNavigation();
+
+        $('#renderingModeLightLink').click(function(event) {
+            event.preventDefault();
+            structurizr.ui.setRenderingMode(structurizr.ui.RENDERING_MODE_LIGHT);
+        });
+
+        $('#renderingModeDarkLink').click(function(event) {
+            event.preventDefault();
+            structurizr.ui.setRenderingMode(structurizr.ui.RENDERING_MODE_DARK);
+        });
+
+        $('#renderingModeSystemLink').click(function(event) {
+            event.preventDefault();
+            structurizr.ui.setRenderingMode(structurizr.ui.RENDERING_MODE_SYSTEM);
+        });
 
         if (window.location.hash !== undefined) {
             scrollToHash();

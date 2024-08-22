@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
 
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/d3-7.8.2.min.js"></script>
-<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-ui${structurizrConfiguration.versionSuffix}.js"></script>
 
 <div id="exploreTreePanel" style="overflow-y: scroll">
 

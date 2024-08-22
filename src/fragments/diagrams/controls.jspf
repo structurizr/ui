@@ -41,8 +41,6 @@
             <button id="showDiagramScopeOffButton" class="btn btn-default hidden" title="Toggle diagram scope off"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/pin-map-fill.svg" class="icon-btn" /></button>
             <button id="healthOnButton" class="btn btn-default hidden" title="Health checks"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/heart-pulse.svg" class="icon-btn" /></button>
             <button id="healthOffButton" class="btn btn-default hidden" title="Health checks"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/heart-pulse-fill.svg" class="icon-btn" /></button>
-            <button id="darkModeOnButton" class="btn btn-default" title="Dark mode on"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon.svg" class="icon-btn" /></button>
-            <button id="darkModeOffButton" class="btn btn-default hidden" title="Dark mode off"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon-fill.svg" class="icon-btn" /></button>
             <button id="explorationsButton" class="btn btn-default hidden" title="Explore"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/diagram-3.svg" class="icon-btn" /></button>
         </div>
         <script nonce="${scriptNonce}">
@@ -57,8 +55,6 @@
             $('#showDiagramScopeOffButton').click(function() { showDiagramScope(false); });
             $('#healthOnButton').click(function() { showHealth(true); });
             $('#healthOffButton').click(function() { showHealth(false); });
-            $('#darkModeOnButton').click(function() { toggleDarkMode(); });
-            $('#darkModeOffButton').click(function() { toggleDarkMode(); });
         </script>
 
         <div class="btn-group">

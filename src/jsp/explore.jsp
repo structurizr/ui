@@ -1,8 +1,6 @@
 <%@ include file="/WEB-INF/fragments/workspace/javascript.jspf" %>
 <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
 
-<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-ui${structurizrConfiguration.versionSuffix}.js"></script>
-
 <div class="section">
     <div class="container centered">
         <h1>Explore</h1>
