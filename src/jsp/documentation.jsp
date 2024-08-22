@@ -340,16 +340,19 @@
         $('#renderingModeLightLink').click(function(event) {
             event.preventDefault();
             structurizr.ui.setRenderingMode(structurizr.ui.RENDERING_MODE_LIGHT);
+            setDarkModeOnEmbeddedDiagrams();
         });
 
         $('#renderingModeDarkLink').click(function(event) {
             event.preventDefault();
             structurizr.ui.setRenderingMode(structurizr.ui.RENDERING_MODE_DARK);
+            setDarkModeOnEmbeddedDiagrams();
         });
 
         $('#renderingModeSystemLink').click(function(event) {
             event.preventDefault();
             structurizr.ui.setRenderingMode(structurizr.ui.RENDERING_MODE_SYSTEM);
+            setDarkModeOnEmbeddedDiagrams();
         });
 
         if (window.location.hash !== undefined) {
@@ -390,6 +393,16 @@
         rendered = false;
 
         setTimeout(checkDiagramsRendered, 500);
+    }
+
+    function setDarkModeOnEmbeddedDiagrams() {
+        const embeddedDiagrams = $('#documentationContent iframe.structurizrEmbed');
+        embeddedDiagrams.each(function (index) {
+            var iframe = embeddedDiagrams[index];
+            if (iframe.contentWindow.structurizr && iframe.contentWindow.structurizr.diagram) {
+                iframe.contentWindow.structurizr.diagram.setDarkMode(structurizr.ui.isDarkMode());
+            }
+        });
     }
 
     function renderNavigation() {
