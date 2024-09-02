@@ -17,7 +17,7 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
         this.#agent = agent;
 
         if (this.#agent === undefined || this.#agent.length === 0) {
-            this.#agent = 'structurizr-javascript';
+            this.#agent = 'structurizr-ui';
         }
 
         if (apiUrl !== undefined) {
@@ -25,16 +25,22 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
         }
     }
 
-    getWorkspace(version, callback) {
+    getWorkspace(branch, version, callback) {
         const self = this;
         const contentMd5 = CryptoJS.MD5("");
         const contentType = '';
         const nonce = new Date().getTime();
 
-        const content = "GET" + "\n" + this.#getPath() + "/workspace/" + this.#workspaceId + "\n" + contentMd5 + "\n" + contentType + "\n" + nonce + "\n";
+        var branchPath;
+        if (branch === undefined || branch === '') {
+            branchPath = '';
+        } else {
+            branchPath = '/branch/' + branch;
+        }
+        const content = "GET" + "\n" + this.#getPath() + "/workspace/" + this.#workspaceId + branchPath + "\n" + contentMd5 + "\n" + contentType + "\n" + nonce + "\n";
         const hmac = CryptoJS.HmacSHA256(content, this.#apiSecret).toString(CryptoJS.enc.Hex);
 
-        var url = this.#apiUrl + "/workspace/" + this.#workspaceId;
+        var url = this.#apiUrl + "/workspace/" + this.#workspaceId + branchPath;
         if (version !== undefined && version.trim().length > 0) {
             url = url + '?version=' + version;
         }
@@ -82,7 +88,7 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
             });
     }
 
-    putWorkspace(workspace, callback) {
+    putWorkspace(branch, workspace, callback) {
         var self = this;
         workspace.revision = this.#revision; // send back the current revision
         workspace.lastModifiedDate = new Date().toISOString();
@@ -94,15 +100,22 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
         const contentType = 'application/json; charset=UTF-8';
         const nonce = new Date().getTime();
 
+        var branchPath;
+        if (branch === undefined || branch === '') {
+            branchPath = '';
+        } else {
+            branchPath = '/branch/' + branch;
+        }
+
         const content = "PUT" + "\n" +
-            this.#getPath() + "/workspace/" + this.#workspaceId + "\n" +
+            this.#getPath() + "/workspace/" + this.#workspaceId + branchPath + "\n" +
             contentMd5 + "\n" +
             contentType + "\n" +
             nonce + "\n";
         const hmac = CryptoJS.HmacSHA256(content, this.#apiSecret).toString(CryptoJS.enc.Hex);
 
         $.ajax({
-            url: this.#apiUrl + "/workspace/" + this.#workspaceId,
+            url: this.#apiUrl + "/workspace/" + this.#workspaceId + branchPath,
             type: "PUT",
             contentType: contentType,
             cache: false,
