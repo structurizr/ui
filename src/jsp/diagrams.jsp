@@ -66,12 +66,12 @@
     <div id="diagramNavigationPanel" class="col-sm-2 hidden-xs hidden-sm <c:if test="${embed eq true}">hidden</c:if>">
         <c:if test="${not empty workspace.branch}">
             <div class="centered" style="margin-top: 20px;">
-                <span class="label label-version"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/bezier2.svg" class="icon-sm icon-white" /> ${workspace.branch}</span>
+                <span class="label label-version" style="font-size: 15px"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/bezier2.svg" class="icon-sm icon-white" /> ${workspace.branch}</span>
             </div>
         </c:if>
         <c:if test="${not empty param.version}">
         <div class="centered" style="margin-top: 20px;">
-            <span class="label label-version"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/clock-history.svg" class="icon-sm icon-white" /> ${workspace.internalVersion}</span>
+            <span class="label label-version" style="font-size: 15px"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/clock-history.svg" class="icon-sm icon-white" /> ${workspace.internalVersion}</span>
         </div>
         </c:if>
 
