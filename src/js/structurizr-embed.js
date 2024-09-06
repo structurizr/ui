@@ -57,7 +57,7 @@ structurizr.ui.Embed = function() {
                 width: window.innerWidth
             };
 
-            const iframe = document.getElementById(embed.elementId);
+            const iframe = getElement(embed.elementId);
             if (iframe) {
                 const parentNode = iframe.parentNode;
                 if (parentNode) {
@@ -74,7 +74,7 @@ structurizr.ui.Embed = function() {
     this.resizeEmbeddedDiagrams = function () {
         Object.keys(embeds).forEach(function(key) {
             const embed = embeds[key];
-            const iframe = document.getElementById(embed.elementId);
+            const iframe = getElement(embed.elementId);
             if (iframe) {
                 const parentNode = iframe.parentNode;
                 if (parentNode) {
@@ -87,7 +87,7 @@ structurizr.ui.Embed = function() {
     };
 
     var resizeHandler = function(embed) {
-        var iframe = document.getElementById(embed.elementId);
+        var iframe = getElement(embed.elementId);
         var parentNode = iframe.parentNode;
         if (parentNode) {
             var width = embed.width;
@@ -112,6 +112,34 @@ structurizr.ui.Embed = function() {
             iframe.width = width + "px";
             iframe.height = height + "px";
         }
+    }
+
+    function getElement(id) {
+        var element = document.getElementById(id);
+
+        if (element) {
+            return element;
+        } else {
+            return findElement(id, document);
+        }
+    }
+
+    function findElement(id, node) {
+        if (node.shadowRoot) {
+            const element = node.shadowRoot.getElementById(id);
+            if (element) {
+                return element;
+            }
+        }
+
+        for (const child of node.children) {
+            const element = findElement(id, child);
+            if (element) {
+                return element;
+            }
+        }
+
+        return null;
     }
 
     this.onResize = function(handler) {
