@@ -21,6 +21,21 @@
     <div class="col-sm-2" style="padding-left: 30px">
         <div id="documentationNavigationPanel" class="hidden-xs">
 
+            <c:if test="${not empty workspace.branch || not empty param.version}">
+                <div style="margin-top: 20px">
+                    <c:if test="${not empty workspace.branch}">
+                        <div style="margin-bottom: 10px;">
+                            <span class="label label-branch"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/bezier2.svg" class="icon-sm icon-white" /> ${workspace.branch}</span>
+                        </div>
+                    </c:if>
+                    <c:if test="${not empty param.version}">
+                        <div style="margin-bottom: 10px;">
+                            <span class="label label-version"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/clock-history.svg" class="icon-sm icon-white" /> ${workspace.internalVersion}</span>
+                        </div>
+                    </c:if>
+                </div>
+            </c:if>
+
             <div id="documentationNavigation"></div>
 
             <div class="navigationItemSeparator"></div>

@@ -179,9 +179,11 @@ a {
 }
 .label-branch {
     background: #08427B;
+    font-size: 13px;
 }
 .label-version {
     background: #85BBF0;
+    font-size: 13px;
 }
 
 th {
