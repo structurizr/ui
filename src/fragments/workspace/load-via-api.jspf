@@ -12,12 +12,12 @@
         "${workspace.id}",
         "${workspace.apiKey}",
         "${workspace.apiSecret}",
+        "${workspace.branch}",
         username,
         agent
     );
 
     structurizrApiClient.getWorkspace(
-        "<c:out value="${workspace.branch}" />",
         "<c:out value="${workspace.internalVersion}" />",
         function(response) {
             if (response.success) {
@@ -48,14 +48,14 @@
             try {
                 const encryptedWorkspace = structurizrEncryptionStrategy.encrypt(workspace);
                 if (encryptedWorkspace) {
-                    structurizrApiClient.putWorkspace("<c:out value="${workspace.branch}" />", encryptedWorkspace, callback);
+                    structurizrApiClient.putWorkspace(encryptedWorkspace, callback);
                 }
             } catch (e) {
                 console.error(e);
                 alert("Workspace " + id + " could not be saved - " + e);
             }
         } else {
-            structurizrApiClient.putWorkspace("<c:out value="${workspace.branch}" />", workspace, callback);
+            structurizrApiClient.putWorkspace(workspace, callback);
         }
     };
 </script>

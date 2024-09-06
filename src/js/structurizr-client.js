@@ -4,15 +4,17 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
     #workspaceId;
     #apiKey;
     #apiSecret;
+    #branch;
     #username;
     #agent;
 
     #revision;
 
-    constructor(apiUrl, workspaceId, apiKey, apiSecret, username, agent) {
+    constructor(apiUrl, workspaceId, apiKey, apiSecret, branch, username, agent) {
         this.#workspaceId = workspaceId;
         this.#apiKey = apiKey;
         this.#apiSecret = apiSecret;
+        this.#branch = branch;
         this.#username = username;
         this.#agent = agent;
 
@@ -25,17 +27,17 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
         }
     }
 
-    getWorkspace(branch, version, callback) {
+    getWorkspace(version, callback) {
         const self = this;
         const contentMd5 = CryptoJS.MD5("");
         const contentType = '';
         const nonce = new Date().getTime();
 
         var branchPath;
-        if (branch === undefined || branch === '') {
+        if (this.#branch === undefined || this.#branch === '') {
             branchPath = '';
         } else {
-            branchPath = '/branch/' + branch;
+            branchPath = '/branch/' + this.#branch;
         }
         const content = "GET" + "\n" + this.#getPath() + "/workspace/" + this.#workspaceId + branchPath + "\n" + contentMd5 + "\n" + contentType + "\n" + nonce + "\n";
         const hmac = CryptoJS.HmacSHA256(content, this.#apiSecret).toString(CryptoJS.enc.Hex);
@@ -88,7 +90,7 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
             });
     }
 
-    putWorkspace(branch, workspace, callback) {
+    putWorkspace(workspace, callback) {
         var self = this;
         workspace.revision = this.#revision; // send back the current revision
         workspace.lastModifiedDate = new Date().toISOString();
@@ -101,10 +103,10 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
         const nonce = new Date().getTime();
 
         var branchPath;
-        if (branch === undefined || branch === '') {
+        if (this.#branch === undefined || this.#branch === '') {
             branchPath = '';
         } else {
-            branchPath = '/branch/' + branch;
+            branchPath = '/branch/' + this.#branch;
         }
 
         const content = "PUT" + "\n" +
@@ -160,6 +162,10 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
             }
         });
     };
+
+    setBranch(branch) {
+        this.#branch = branch;
+    }
 
     #getPath() {
         if (this.#apiUrl === '/api') {

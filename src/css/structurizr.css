@@ -177,6 +177,9 @@ a {
 .label-primary {
     background: #1168BD;
 }
+.label-branch {
+    background: #08427B;
+}
 .label-version {
     background: #85BBF0;
 }
