@@ -50,11 +50,6 @@
             </div>
 
             <div id="documentationMetadata">
-                <c:if test="${not empty param.version}">
-                    <div style="margin-bottom: 10px">
-                        <span class="label label-version" style="font-size: 11px"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/clock-history.svg" class="icon-xs icon-white" /> ${workspace.internalVersion}</span>
-                    </div>
-                </c:if>
                 <span id="lastModifiedDate"></span>
                 <c:if test="${not empty workspace.version}">
                     <br />
@@ -171,7 +166,7 @@
         }
 
         structurizr.ui.applyBranding();
-        $('#brandingLogoAnchor').attr('href', '<c:out value="${urlPrefix}" />');
+        $('#brandingLogoAnchor').attr('href', '<c:out value="${urlPrefix}" /><c:out value="${urSuffix}" />');
         progressMessage.hide();
     }
 
