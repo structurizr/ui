@@ -5,7 +5,7 @@
     <div class="container centered">
         <h1>Explore</h1>
 
-        <a href="${urlPrefix}/explore/model<c:out value="${urlSuffix}" />">Model</a>
+        <a href="${urlPrefix}/explore/model<c:out value="${urlSuffix}" escapeXml="false" />">Model</a>
         <br />
         <br />
 
@@ -26,7 +26,7 @@
             var html = '';
 
             views.forEach(function(view) {
-                var diagramUrl = '<c:out value="${urlPrefix}" />/diagrams<c:out value="${urlSuffix}" />#' + structurizr.util.escapeHtml(view.key);
+                var diagramUrl = '<c:out value="${urlPrefix}" />/diagrams<c:out value="${urlSuffix}" escapeXml="false" />#' + structurizr.util.escapeHtml(view.key);
                 var graphUrl;
                 var treeUrl;
 
@@ -37,7 +37,7 @@
                     view.type === structurizr.constants.CONTAINER_VIEW_TYPE ||
                     view.type === structurizr.constants.COMPONENT_VIEW_TYPE ||
                     view.type === structurizr.constants.DEPLOYMENT_VIEW_TYPE) {
-                    treeUrl = '<c:out value="${urlPrefix}" />/explore/tree<c:out value="${urlSuffix}" />#' + structurizr.util.escapeHtml(view.key);
+                    treeUrl = '<c:out value="${urlPrefix}" />/explore/tree<c:out value="${urlSuffix}" escapeXml="false" />#' + structurizr.util.escapeHtml(view.key);
                 }
 
                 if (
@@ -46,7 +46,7 @@
                     view.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE ||
                     view.type === structurizr.constants.CONTAINER_VIEW_TYPE ||
                     view.type === structurizr.constants.COMPONENT_VIEW_TYPE) {
-                    graphUrl = '<c:out value="${urlPrefix}" />/explore/graph<c:out value="${urlSuffix}" />#' + structurizr.util.escapeHtml(view.key);
+                    graphUrl = '<c:out value="${urlPrefix}" />/explore/graph<c:out value="${urlSuffix}" escapeXml="false" />#' + structurizr.util.escapeHtml(view.key);
                 }
 
                 if (graphUrl !== undefined || treeUrl !== undefined) {

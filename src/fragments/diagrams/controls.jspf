@@ -13,7 +13,7 @@
                 </c:otherwise>
             </c:choose>
             <button id="workspaceSummaryButton" class="btn btn-default" title="Workspace summary"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/folder.svg" class="icon-btn" /></button>
-            <script nonce="${scriptNonce}">$('#workspaceSummaryButton').click(function() { window.location.href='<c:out value="${urlPrefix}" /><c:out value="${urlSuffix}" />'; });</script>
+            <script nonce="${scriptNonce}">$('#workspaceSummaryButton').click(function() { window.location.href='<c:out value="${urlPrefix}" /><c:out value="${urlSuffix}" escapeXml="false" />'; });</script>
             </c:if>
             <c:if test="${structurizrConfiguration.type eq 'lite'}">
             <button id="homeButton" class="btn btn-default" title="Home"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/house.svg" class="icon-btn" /></button>
@@ -93,7 +93,7 @@
         <div id="editDiagramButton" class="btn-group">
             <button class="btn btn-primary" title="Edit diagram"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/pencil.svg" class="icon-btn icon-white" /></button>
         </div>
-        <script nonce="${scriptNonce}">$('#editDiagramButton').click(function() { window.location.href='/workspace/${workspace.id}/diagram-editor<c:out value="${urlSuffix}" />#' + window.location.hash.substring(1); });</script>
+        <script nonce="${scriptNonce}">$('#editDiagramButton').click(function() { window.location.href='/workspace/${workspace.id}/diagram-editor<c:out value="${urlSuffix}" escapeXml="false" />#' + window.location.hash.substring(1); });</script>
         </c:if>
     </div>
 </div>

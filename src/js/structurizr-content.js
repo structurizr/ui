@@ -1,7 +1,7 @@
 // this code renders the following items in Markdown/AsciiDoc documentation:
 // - images that are embedded in the workspace (as base64 data uris)
 // - diagrams from the workspace (as iframe embeds)
-structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix, safeMode) {
+structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, safeMode) {
 
     const MAX_HEIGHT_PERCENTAGE = 0.6;
     var images = workspace.documentation.images;
@@ -100,7 +100,10 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, urlSuffix,
         if (view) {
             // embed the specified diagram
             var id = 'structurizrEmbed' + (++embedIndex);
-            var embedUrl = '/embed' + '?workspace=' + workspace.id + '&view=' + encodeURIComponent(diagramIdentifier) + '&perspective=' + encodeURIComponent(perspective) + '&type=' + type + '&iframe=' + id + '&urlPrefix=' + urlPrefix + '&urlSuffix=' + encodeURIComponent(urlSuffix);
+            const urlParams = new URLSearchParams(window.location.search);
+            const branch = urlParams.get('branch');
+            const version = urlParams.get('version');
+            var embedUrl = '/embed' + '?workspace=' + workspace.id + '&view=' + encodeURIComponent(diagramIdentifier) + '&perspective=' + encodeURIComponent(perspective) + '&type=' + type + '&iframe=' + id + '&urlPrefix=' + urlPrefix + '&branch=' + branch + '&version=' + version;
 
             return '<div style="text-align: center"><iframe id="' + id + '" class="structurizrEmbed thumbnail" src="' + embedUrl + '" width="100%" height="' + (window.innerHeight * MAX_HEIGHT_PERCENTAGE) + 'px" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>' + '</div>';
         } else {

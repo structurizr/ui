@@ -121,7 +121,6 @@
                 structurizr.workspace,
                 '${structurizrConfiguration.cdnUrl}',
                 '<c:out value="${urlPrefix}" />',
-                '<c:out value="${urlSuffix}" />',
                 ${structurizrConfiguration.safeMode});
 
             initDecisionScopeAndOrder();
@@ -263,7 +262,7 @@
 
             if (elementId === '*') {
                 scope = '*';
-                const uri = '<c:out value="${urlPrefix}" />/decisions<c:out value="${urlSuffix}" />';
+                const uri = '<c:out value="${urlPrefix}" />/decisions<c:out value="${urlSuffix}" escapeXml="false" />';
                 documentationNavigation.append('<div class="decisionNavigationLink decisionNavigationHeading"><a href="' + uri + '">' + structurizr.util.escapeHtml(structurizr.workspace.name) + '</a></div>');
                 decisionLogNavigationDropDown.append(
                     $('<option></option>').val(uri).html('Workspace] ' + structurizr.util.escapeHtml(structurizr.workspace.name))
@@ -272,7 +271,7 @@
             } else {
                 var element = structurizr.workspace.findElementById(elementId);
                 scope = toScope(element);
-                const uri = '<c:out value="${urlPrefix}" />/decisions/' + encodeURI(scope) + '<c:out value="${urlSuffix}" />';
+                const uri = '<c:out value="${urlPrefix}" />/decisions/' + encodeURI(scope) + '<c:out value="${urlSuffix}" escapeXml="false" />';
 
                 documentationNavigation.append('<div class="decisionNavigationLink decisionNavigationHeading"><a href="' + uri + '">' + structurizr.util.escapeHtml(element.name) + '</a></div>');
                 decisionLogNavigationDropDown.append(
@@ -386,7 +385,7 @@
                 const elementId = elementsWithDecisions[0];
                 const element = structurizr.workspace.findElementById(elementId);
                 const scope = toScope(element);
-                window.location.href = '<c:out value="${urlPrefix}" />/decisions/' + encodeURI(scope) + '<c:out value="${urlSuffix}" />';
+                window.location.href = '<c:out value="${urlPrefix}" />/decisions/' + encodeURI(scope) + '<c:out value="${urlSuffix}" escapeXml="false" />';
                 return;
             } else {
                 showNoDecisionsPage();
@@ -483,7 +482,7 @@
             href = decodeURIComponent(href);
             if (href.indexOf(structurizr.constants.INTRA_WORKSPACE_URL_PREFIX) === 0) {
                 // convert {workspace}/doc... to /workspace/1234/doc...
-                href = '<c:out value="${urlPrefix}" />' + href.substring(structurizr.constants.INTRA_WORKSPACE_URL_PREFIX.length) + '<c:out value="${urlSuffix}" />';
+                href = '<c:out value="${urlPrefix}" />' + href.substring(structurizr.constants.INTRA_WORKSPACE_URL_PREFIX.length) + '<c:out value="${urlSuffix}" escapeXml="false" />';
                 $(this).attr('href', href)
             }
         });
