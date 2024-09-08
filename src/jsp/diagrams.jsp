@@ -645,12 +645,26 @@
     }
 
     function openCurrentDiagramInNewWindow() {
-        var hash = window.location.hash;
+        const hash = window.location.hash;
+        var url = '<c:out value="${urlPrefix}" />/diagrams<c:out value="${urlSuffix}" escapeXml="false" />';
+        var diagramIdentifier = '';
+        const perspective = '<c:out value="${perspective}" />';
+
         if (hash === undefined || hash.trim().length === 0) {
-            window.open('<c:out value="${urlPrefix}" />/diagrams<c:out value="${urlSuffix}" escapeXml="false" />#<c:out value="${diagramIdentifier}" />');
+            diagramIdentifier = '<c:out value="${diagramIdentifier}" />';
         } else {
-            window.open('<c:out value="${urlPrefix}" />/diagrams<c:out value="${urlSuffix}" escapeXml="false" />#' + window.location.hash.substring(1))
+            diagramIdentifier = window.location.hash.substring(1);
         }
+
+        if (perspective.length > 0) {
+            if (url.indexOf('?') === -1) {
+                url = url + '?perspective=' + perspective;
+            } else {
+                url = url + '&perspective=' + perspective;
+            }
+        }
+
+        window.open(url + '#' + diagramIdentifier);
     }
 
     function initSizing() {
