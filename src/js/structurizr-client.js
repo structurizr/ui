@@ -8,8 +8,6 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
     #username;
     #agent;
 
-    #revision;
-
     constructor(apiUrl, workspaceId, apiKey, apiSecret, branch, username, agent) {
         this.#workspaceId = workspaceId;
         this.#apiKey = apiKey;
@@ -28,7 +26,6 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
     }
 
     getWorkspace(version, callback) {
-        const self = this;
         const contentMd5 = CryptoJS.MD5("");
         const contentType = '';
         const nonce = new Date().getTime();
@@ -59,8 +56,6 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
             dataType: 'json'
         })
             .done(function(json) {
-                self.#revision = json.revision;
-
                 if (callback) {
                     callback(
                         {
@@ -91,8 +86,6 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
     }
 
     putWorkspace(workspace, callback) {
-        var self = this;
-        workspace.revision = this.#revision; // send back the current revision
         workspace.lastModifiedDate = new Date().toISOString();
         workspace.lastModifiedAgent = this.#agent;
         workspace.lastModifiedUser = this.#username;
@@ -132,10 +125,6 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
             data: jsonAsString
         })
         .done(function(data, textStatus, jqXHR) {
-            if (data.revision) {
-                self.#revision = data.revision;
-                workspace.revision = data.revision;
-            }
             if (callback) {
                 callback(
                     {
@@ -188,10 +177,6 @@ structurizr.io.StructurizrApiClient = class StructurizrApiClient {
 
             return path;
         }
-    }
-
-    resetRevision() {
-        this.#revision = undefined;
     }
 
 }
