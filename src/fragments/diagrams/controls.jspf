@@ -99,7 +99,7 @@
 </div>
 
 <c:if test="${workspace.editable}">
-<div class="form-inline" style="margin-top: 8px;">
+<div class="form-inline">
     <div class="form-group">
         <span id="diagramEditButtons">
 
