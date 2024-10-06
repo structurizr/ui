@@ -114,8 +114,6 @@
     }
 
     function init() {
-        resize();
-
         if (structurizr.workspace.hasDecisions()) {
             contentRenderer = new structurizr.ui.ContentRenderer(
                 structurizr.workspace,
@@ -166,6 +164,7 @@
 
         structurizr.ui.applyBranding();
         $('#brandingLogoAnchor').attr('href', '<c:out value="${urlPrefix}" /><c:out value="${urSuffix}" />');
+        resize();
         progressMessage.hide();
     }
 
@@ -534,7 +533,9 @@
         const contentHeight = (window.innerHeight - topNavigationHeight - padding);
         $('#documentationPanel').css('height', contentHeight + 'px');
         documentationNavigationPanel.css('height', contentHeight + 'px');
+
         structurizr.embed.setMaxHeight(0.8 * contentHeight);
+        $('.img-thumbnail').css('max-height', 0.8 * contentHeight);
 
         if (graph !== undefined && $('#graphContent').is(':visible')) {
             resizeGraph();

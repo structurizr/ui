@@ -128,8 +128,6 @@
     }
 
     function init() {
-        resize();
-
         if (structurizr.workspace.hasDocumentation()) {
             contentRenderer = new structurizr.ui.ContentRenderer(
                 structurizr.workspace,
@@ -201,6 +199,7 @@
 
         structurizr.ui.applyBranding();
         $('#brandingLogoAnchor').attr('href', '<c:out value="${urlPrefix}" /><c:out value="${urSuffix}" />');
+        resize();
         progressMessage.hide();
     }
 
@@ -636,7 +635,10 @@
         }
         const documentationPanelHeight = (window.innerHeight - topNavigationHeight - padding - navigationDropDownHeight);
         $('#documentationPanel').css('height', documentationPanelHeight + 'px');
+
         structurizr.embed.setMaxHeight(0.8 * documentationPanelHeight);
+        $('.img-thumbnail').css('max-height', 0.8 * documentationPanelHeight);
+
         $('#documentationContent').css('margin-bottom', (0.75 * documentationPanelHeight) + 'px');
         $('#documentationNavigationPanel').css('height', (window.innerHeight - topNavigationHeight - padding) + 'px');
     }
