@@ -5,6 +5,21 @@
     border-style: none;
 }
 
+details.thumbnailGroup > summary:first-of-type {
+  display: list-item;
+  counter-increment: list-item 0;
+  list-style: inside disclosure-closed;
+}
+details.thumbnailGroup[open] > summary:first-of-type {
+  list-style-type: disclosure-open;
+}
+
+details.thumbnailGroup summary {
+  display: block;
+  unicode-bidi: isolate;
+  text-transform: capitalize;
+}
+
 .diagramThumbnail {
     cursor: pointer;
     margin: 0 0 40px 0;
