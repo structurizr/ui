@@ -125,18 +125,33 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, safeMode) 
             return renderEmbeddedDiagram(match[1]);
         }
 
-        var image = findImage(name);
-
         var imageTitle = '';
         if (alt) {
             imageTitle = '<div class="imageTitle">' + alt + '</div>';
         }
 
-        if (image) {
-            return '<div style="text-align: center"><img src="data:' + image.type + ';base64,' + image.content + '" alt="' + alt + '" class="img-thumbnail" />' + imageTitle + '</div>';
-        } else {
-            return '<div style="text-align: center"><img src="' + name + '" alt="' + alt + '" class="img-thumbnail" />' + imageTitle + '</div>';
+        // check for images of the form {workspace}/images (this is only supported by Lite)
+        const workspacePrefix = '%7Bworkspace%7D/images/';
+        if (name.indexOf(workspacePrefix) === 0) {
+            name = urlPrefix + '/images/' + name.substr(workspacePrefix.length);
+            return renderImageFromFile(name, alt, imageTitle);
         }
+
+        var image = findImage(name);
+
+        if (image) {
+            return renderImageFromBase64(image, alt, imageTitle);
+        } else {
+            return renderImageFromFile(name, alt, imageTitle);
+        }
+    }
+
+    function renderImageFromFile(name, alt, imageTitle) {
+        return '<div style="text-align: center"><img src="' + name + '" alt="' + alt + '" class="img-thumbnail" />' + imageTitle + '</div>';
+    }
+
+    function renderImageFromBase64(image, alt, imageTitle) {
+        return '<div style="text-align: center"><img src="data:' + image.type + ';base64,' + image.content + '" alt="' + alt + '" class="img-thumbnail" />' + imageTitle + '</div>';
     }
 
     function findImage(name) {
