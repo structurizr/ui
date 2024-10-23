@@ -106,7 +106,7 @@
 
     <c:choose>
     <c:when test="${review.type == 'General'}">
-    <a href="https://c4model.com/review/" target="_blank">Software architecture diagram review checklist</a>
+    <a href="https://c4model.com/diagrams/checklist" target="_blank">Software architecture diagram review checklist</a>
     </c:when>
         <c:when test="${review.type == 'Risk'}">
             <a href="https://riskstorming.com" target="_blank">Risk-storming</a>
