@@ -5550,7 +5550,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         });
 
         var dx = Math.floor(((diagramWidth - maxX) - minX)/2);
-        var dy = Math.floor(((diagramHeight - maxY) - minY)/2);
+        var dy = Math.floor(((diagramHeight - diagramMetadataHeight - maxY) - minY)/2);
 
         elements.forEach(function(cellView) {
             moveElement(cellView.model, dx, dy);
@@ -6013,7 +6013,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var contentArea = findContentArea(false, 0);
 
         var dx = Math.floor(((diagramWidth - contentArea.maxX) - contentArea.minX)/2);
-        var dy = Math.floor(((diagramHeight - contentArea.maxY) - contentArea.minY)/2);
+        var dy = Math.floor(((diagramHeight - diagramMetadataHeight - contentArea.maxY) - contentArea.minY)/2);
 
         cellViews.forEach(function(cellView) {
             moveElement(cellView.model, dx, dy);
