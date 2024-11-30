@@ -47,7 +47,7 @@ workspace "%s" "%s" {
             element "Container" {
                 background %s
             }
-                element "Database" {
+            element "Database" {
                 shape cylinder
             }
         }
