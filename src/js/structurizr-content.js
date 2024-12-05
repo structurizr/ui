@@ -103,7 +103,13 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, safeMode) 
             const urlParams = new URLSearchParams(window.location.search);
             const branch = urlParams.get('branch');
             const version = urlParams.get('version');
-            var embedUrl = '/embed' + '?workspace=' + workspace.id + '&view=' + encodeURIComponent(diagramIdentifier) + '&perspective=' + encodeURIComponent(perspective) + '&type=' + type + '&iframe=' + id + '&urlPrefix=' + urlPrefix + '&branch=' + branch + '&version=' + version;
+            var embedUrl = '/embed' + '?workspace=' + workspace.id + '&view=' + encodeURIComponent(diagramIdentifier) + '&perspective=' + encodeURIComponent(perspective) + '&type=' + type + '&iframe=' + id + '&urlPrefix=' + urlPrefix;
+            if (branch) {
+                embedUrl += '&branch=' + branch;
+            }
+            if (version) {
+                embedUrl += '&version=' + version;
+            }
 
             return '<div style="text-align: center"><iframe id="' + id + '" class="structurizrEmbed thumbnail" src="' + embedUrl + '" width="100%" height="' + (window.innerHeight * MAX_HEIGHT_PERCENTAGE) + 'px" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>' + '</div>';
         } else {
