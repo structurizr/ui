@@ -56,7 +56,11 @@ structurizr.ui.ContentRenderer = function(workspace, host, urlPrefix, safeMode) 
             });
 
             return '<div>' + content + '</div>';
-        } else {
+        }
+        else if (token.info === 'mermaid') {
+           return `<pre class="mermaid">${code}</pre>`
+        }
+        else {
             return default_fenced_code_block_renderer(tokens, idx, options, env, self)
         }
     };
