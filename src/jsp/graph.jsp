@@ -67,7 +67,7 @@
     progressMessage.show('<p>Loading workspace...</p>');
 
     function workspaceLoaded() {
-        structurizr.ui.loadThemes(function() {
+        structurizr.ui.loadThemes('${structurizrConfiguration.themesUrl}', function() {
             init();
         });
     }
