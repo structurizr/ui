@@ -5697,6 +5697,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         });
 
         paper.on('cell:pointerdown', function (cell, evt, x, y) {
+            window.focus();
+
             if (!cell.getConnectionLength) {
                 // an element has been clicked
                 if (self.hasElementsSelected()) {
@@ -5735,6 +5737,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         });
 
         paper.on('blank:pointerdown', function (evt, x, y) {
+            window.focus();
+
             if (evt.altKey === true) {
                 enableCanvasDragging();
             } else if (self.isEditable()) {
