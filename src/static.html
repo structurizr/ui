@@ -79,152 +79,156 @@
 <script type="text/javascript" src="./js/structurizr-tooltip.js"></script>
 
 <script>
-    const iframe = new URLSearchParams(window.location.search).get('iframe');
-
-    structurizr.ui.initDarkMode('./css/structurizr-static-dark.css');
-    structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
-    structurizr.ui.DEFAULT_FONT_URL = 'https://fonts.googleapis.com/css?family=Open+Sans:400,700';
-
     structurizr.workspace = new structurizr.Workspace(JSON.parse(decodeBase64(jsonAsString)));
-
-    $('#diagram').height($(window).innerHeight());
-
-    structurizr.diagram = new structurizr.ui.Diagram('diagram', false, function() {
-        structurizr.diagram.setDarkMode(structurizr.ui.isDarkMode());
-
-        window.onhashchange = function () {
-            hashChanged();
-        };
-
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (structurizr.ui.getRenderingMode() === structurizr.ui.RENDERING_MODE_SYSTEM) {
-                structurizr.diagram.setDarkMode(structurizr.ui.isDarkMode());
-            }
-        });
-
-        const hash = window.location.hash;
-        if (hash && hash.length > 1) {
-            const diagramIdentifier = decodeURIComponent(hash.substring(1)); // remove the # symbol
-            structurizr.diagram.changeView(diagramIdentifier);
-        } else {
-            var diagramIdentifier = structurizr.workspace.views.configuration.defaultView;
-
-            if (diagramIdentifier === undefined || diagramIdentifier === '') {
-                diagramIdentifier = structurizr.workspace.getViews()[0].key;
-            }
-
-            window.location.hash = '#' + diagramIdentifier;
-        }
+    structurizr.ui.loadThemes('https://static.structurizr.com/themes/', function() {
+        init();
     });
 
-    structurizr.diagram.resize();
-    structurizr.diagram.zoomToWidthOrHeight();
-    structurizr.diagram.setNavigationEnabled(true);
-    structurizr.diagram.onElementDoubleClicked(elementDoubleClicked);
-    structurizr.diagram.onRelationshipDoubleClicked(relationshipDoubleClicked);
-    structurizr.diagram.setTooltip(tooltip);
-    structurizr.diagram.onViewChanged(viewChanged);
+    function init() {
+        structurizr.ui.initDarkMode('./css/structurizr-static-dark.css');
+        structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
+        structurizr.ui.DEFAULT_FONT_URL = 'https://fonts.googleapis.com/css?family=Open+Sans:400,700';
 
-    structurizr.diagram.onkeydown(function(e) {
-        const leftArrow = 37;
-        const pageUp = 33;
-        const rightArrow = 39;
-        const pageDown = 34;
-        const upArrow = 38;
-        const downArrow = 40;
+        $('#diagram').height($(window).innerHeight());
 
-        if (structurizr.diagram.isNavigationEnabled()) {
-            if (e.which === leftArrow || e.which === upArrow || e.which === pageUp) {
-                navigateToPreviousDiagram();
-                e.preventDefault();
-            } else if (e.which === rightArrow || e.which === downArrow || e.which === pageDown) {
-                navigateToNextDiagram();
-                e.preventDefault();
-            }
-        }
-    });
+        structurizr.diagram = new structurizr.ui.Diagram('diagram', false, function () {
+            structurizr.diagram.setDarkMode(structurizr.ui.isDarkMode());
 
-    structurizr.diagram.onkeypress(function(e) {
-        const plus = 43;
-        const equals = 61;
-        const minus = 45;
-        const comma = 44;
-        const dot = 46;
-        const c = 99;
-        const d = 100;
-        const h = 104;
-        const i = 105;
-        const m = 109;
-        const t = 116;
-        const w = 119;
+            window.onhashchange = function () {
+                hashChanged();
+            };
 
-        if (e.which === comma) {
-            if (structurizr.diagram.currentViewIsDynamic() || structurizr.diagram.currentViewHasAnimation()) {
-                structurizr.diagram.stepBackwardInAnimation();
-                e.preventDefault();
-            }
-        } else if (e.which === dot) {
-            if (structurizr.diagram.currentViewIsDynamic() || structurizr.diagram.currentViewHasAnimation()) {
-                structurizr.diagram.stepForwardInAnimation();
-                e.preventDefault();
-            }
-        } else if (e.which === d) {
-            structurizr.diagram.toggleDescription();
-            e.preventDefault();
-        } else if (e.which === m) {
-            structurizr.diagram.toggleMetadata();
-            e.preventDefault();
-        } else if (e.which === plus || e.which === equals) {
-            structurizr.diagram.zoomIn();
-            e.preventDefault();
-        } else if (e.which === minus) {
-            structurizr.diagram.zoomOut();
-            e.preventDefault();
-        } else if (e.which === w) {
-            structurizr.diagram.zoomFitWidth();
-            e.preventDefault();
-        } else if (e.which === h) {
-            structurizr.diagram.zoomFitHeight();
-            e.preventDefault();
-        } else if (e.which === c) {
-            structurizr.diagram.zoomFitContent();
-            e.preventDefault();
-        } else if (e.which === i) {
-            if (structurizr.diagram.getCurrentView().type !== structurizr.constants.IMAGE_VIEW_TYPE) {
-                $('#diagramKey').html(structurizr.diagram.exportCurrentDiagramKeyToSVG());
-                $('#keyModal').modal('show');
-            }
-        } else if (e.which === t) {
-            toggleTooltip();
-        }
-    });
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                if (structurizr.ui.getRenderingMode() === structurizr.ui.RENDERING_MODE_SYSTEM) {
+                    structurizr.diagram.setDarkMode(structurizr.ui.isDarkMode());
+                }
+            });
 
-    document.getElementById('diagram-viewport').addEventListener('wheel', function(event) {
-            if (event.ctrlKey === true) {
-                if (event.wheelDelta > 0) {
-                    structurizr.diagram.zoomIn(event);
-                } else {
-                    structurizr.diagram.zoomOut(event);
+            const hash = window.location.hash;
+            if (hash && hash.length > 1) {
+                const diagramIdentifier = decodeURIComponent(hash.substring(1)); // remove the # symbol
+                structurizr.diagram.changeView(diagramIdentifier);
+            } else {
+                var diagramIdentifier = structurizr.workspace.views.configuration.defaultView;
+
+                if (diagramIdentifier === undefined || diagramIdentifier === '') {
+                    diagramIdentifier = structurizr.workspace.getViews()[0].key;
                 }
 
-                event.preventDefault();
-                event.stopPropagation();
+                window.location.hash = '#' + diagramIdentifier;
             }
-        },
-        {
-            passive: false
         });
 
-    $(window).resize(function() {
-        $('#diagram').height($(window).innerHeight());
         structurizr.diagram.resize();
         structurizr.diagram.zoomToWidthOrHeight();
+        structurizr.diagram.setNavigationEnabled(true);
+        structurizr.diagram.onElementDoubleClicked(elementDoubleClicked);
+        structurizr.diagram.onRelationshipDoubleClicked(relationshipDoubleClicked);
+        structurizr.diagram.setTooltip(tooltip);
+        structurizr.diagram.onViewChanged(viewChanged);
 
-        postDiagramAspectRatioToParentWindow();
-    });
+        structurizr.diagram.onkeydown(function (e) {
+            const leftArrow = 37;
+            const pageUp = 33;
+            const rightArrow = 39;
+            const pageDown = 34;
+            const upArrow = 38;
+            const downArrow = 40;
+
+            if (structurizr.diagram.isNavigationEnabled()) {
+                if (e.which === leftArrow || e.which === upArrow || e.which === pageUp) {
+                    navigateToPreviousDiagram();
+                    e.preventDefault();
+                } else if (e.which === rightArrow || e.which === downArrow || e.which === pageDown) {
+                    navigateToNextDiagram();
+                    e.preventDefault();
+                }
+            }
+        });
+
+        structurizr.diagram.onkeypress(function (e) {
+            const plus = 43;
+            const equals = 61;
+            const minus = 45;
+            const comma = 44;
+            const dot = 46;
+            const c = 99;
+            const d = 100;
+            const h = 104;
+            const i = 105;
+            const m = 109;
+            const t = 116;
+            const w = 119;
+
+            if (e.which === comma) {
+                if (structurizr.diagram.currentViewIsDynamic() || structurizr.diagram.currentViewHasAnimation()) {
+                    structurizr.diagram.stepBackwardInAnimation();
+                    e.preventDefault();
+                }
+            } else if (e.which === dot) {
+                if (structurizr.diagram.currentViewIsDynamic() || structurizr.diagram.currentViewHasAnimation()) {
+                    structurizr.diagram.stepForwardInAnimation();
+                    e.preventDefault();
+                }
+            } else if (e.which === d) {
+                structurizr.diagram.toggleDescription();
+                e.preventDefault();
+            } else if (e.which === m) {
+                structurizr.diagram.toggleMetadata();
+                e.preventDefault();
+            } else if (e.which === plus || e.which === equals) {
+                structurizr.diagram.zoomIn();
+                e.preventDefault();
+            } else if (e.which === minus) {
+                structurizr.diagram.zoomOut();
+                e.preventDefault();
+            } else if (e.which === w) {
+                structurizr.diagram.zoomFitWidth();
+                e.preventDefault();
+            } else if (e.which === h) {
+                structurizr.diagram.zoomFitHeight();
+                e.preventDefault();
+            } else if (e.which === c) {
+                structurizr.diagram.zoomFitContent();
+                e.preventDefault();
+            } else if (e.which === i) {
+                if (structurizr.diagram.getCurrentView().type !== structurizr.constants.IMAGE_VIEW_TYPE) {
+                    $('#diagramKey').html(structurizr.diagram.exportCurrentDiagramKeyToSVG());
+                    $('#keyModal').modal('show');
+                }
+            } else if (e.which === t) {
+                toggleTooltip();
+            }
+        });
+
+        document.getElementById('diagram-viewport').addEventListener('wheel', function (event) {
+                if (event.ctrlKey === true) {
+                    if (event.wheelDelta > 0) {
+                        structurizr.diagram.zoomIn(event);
+                    } else {
+                        structurizr.diagram.zoomOut(event);
+                    }
+
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            },
+            {
+                passive: false
+            });
+
+        $(window).resize(function () {
+            $('#diagram').height($(window).innerHeight());
+            structurizr.diagram.resize();
+            structurizr.diagram.zoomToWidthOrHeight();
+
+            postDiagramAspectRatioToParentWindow();
+        });
+    }
 
     function postDiagramAspectRatioToParentWindow() {
         const diagramAspectRatio = (structurizr.diagram.getWidth() / structurizr.diagram.getHeight());
+        const iframe = new URLSearchParams(window.location.search).get('iframe');
 
         parent.postMessage({
             iframe: iframe,
