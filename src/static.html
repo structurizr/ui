@@ -86,6 +86,7 @@
 
 <script>
     structurizr.workspace = new structurizr.Workspace(JSON.parse(decodeBase64(jsonAsString)));
+    structurizr.ui.applyBranding();
     structurizr.ui.loadThemes('https://static.structurizr.com/themes/', function() {
         init();
     });
