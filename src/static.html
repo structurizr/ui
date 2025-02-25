@@ -134,6 +134,13 @@
         structurizr.diagram.setTooltip(tooltip);
         structurizr.diagram.onViewChanged(viewChanged);
 
+        const perspective = getParameter('perspective');
+        if (perspective) {
+            structurizr.diagram.changePerspective(perspective);
+            tooltip.disable();
+            toggleTooltip();
+        }
+
         structurizr.diagram.onkeydown(function (e) {
             const leftArrow = 37;
             const pageUp = 33;
@@ -235,7 +242,7 @@
 
     function postDiagramAspectRatioToParentWindow() {
         const diagramAspectRatio = (structurizr.diagram.getWidth() / structurizr.diagram.getHeight());
-        const iframe = new URLSearchParams(window.location.search).get('iframe');
+        const iframe = getParameter('iframe');
 
         parent.postMessage({
             iframe: iframe,
@@ -244,6 +251,10 @@
             type: 'diagram',
             view: structurizr.diagram.getCurrentViewOrFilter().key
         }, '*');
+    }
+
+    function getParameter(name) {
+        return new URLSearchParams(window.location.search).get(name);
     }
 
     function hashChanged() {
