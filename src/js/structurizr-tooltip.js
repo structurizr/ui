@@ -78,12 +78,7 @@ structurizr.ui.Tooltip = function() {
 
         tooltipName.html(structurizr.util.escapeHtml(element.name));
         tooltipDescription.html(element.description ? structurizr.util.escapeHtml(element.description).replaceAll('\n', '<br />') : '');
-
-        if (element.type === 'Code') {
-            tooltipMetadata.text('(Code)');
-        } else {
-            tooltipMetadata.text('[' + structurizr.workspace.getTerminologyFor(element) + ']');
-        }
+        tooltipMetadata.text(structurizr.ui.getMetadataForElement(element, true));
 
         if (element.parentId) {
             var parentElement = structurizr.workspace.findElementById(element.parentId);
