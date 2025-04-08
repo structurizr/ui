@@ -278,11 +278,17 @@
                     options.includeMetadata = true;
                 }
 
-                return structurizr.diagram.exportCurrentDiagramToSVG(options.includeMetadata, true);
+                var svg = structurizr.diagram.exportCurrentDiagramToSVG(options.includeMetadata, true);
+                svg = replaceLocalThemes(svg);
+
+                return svg;
             };
 
             this.exportCurrentDiagramKeyToSVG = function() {
-                return structurizr.diagram.exportCurrentDiagramKeyToSVG(true);
+                var svg = structurizr.diagram.exportCurrentDiagramKeyToSVG(true);
+                svg = replaceLocalThemes(svg);
+
+                return svg;
             };
 
             this.getViews = function() {
