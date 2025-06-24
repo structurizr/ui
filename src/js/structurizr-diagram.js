@@ -62,6 +62,9 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     var diagramTitle;
     var diagramDescription;
     var diagramMetadata;
+    var diagramTitleElement;
+    var diagramDescriptionElement;
+    var diagramMetadataElement;
     var diagramMetadataWidth = 0;
     var diagramMetadataHeight = 0;
     var brandingLogo;
@@ -2664,45 +2667,46 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     function createDiagramMetadata() {
         const viewOrFilter = (currentFilter !== undefined ? currentFilter : currentView);
-        const title = structurizr.ui.getTitleForView(viewOrFilter);
+        diagramTitle = structurizr.ui.getTitleForView(viewOrFilter);
 
-        diagramTitle = new structurizr.shapes.DiagramTitle({
+        diagramTitleElement = new structurizr.shapes.DiagramTitle({
             attrs: {
                 '.structurizrDiagramTitle': {
-                    text: title,
+                    text: diagramTitle,
                     'font-size': elementStyleForDiagramTitle.fontSize + 'px',
                     'font-family': font.name,
-                    fill: elementStyleForDiagramTitle.color
+                    fill: elementStyleForDiagramTitle.color,
+                    'lineHeight': lineHeight
                 }
             }});
-        graph.addCell(diagramTitle);
-        diagramTitle.toBack();
-        diagramMetadataWidth = Math.max(diagramMetadataWidth, calculateWidth(title, elementStyleForDiagramTitle.fontSize));
+        graph.addCell(diagramTitleElement);
+        diagramTitleElement.toBack();
+        diagramMetadataWidth = Math.max(diagramMetadataWidth, calculateWidth(diagramTitle, elementStyleForDiagramTitle.fontSize));
 
-        var description = '';
         if (currentFilter && currentFilter.description) {
-            description = currentFilter.description;
+            diagramDescription = currentFilter.description;
         } else if (currentView.description) {
-            description = currentView.description;
+            diagramDescription = currentView.description;
         }
 
-        if (description !== undefined && description.length > 0) {
-            diagramDescription = new structurizr.shapes.DiagramDescription({
+        if (diagramDescription !== undefined && diagramDescription.length > 0) {
+            diagramDescriptionElement = new structurizr.shapes.DiagramDescription({
                 attrs: {
                     '.structurizrDiagramDescription': {
-                        text: description,
+                        text: diagramDescription,
                         'font-size': elementStyleForDiagramDescription.fontSize + 'px',
                         'font-family': font.name,
-                        fill: elementStyleForDiagramDescription.color
+                        fill: elementStyleForDiagramDescription.color,
+                        'lineHeight': lineHeight
                     }
                 }
             });
 
-            graph.addCell(diagramDescription);
-            diagramDescription.toBack();
-            diagramMetadataWidth = Math.max(diagramMetadataWidth, calculateWidth(description, elementStyleForDiagramDescription.fontSize));
+            graph.addCell(diagramDescriptionElement);
+            diagramDescriptionElement.toBack();
+            diagramMetadataWidth = Math.max(diagramMetadataWidth, calculateWidth(diagramDescription, elementStyleForDiagramDescription.fontSize));
         } else {
-            diagramDescription = undefined;
+            diagramDescriptionElement = undefined;
         }
 
         const timezone = structurizr.workspace.views.configuration.properties['structurizr.timezone'];
@@ -2718,57 +2722,58 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             timeZoneName : 'long'
         };
 
-        var metadata;
         if (structurizr.workspace.id === 0) {
             // demo page
-            metadata = new Date().toLocaleString(locale, options);
+            diagramMetadata = new Date().toLocaleString(locale, options);
         } else {
             const lastModified = structurizr.workspace.lastModifiedDate;
             if (lastModified) {
-                metadata = new Date(lastModified).toLocaleString(locale, options);
+                diagramMetadata = new Date(lastModified).toLocaleString(locale, options);
             }
 
             const version = structurizr.workspace.version;
             if (version) {
-                if (metadata) {
-                    metadata += ' | ';
+                if (diagramMetadata) {
+                    diagramMetadata += ' | ';
                 } else {
-                    metadata = '';
+                    diagramMetadata = '';
                 }
-                metadata += 'Version: ' + version;
+                diagramMetadata += 'Version: ' + version;
             }
         }
 
-        diagramMetadata = new structurizr.shapes.DiagramMetadata({
+        diagramMetadataElement = new structurizr.shapes.DiagramMetadata({
             attrs: {
                 '.structurizrDiagramMetadata': {
-                    text: metadata,
+                    text: diagramMetadata,
                     'font-size': elementStyleForDiagramMetadata.fontSize + 'px',
                     'font-family': font.name,
-                    fill: elementStyleForDiagramMetadata.color
+                    fill: elementStyleForDiagramMetadata.color,
+                    'lineHeight': lineHeight
                 }
             }});
-        graph.addCell(diagramMetadata);
-        diagramMetadata.toBack();
-        diagramMetadataWidth = Math.max(diagramMetadataWidth, calculateWidth(metadata, elementStyleForDiagramMetadata.fontSize));
+        graph.addCell(diagramMetadataElement);
+        diagramMetadataElement.toBack();
+        diagramMetadataWidth = Math.max(diagramMetadataWidth, calculateWidth(diagramMetadata, elementStyleForDiagramMetadata.fontSize));
 
         const showTitle = getViewOrViewSetProperty(viewOrFilter, 'structurizr.title', 'true') === 'true';
         const showDescription = getViewOrViewSetProperty(viewOrFilter, 'structurizr.description', 'true') === 'true';
         const showMetadata = getViewOrViewSetProperty(viewOrFilter, 'structurizr.metadata', 'true') === 'true';
 
-        const titleHeight = calculateHeight("Title", elementStyleForDiagramTitle.fontSize, 0, false);
-        const descriptionHeight = calculateHeight("Description", elementStyleForDiagramDescription.fontSize, 0, false);
-        const metadataHeight = calculateHeight("Metadata", elementStyleForDiagramMetadata.fontSize, 0, false);
+        const padding = 10;
+        const titleHeight = calculateHeight(diagramTitle, elementStyleForDiagramTitle.fontSize, 0) + padding;
+        const descriptionHeight = calculateHeight(diagramDescription, elementStyleForDiagramDescription.fontSize, 0) + padding;
+        const metadataHeight = calculateHeight(diagramMetadata, elementStyleForDiagramMetadata.fontSize, 0) + padding;
 
-        if (diagramMetadata !== undefined && showMetadata === true) {
+        if (showMetadata === true) {
             diagramMetadataHeight += metadataHeight;
         }
 
-        if (diagramDescription !== undefined && showDescription === true) {
+        if (diagramDescriptionElement !== undefined && showDescription === true) {
             diagramMetadataHeight += descriptionHeight;
         }
 
-        if (diagramTitle !== undefined && showTitle === true) {
+        if (showTitle === true) {
             diagramMetadataHeight += titleHeight;
         }
 
@@ -2817,9 +2822,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         const paddingBottom = 10;
         const paddingLogoRight = 40;
 
-        const titleHeight = calculateHeight("Title", elementStyleForDiagramTitle.fontSize, 0, false);
-        const descriptionHeight = calculateHeight("Description", elementStyleForDiagramDescription.fontSize, 0, false);
-        const metadataHeight = calculateHeight("Metadata", elementStyleForDiagramMetadata.fontSize, 0, false);
+        const padding = 10;
+        const titleHeight = calculateHeight(diagramTitle, elementStyleForDiagramTitle.fontSize, 0) + padding;
+        const descriptionHeight = calculateHeight(diagramDescription, elementStyleForDiagramDescription.fontSize, 0) + padding;
+        const metadataHeight = calculateHeight(diagramMetadata, elementStyleForDiagramMetadata.fontSize, 0) + padding;
 
         var x = paddingLeft;
         var y = diagramHeight - paddingBottom;
@@ -2833,21 +2839,21 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             x = brandingLogo.get('size').width + paddingLogoRight;
         }
 
-        if (diagramMetadata !== undefined && showMetadata === true) {
+        if (diagramMetadataElement !== undefined && showMetadata === true) {
             y = y - metadataHeight;
-            diagramMetadata.set({position: {x: x, y: y}});
+            diagramMetadataElement.set({position: {x: x, y: y}});
             $(".structurizrDiagramMetadata").attr('display', 'block');
         }
 
-        if (diagramDescription !== undefined && showDescription === true) {
+        if (diagramDescriptionElement !== undefined && showDescription === true) {
             y = y - descriptionHeight;
-            diagramDescription.set({position: {x: x, y: y}});
+            diagramDescriptionElement.set({position: {x: x, y: y}});
             $(".structurizrDiagramDescription").attr('display', 'block');
         }
 
-        if (diagramTitle !== undefined && showTitle === true) {
+        if (diagramTitleElement !== undefined && showTitle === true) {
             y = y - titleHeight;
-            diagramTitle.set({ position: { x: x, y: y }});
+            diagramTitleElement.set({ position: { x: x, y: y }});
             $(".structurizrDiagramTitle").attr('display', 'block');
         }
     }
@@ -2878,7 +2884,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             if (text.length === 0) {
                 return 0;
             } else {
-                return text.length * (0.6 * fontSize);
+                var length = 0;
+                text.split('\n').forEach(function(line) {
+                    length = Math.max(length, line.length * (0.6 * fontSize));
+                });
+
+                return length;
             }
         } else {
             return 0;
