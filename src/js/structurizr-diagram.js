@@ -4028,17 +4028,22 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     this.resize = function() {
-        viewport.width(this.getPossibleViewportWidth());
-
-        if (!embedded || structurizr.ui.isFullScreen()) {
-            var height = this.getPossibleViewportHeight();
-            viewport.height(height);
-            $('#diagramNavigationPanel').height(height);
+        if (structurizr.ui.isFullScreen()) {
+            viewport.width($(window).width());
+            viewport.height($(window).height());
         } else {
-            var diagramRatio = diagramWidth / diagramHeight;
-            var height = Math.floor(viewport.width() / diagramRatio);
-            viewport.height(height);
-            $('#diagramNavigationPanel').height(height);
+            viewport.width(this.getPossibleViewportWidth());
+
+            if (!embedded) {
+                var height = this.getPossibleViewportHeight();
+                viewport.height(height);
+                $('#diagramNavigationPanel').height(height);
+            } else {
+                var diagramRatio = diagramWidth / diagramHeight;
+                var height = Math.floor(viewport.width() / diagramRatio);
+                viewport.height(height);
+                $('#diagramNavigationPanel').height(height);
+            }
         }
     };
 

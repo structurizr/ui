@@ -1403,7 +1403,6 @@
             structurizr.ui.enterFullScreen('diagram');
         }
 
-        $('#diagramNavigationPanel').addClass('hidden');
         $('#enterPresentationModeButton').addClass('hidden');
         $('.structurizrDiagramViewport').css('background', '#000000');
         structurizr.diagram.resize();
