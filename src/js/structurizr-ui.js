@@ -160,6 +160,7 @@ structurizr.ui.ElementStyle = function(width, height, background, color, fontSiz
     this.fontSize = fontSize;
     this.shape = shape;
     this.icon = icon;
+    this.iconPosition = 'Bottom';
     this.border = border;
     this.opacity = opacity;
     this.metadata = metadata;
@@ -172,7 +173,7 @@ structurizr.ui.ElementStyle = function(width, height, background, color, fontSiz
     };
 
     this.toString = function() {
-        return "".concat(this.tag, ",", this.width, ",", this.height, ",", this.background, ",", this.stroke, ",", this.color, ",", this.fontSize, ",", this.shape, ",", this.icon, ",", this.border, ",", this.opacity, ",", this.metadata, ",", this.description);
+        return "".concat(this.tag, ",", this.width, ",", this.height, ",", this.background, ",", this.stroke, ",", this.color, ",", this.fontSize, ",", this.shape, ",", this.icon, ",", this.iconPosition, ",", this.border, ",", this.opacity, ",", this.metadata, ",", this.description);
     };
 
 };
@@ -256,6 +257,7 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
                 structurizr.util.copyAttributeIfSpecified(elementStyleFromWorkspace, elementStyle, 'fontSize');
                 structurizr.util.copyAttributeIfSpecified(elementStyleFromWorkspace, elementStyle, 'shape');
                 structurizr.util.copyAttributeIfSpecified(elementStyleFromWorkspace, elementStyle, 'icon');
+                structurizr.util.copyAttributeIfSpecified(elementStyleFromWorkspace, elementStyle, 'iconPosition');
                 structurizr.util.copyAttributeIfSpecified(elementStyleFromWorkspace, elementStyle, 'border');
                 structurizr.util.copyAttributeIfSpecified(elementStyleFromWorkspace, elementStyle, 'opacity');
                 structurizr.util.copyAttributeIfSpecified(elementStyleFromWorkspace, elementStyle, 'metadata');
@@ -303,6 +305,7 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
             style.copyStyleAttributeIfSpecified(elementStyle, 'fontSize');
             style.copyStyleAttributeIfSpecified(elementStyle, 'shape');
             style.copyStyleAttributeIfSpecified(elementStyle, 'icon');
+            style.copyStyleAttributeIfSpecified(elementStyle, 'iconPosition');
             style.copyStyleAttributeIfSpecified(elementStyle, 'border');
             style.copyStyleAttributeIfSpecified(elementStyle, 'opacity');
             style.copyStyleAttributeIfSpecified(elementStyle, 'metadata');

@@ -3,8 +3,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     const self = this;
     const font = structurizr.ui.getBranding().font;
     const gridSize = 5;
-    const DEFAULT_ICON_HEIGHT = 60;
-    const ICON_PADDING = 5;
     const nameFontSizeDifference = +10;
     const metaDataFontSizeDifference = -7;
 
@@ -961,6 +959,18 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         repositionAllParentCells();
 
+        if (descriptionEnabled) {
+            showDescription();
+        } else {
+            hideDescription();
+        }
+
+        if (metadataEnabled) {
+            showMetadata();
+        } else {
+            hideMetadata();
+        }
+
         // ensure all elements are stacked properly, front to back
         graph.getElements().forEach(function(element) {
             if (element.get('parent') === undefined) {
@@ -1700,90 +1710,176 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         return configuration.width * 0.07;
     }
 
-    function renderElementInternals(element, cell, configuration, width, horizontalPadding, height, verticalOffset) {
-        const internalPadding = 10;
+    function renderElementInternals(element, cell, configuration, width, horizontalOffset, height, verticalOffset) {
+        const defaultIconWidth = 60;
+        const defaultIconHeight = 60;
+        const horizontalIconPadding = 15;
 
+        const horizontalPadding = 30;
         const fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
         const color = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         const stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
         const navigationColor = color;
 
-        const name = formatName(element, configuration, horizontalPadding);
-        const metadata = formatMetaData(element, configuration, horizontalPadding);
-        const description = formatDescription(element, configuration, horizontalPadding);
+        var maxWidth;
+        if (configuration.iconPosition === 'Left') {
+            if (configuration.icon !== undefined) {
+                maxWidth = configuration.width - (horizontalOffset + horizontalPadding + horizontalPadding + defaultIconWidth + horizontalIconPadding);
+            } else {
+                maxWidth = configuration.width - (horizontalOffset + horizontalPadding + horizontalPadding);
+            }
+        } else {
+            maxWidth = configuration.width - (horizontalOffset + horizontalPadding + horizontalPadding);
+        }
 
-        const heightOfNameLabel = calculateHeight(name, configuration.fontSize, nameFontSizeDifference, false);
-        const heightOfMetaDataLabel = calculateHeight(metadata, configuration.fontSize, metaDataFontSizeDifference, false);
-        const heightOfDescriptionLabel = calculateHeight(description, configuration.fontSize, 0, false);
+        var widthOfIcon = 0;
         var heightOfIcon = 0;
         if (configuration.icon !== undefined) {
-            heightOfIcon = DEFAULT_ICON_HEIGHT + ICON_PADDING;
-        }
+            var iconRatio = getImageRatio(configuration.icon);
 
-        const nameY = verticalOffset + (internalPadding / 2);
-
-        const metadataY = nameY + heightOfNameLabel;
-
-        var descriptionY = metadataY + heightOfMetaDataLabel;
-        if (heightOfDescriptionLabel > 0) {
-            if (heightOfMetaDataLabel > 0) {
-                descriptionY += internalPadding;
+            if (configuration.iconPosition === 'Left') {
+                widthOfIcon = defaultIconWidth;
+                heightOfIcon = ((widthOfIcon) * iconRatio);
+            } else {
+                heightOfIcon = defaultIconHeight;
+                widthOfIcon = ((heightOfIcon) * iconRatio);
             }
         }
 
-        var iconY = descriptionY + heightOfDescriptionLabel;
-        if (heightOfIcon > 0) {
-            if (heightOfMetaDataLabel > 0 || heightOfDescriptionLabel > 0) {
-                iconY += internalPadding;
-            }
+        const name = formatName(element, configuration, maxWidth);
+        const nameHeight = calculateHeight(name, configuration.fontSize, nameFontSizeDifference);
+        const metadata = formatMetaData(element, configuration, maxWidth);
+        const metadataHeight = calculateHeight(metadata, configuration.fontSize, metaDataFontSizeDifference);
+        const description = formatDescription(element, configuration, maxWidth);
+        const descriptionHeight = calculateHeight(description, configuration.fontSize, 0);
+
+        var y = 0;
+        var totalY = 0;
+
+        var iconY = 0;
+        var nameY = 0;
+        var metadataY = 0;
+        var descriptionY = 0;
+
+        if (configuration.icon !== undefined && configuration.iconPosition === 'Top') {
+            const padding = 10;
+            totalY += heightOfIcon;
+
+            iconY = y;
+            y += heightOfIcon;
+            y += padding;
         }
 
-        const totalY = iconY + heightOfIcon;
-        const offset = (height - totalY) / 2;
+        nameY = y;
+        y += nameHeight;
+        totalY += nameHeight;
+
+        if (metadata.length > 0) {
+            const padding = 8;
+            y += padding;
+            totalY += padding + metadataHeight;
+
+            metadataY = y;
+            y += metadataHeight;
+        }
+
+        if (description.length > 0) {
+            const padding = 15;
+            y += padding;
+            totalY += padding + descriptionHeight;
+
+            descriptionY = y;
+            y += descriptionHeight;
+        }
+
+        if (configuration.icon !== undefined && configuration.iconPosition === 'Bottom') {
+            const padding = 15;
+            y += padding;
+            totalY += padding + heightOfIcon;
+
+            iconY = y;
+        }
+
+        const marginY = (height - totalY) / 2;
 
         if (totalY > height) {
             console.log('The height of the element named "' + element.name + '" is too small to fit the content (' + Math.ceil(totalY) + 'px)');
         }
 
-        var nameRefY =          (nameY + offset) / height;
-        var metaDataRefY =      (metadataY + offset) / height;
-        var descriptionRefY =   (descriptionY + offset) / height;
-        var iconRefY =          (iconY + offset) / height;
+        iconY += (verticalOffset + marginY);
+        nameY += (verticalOffset + marginY);
+        metadataY += (verticalOffset + marginY);
+        descriptionY += (verticalOffset + marginY);
+
         var navigationRefY =    (height - 32) / height;
 
-        if (configuration.icon) {
-            var iconRatio = getImageRatio(configuration.icon);
-            var widthOfIcon = ((heightOfIcon-ICON_PADDING) * iconRatio);
-            var iconRefX = (((width - widthOfIcon) / 2) / width);
+        if (configuration.icon && configuration.iconPosition !== 'Left') {
+            const iconRefX = (((width - widthOfIcon) / 2) / width);
 
             cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
             cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
-            cell.attributes.attrs['.structurizrIcon']['height'] = (heightOfIcon-ICON_PADDING);
+            cell.attributes.attrs['.structurizrIcon']['height'] = heightOfIcon;
             cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
-            cell.attributes.attrs['.structurizrIcon']['ref-y'] = iconRefY;
-            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
+            cell.attributes.attrs['.structurizrIcon']['ref-y'] = undefined;
+            cell.attributes.attrs['.structurizrIcon']['y'] = iconY;
+            cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity / 100);
         }
 
         cell.attributes.attrs['.structurizrName']['text'] = name;
         cell.attributes.attrs['.structurizrName']['font-family'] = font.name;
         cell.attributes.attrs['.structurizrName']['fill'] = color;
+        cell.attributes.attrs['.structurizrName']['dominant-baseline'] = 'hanging';
         cell.attributes.attrs['.structurizrName']['font-size'] = configuration.fontSize+nameFontSizeDifference;
-        cell.attributes.attrs['.structurizrName']['ref-y'] = nameRefY;
+        cell.attributes.attrs['.structurizrName']['ref-y'] = undefined;
+        cell.attributes.attrs['.structurizrName']['y'] = nameY;
         cell.attributes.attrs['.structurizrName']['lineHeight'] = lineHeight;
 
         cell.attributes.attrs['.structurizrMetaData']['text'] = metadata;
         cell.attributes.attrs['.structurizrMetaData']['font-family'] = font.name;
         cell.attributes.attrs['.structurizrMetaData']['fill'] = color;
+        cell.attributes.attrs['.structurizrMetaData']['dominant-baseline'] = 'hanging';
         cell.attributes.attrs['.structurizrMetaData']['font-size'] = configuration.fontSize+metaDataFontSizeDifference;
-        cell.attributes.attrs['.structurizrMetaData']['ref-y'] = metaDataRefY;
+        cell.attributes.attrs['.structurizrMetaData']['ref-y'] = undefined;
+        cell.attributes.attrs['.structurizrMetaData']['y'] = metadataY;
         cell.attributes.attrs['.structurizrMetaData']['lineHeight'] = lineHeight;
 
         cell.attributes.attrs['.structurizrDescription']['text'] = description;
         cell.attributes.attrs['.structurizrDescription']['font-family'] = font.name;
         cell.attributes.attrs['.structurizrDescription']['fill'] = color;
+        cell.attributes.attrs['.structurizrDescription']['dominant-baseline'] = 'hanging';
         cell.attributes.attrs['.structurizrDescription']['font-size'] = configuration.fontSize;
-        cell.attributes.attrs['.structurizrDescription']['ref-y'] = descriptionRefY;
+        cell.attributes.attrs['.structurizrDescription']['ref-y'] = undefined;
+        cell.attributes.attrs['.structurizrDescription']['y'] = descriptionY;
         cell.attributes.attrs['.structurizrDescription']['lineHeight'] = lineHeight;
+
+        if (configuration.iconPosition === 'Left') {
+            if (configuration.icon) {
+                if (heightOfIcon > totalY) {
+                    iconY = verticalOffset + ((height - heightOfIcon) / 2);
+                } else {
+                    iconY = nameY + 3;
+                }
+
+                cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
+                cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
+                cell.attributes.attrs['.structurizrIcon']['height'] = heightOfIcon;
+                cell.attributes.attrs['.structurizrIcon']['x'] = horizontalOffset + horizontalPadding;
+                cell.attributes.attrs['.structurizrIcon']['y'] = iconY;
+                cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity / 100);
+            }
+
+            cell.attributes.attrs['.structurizrName']['text-anchor'] = 'start';
+            cell.attributes.attrs['.structurizrName']['ref-x'] = undefined;
+            cell.attributes.attrs['.structurizrName']['x'] = horizontalOffset + horizontalPadding + (widthOfIcon > 0 ? widthOfIcon + horizontalIconPadding : 0);
+
+            cell.attributes.attrs['.structurizrMetaData']['text-anchor'] = 'start';
+            cell.attributes.attrs['.structurizrMetaData']['ref-x'] = undefined;
+            cell.attributes.attrs['.structurizrMetaData']['x'] = horizontalOffset + horizontalPadding + (widthOfIcon > 0 ? widthOfIcon + horizontalIconPadding : 0);
+
+            cell.attributes.attrs['.structurizrDescription']['text-anchor'] = 'start';
+            cell.attributes.attrs['.structurizrDescription']['ref-x'] = undefined;
+            cell.attributes.attrs['.structurizrDescription']['x'] = horizontalOffset + horizontalPadding + (widthOfIcon > 0 ? widthOfIcon + horizontalIconPadding : 0);
+        }
 
         cell.attributes.attrs['.structurizrNavigation']['color'] = navigationColor;
         cell.attributes.attrs['.structurizrNavigation']['ref-y'] = navigationRefY;
@@ -1832,7 +1928,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrBox']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
+        renderElementInternals(element, cell, configuration, width, 0, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -1878,7 +1974,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrEllipse']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
+        renderElementInternals(element, cell, configuration, width, 0, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -1924,7 +2020,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrHexagon']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, width, width * 0.2, height, 0);
+        renderElementInternals(element, cell, configuration, width, 0, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -1969,7 +2065,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrDiamond']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, width, width * 0.3, height, 0);
+        renderElementInternals(element, cell, configuration, width, 0, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2038,7 +2134,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrPersonLeftArm']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
+        renderElementInternals(element, cell, configuration, width, 0, height, configuration.width/2.5);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2117,7 +2213,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrRobotLeftArm']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
+        renderElementInternals(element, cell, configuration, width, 0, height, configuration.width/2.5);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2178,7 +2274,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrCylinderPath']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 15);
+        renderElementInternals(element, cell, configuration, width, 0, height, 30);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2239,7 +2335,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrPipePath']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
+        renderElementInternals(element, cell, configuration, width, rx, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2297,7 +2393,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrFolder']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
+        renderElementInternals(element, cell, configuration, width, 0, height, tabHeight);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2366,7 +2462,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrComponentBlockBottom']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
+        renderElementInternals(element, cell, configuration, width, blockWidth, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2449,7 +2545,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrWebBrowser']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, webBrowserPanelWidth, webBrowserPanelWidth * 0.1, webBrowserPanelHeight, 0);
+        renderElementInternals(element, cell, configuration, webBrowserPanelWidth, 0, webBrowserPanelHeight, 40);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2523,7 +2619,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrWindow']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, windowPanelWidth, windowPanelWidth * 0.1, windowPanelHeight, 0);
+        renderElementInternals(element, cell, configuration, windowPanelWidth, 0, windowPanelHeight, 40);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2590,7 +2686,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrMobileDevice']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
+        renderElementInternals(element, cell, configuration, width, 0, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2657,7 +2753,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             cell.attributes.attrs['.structurizrMobileDevice']['stroke-dasharray'] = borderStyles[configuration.border];
         }
 
-        renderElementInternals(element, cell, configuration, width, width * 0.1, height, 0);
+        renderElementInternals(element, cell, configuration, width, 0, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2858,7 +2954,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
     }
 
-    function calculateHeight(text, fontSize, fontSizeDelta, addPadding) {
+    function calculateHeight(text, fontSize, fontSizeDelta) {
         var lineSpacing = 1.20;
         if (text) {
             text = text.trim();
@@ -2867,10 +2963,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 return 0;
             } else {
                 var numberOfLines = text.split("\n").length;
-                if (addPadding) {
-                    numberOfLines++;
-                }
-                return (numberOfLines * ((fontSize + fontSizeDelta) * lineSpacing));
+                return (fontSize + fontSizeDelta) + ((numberOfLines-1) * ((fontSize + fontSizeDelta) * lineSpacing));
             }
         } else {
             return 0;
@@ -2896,27 +2989,19 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
     }
 
-    function formatName(element, configuration, horizontalPadding) {
-        return breakText(element.name ? element.name : "", Math.max(0, configuration.width-horizontalPadding), font.name, (configuration.fontSize + nameFontSizeDifference));
+    function formatName(element, configuration, width) {
+        return breakText(element.name ? element.name : "", Math.max(0, width), font.name, (configuration.fontSize + nameFontSizeDifference));
     }
 
-    function formatDescription(element, configuration, horizontalPadding) {
-        if (descriptionEnabled === false) {
-            return '';
-        }
-
+    function formatDescription(element, configuration, width) {
         if (configuration.description !== undefined && configuration.description === false) {
             return '';
         } else {
-            return breakText(element.description ? element.description : "", Math.max(0, configuration.width - horizontalPadding), font.name, configuration.fontSize);
+            return breakText(element.description ? element.description : "", Math.max(0, width), font.name, configuration.fontSize);
         }
     }
 
-    function formatMetaData(element, configuration, horizontalPadding) {
-        if (metadataEnabled === false) {
-            return '';
-        }
-
+    function formatMetaData(element, configuration, width) {
         if (element.type === 'Custom' && (element.metadata === undefined || element.metadata === '')) {
             return '';
         }
@@ -2924,7 +3009,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         if (configuration.metadata !== undefined && configuration.metadata === false) {
             return '';
         } else {
-            var metadata = breakText(structurizr.ui.getMetadataForElement(element, true), configuration.width - horizontalPadding, font.name, (configuration.fontSize + metaDataFontSizeDifference));
+            var metadata = breakText(structurizr.ui.getMetadataForElement(element, true), width, font.name, (configuration.fontSize + metaDataFontSizeDifference));
 
             if (currentView.type === 'Deployment') {
                 if (element.type === 'ContainerInstance') {
@@ -2944,10 +3029,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function formatTechnologyForRelationship(relationship) {
-        if (metadataEnabled === false) {
-            return '';
-        }
-
         return structurizr.ui.getMetadataForRelationship(relationship);
     }
 
@@ -4482,10 +4563,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     function createTextForKey(width, height, offsetX, offsetY, tag, stereotype, textColor, icon, opacity) {
         var fontSize = 30;
-        var heightOfIcon = DEFAULT_ICON_HEIGHT;
+        var heightOfIcon = 60;
         var text = breakText(structurizr.util.escapeHtml(tag), width * 0.8, font.name, fontSize);
 
-        var heightOfText = calculateHeight(text, fontSize, 0, false);
+        var heightOfText = calculateHeight(text, fontSize, 0);
 
         offsetY = offsetY / 2;
 
@@ -6175,13 +6256,41 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     this.toggleMetadata = function() {
         metadataEnabled = !metadataEnabled;
-        renderView();
+
+        if (metadataEnabled) {
+            showMetadata();
+        } else {
+            hideMetadata();
+        }
     };
+
+    function showMetadata() {
+        $('.structurizrElement .structurizrMetaData').css('display', 'block');
+        $('.joint-link .structurizrMetaData').css('display', 'block')
+    }
+
+    function hideMetadata() {
+        $('.structurizrElement .structurizrMetaData').css('display', 'none');
+        $('.joint-link .structurizrMetaData').css('display', 'none')
+    }
 
     this.toggleDescription = function() {
         descriptionEnabled = !descriptionEnabled;
-        renderView();
+
+        if (descriptionEnabled) {
+            showDescription();
+        } else {
+            hideDescription();
+        }
     };
+
+    function showDescription() {
+        $('.structurizrElement .structurizrDescription').css('display', 'block');
+    }
+
+    function hideDescription() {
+        $('.structurizrElement .structurizrDescription').css('display', 'none');
+    }
 
     this.showDiagramScope = function(bool) {
         this.stopAnimation();
