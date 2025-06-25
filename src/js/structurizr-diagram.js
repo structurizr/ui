@@ -3113,13 +3113,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 configuration = structurizr.ui.findRelationshipStyle(relationship, darkMode);
             }
 
-            var strokeDashArray;
-            if (configuration.style === 'Dashed') {
-                strokeDashArray = calculateStrokeDashArray(configuration.thickness);
-            } else if (configuration.style === 'Dotted') {
-                strokeDashArray = calculateStrokeDottedArray(configuration.thickness);
-            }
-
             var triangle = calculateArrowHead(configuration.thickness);
 
             var description = "";
@@ -3140,7 +3133,17 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
 
             description = breakText(description, configuration.width, font.name, configuration.fontSize);
-            var heightOfDescription = calculateHeight(description, configuration.fontSize, 0, false);
+            const heightOfDescription = calculateHeight(description, configuration.fontSize, 0);
+
+            var technology = formatTechnologyForRelationship(relationship);
+            technology = breakText(technology, configuration.width, font.name, configuration.fontSize + metaDataFontSizeDifference);
+            const heightOfTechnology = calculateHeight(technology, configuration.fontSize, metaDataFontSizeDifference);
+
+            var totalHeight = heightOfDescription;
+            if (heightOfTechnology > 0) {
+                totalHeight += internalPadding;
+                totalHeight += heightOfTechnology;
+            }
 
             var fill = structurizr.util.shadeColor(configuration.color, 100 - configuration.opacity, darkMode);
 
@@ -3166,11 +3169,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
 
             var labels = [];
-            var verticalOffset = 0;
+
+            // description label
             labels.push({
                     position: {
                         distance: position / 100,
-                            offset: { x: 0, y: verticalOffset }
+                        offset: { x: 0, y: (heightOfDescription / 2) - (totalHeight / 2) }
                     },
                     attrs: {
                         rect: {
@@ -3179,30 +3183,31 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         },
                         text: {
                             text: description,
-                                fill: fill,
-                                'font-family': font.name,
-                                'font-weight': 'normal',
-                                'font-size': configuration.fontSize + 'px',
-                                'pointer-events': 'none',
-                                'lineHeight': lineHeight
+                            fill: fill,
+                            'font-family': font.name,
+                            'font-weight': 'normal',
+                            'font-size': configuration.fontSize + 'px',
+                            'pointer-events': 'none',
+                            'lineHeight': lineHeight
                         }
                     }
                 });
-            verticalOffset = ((heightOfDescription + configuration.fontSize)/ 2);
 
-            var technology = formatTechnologyForRelationship(relationship);
+            // technology/metadata label
             if (technology && technology.trim().length > 0) {
                 labels.push({
                     position: {
                         distance: position / 100,
-                        offset: { x: 0, y: verticalOffset }
+                        offset: { x: 0, y: (totalHeight / 2) - (heightOfTechnology / 2) }
                     },
                     attrs: {
                         rect: {
+                            'class': 'structurizrMetaData',
                             fill: canvasColor,
                             'pointer-events': 'none'
                         },
                         text: {
+                            'class': 'structurizrMetaData',
                             text: technology,
                             fill: fill,
                             'font-family': font.name,
@@ -3213,14 +3218,13 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         }
                     }
                 });
-                var heightOfTechnology = calculateHeight(technology, configuration.fontSize, metaDataFontSizeDifference, false);
-                verticalOffset += heightOfTechnology - (configuration.fontSize / 2);
             }
 
+            // navigation (e.g. URL indicator) label
             labels.push({
                 position: {
                     distance: position / 100,
-                    offset: { x: -10, y: verticalOffset }
+                    offset: { x: -10, y: totalHeight / 2}
                 },
                 attrs: {
                     rect: {
@@ -3240,6 +3244,13 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             });
 
             if (configuration.style === undefined || configuration.style === 'Dashed' || configuration.style === 'Dotted') {
+                var strokeDashArray;
+                if (configuration.style === 'Dashed') {
+                    strokeDashArray = calculateStrokeDashArray(configuration.thickness);
+                } else if (configuration.style === 'Dotted') {
+                    strokeDashArray = calculateStrokeDottedArray(configuration.thickness);
+                }
+
                 link.attr({
                     '.connection': {
                         stroke: fill,
