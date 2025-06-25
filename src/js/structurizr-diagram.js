@@ -2109,7 +2109,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 },
                 '.structurizrPersonRightArm': {
                     stroke: stroke,
-                    'stroke-width': configuration.strokeWidth,
+                    'stroke-width': 1,
                     x1: configuration.width/5,
                     y1: configuration.width/1.5,
                     x2: configuration.width/5,
@@ -2117,7 +2117,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 },
                 '.structurizrPersonLeftArm': {
                     stroke: stroke,
-                    'stroke-width': configuration.strokeWidth,
+                    'stroke-width': 1,
                     x1: configuration.width-(configuration.width/5),
                     y1: configuration.width/1.5,
                     x2: configuration.width-(configuration.width/5),
@@ -2188,7 +2188,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 },
                 '.structurizrRobotRightArm': {
                     stroke: stroke,
-                    'stroke-width': configuration.strokeWidth,
+                    'stroke-width': 1,
                     x1: configuration.width/5,
                     y1: configuration.width/1.5,
                     x2: configuration.width/5,
@@ -2196,7 +2196,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 },
                 '.structurizrRobotLeftArm': {
                     stroke: stroke,
-                    'stroke-width': configuration.strokeWidth,
+                    'stroke-width': 1,
                     x1: configuration.width-(configuration.width/5),
                     y1: configuration.width/1.5,
                     x2: configuration.width-(configuration.width/5),
@@ -4378,8 +4378,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<rect x="0" y="' + height/2.5 + '" width="' + width + '" height="' + (height - (height/2.5)) + '" rx="90" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
                 svg += '<circle cx="' + width/2 + '" cy="' + height/4.5 + '" r="' + height/4.5 + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
-                svg += '<line x1="' + width/5 + '" y1="' + height/1.5 + '" x2="' + width/5 + '" y2="' + height + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
-                svg += '<line x1="' + (width-(width/5)) + '" y1="' + height/1.5 + '" x2="' + (width-(width/5)) + '" y2="' + height + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
+                svg += '<line x1="' + width/5 + '" y1="' + height/1.5 + '" x2="' + width/5 + '" y2="' + height + '" stroke-width="1" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
+                svg += '<line x1="' + (width-(width/5)) + '" y1="' + height/1.5 + '" x2="' + (width-(width/5)) + '" y2="' + height + '" stroke-width="1" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
                 svg += createTextForKey(width, height, 0, (height/4.5 * 2), createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Robot") {
@@ -4389,8 +4389,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += '<rect x="0" y="' + height/2.5 + '" width="' + width + '" height="' + (height - (height/2.5)) + '" rx="40" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
                 svg += '<rect x="' + (width - width/1.8)/2 + '" y="' + (width/2.25 - width/10)/2 + '" width="' + width/1.8 + '" height="' + height/10 + '" rx="10" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
                 svg += '<rect x="' + (height - height/2.25)/2 + '" y="0" width="' + width/2.25 + '" height="' + height/2.25 + '" rx="40" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
-                svg += '<line x1="' + width/5 + '" y1="' + height/1.5 + '" x2="' + width/5 + '" y2="' + height + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
-                svg += '<line x1="' + (width-(width/5)) + '" y1="' + height/1.5 + '" x2="' + (width-(width/5)) + '" y2="' + height + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
+                svg += '<line x1="' + width/5 + '" y1="' + height/1.5 + '" x2="' + width/5 + '" y2="' + height + '" stroke-width="1" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
+                svg += '<line x1="' + (width-(width/5)) + '" y1="' + height/1.5 + '" x2="' + (width-(width/5)) + '" y2="' + height + '" stroke-width="1" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
                 svg += createTextForKey(width, height, 0, (height/4.5 * 2), createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Folder") {
