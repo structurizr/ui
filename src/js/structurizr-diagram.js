@@ -2820,7 +2820,18 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     function createDiagramMetadata() {
         const viewOrFilter = (currentFilter !== undefined ? currentFilter : currentView);
-        diagramTitle = structurizr.ui.getTitleForView(viewOrFilter);
+        const showTitle = getViewOrViewSetProperty(viewOrFilter, 'structurizr.title', 'true') === 'true';
+        const showDescription = getViewOrViewSetProperty(viewOrFilter, 'structurizr.description', 'true') === 'true';
+        const showMetadata = getViewOrViewSetProperty(viewOrFilter, 'structurizr.metadata', 'true') === 'true';
+
+        diagramTitle = '';
+        diagramDescription = '';
+        diagramMetadata = '';
+        diagramMetadataWidth = 0;
+
+        if (showTitle) {
+            diagramTitle = structurizr.ui.getTitleForView(viewOrFilter);
+        }
 
         diagramTitleElement = new structurizr.shapes.DiagramTitle({
             attrs: {
@@ -2836,10 +2847,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         diagramTitleElement.toBack();
         diagramMetadataWidth = Math.max(diagramMetadataWidth, calculateWidth(diagramTitle, elementStyleForDiagramTitle.fontSize));
 
-        if (currentFilter && currentFilter.description) {
-            diagramDescription = currentFilter.description;
-        } else if (currentView.description) {
-            diagramDescription = currentView.description;
+        if (showDescription) {
+            if (currentFilter && currentFilter.description) {
+                diagramDescription = currentFilter.description;
+            } else if (currentView.description) {
+                diagramDescription = currentView.description;
+            }
         }
 
         if (diagramDescription !== undefined && diagramDescription.length > 0) {
@@ -2875,23 +2888,25 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             timeZoneName : 'long'
         };
 
-        if (structurizr.workspace.id === 0) {
-            // demo page
-            diagramMetadata = new Date().toLocaleString(locale, options);
-        } else {
-            const lastModified = structurizr.workspace.lastModifiedDate;
-            if (lastModified) {
-                diagramMetadata = new Date(lastModified).toLocaleString(locale, options);
-            }
-
-            const version = structurizr.workspace.version;
-            if (version) {
-                if (diagramMetadata) {
-                    diagramMetadata += ' | ';
-                } else {
-                    diagramMetadata = '';
+        if (showMetadata) {
+            if (structurizr.workspace.id === 0) {
+                // demo page
+                diagramMetadata = new Date().toLocaleString(locale, options);
+            } else {
+                const lastModified = structurizr.workspace.lastModifiedDate;
+                if (lastModified) {
+                    diagramMetadata = new Date(lastModified).toLocaleString(locale, options);
                 }
-                diagramMetadata += 'Version: ' + version;
+
+                const version = structurizr.workspace.version;
+                if (version) {
+                    if (diagramMetadata) {
+                        diagramMetadata += ' | ';
+                    } else {
+                        diagramMetadata = '';
+                    }
+                    diagramMetadata += 'Version: ' + version;
+                }
             }
         }
 
@@ -2908,10 +2923,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         graph.addCell(diagramMetadataElement);
         diagramMetadataElement.toBack();
         diagramMetadataWidth = Math.max(diagramMetadataWidth, calculateWidth(diagramMetadata, elementStyleForDiagramMetadata.fontSize));
-
-        const showTitle = getViewOrViewSetProperty(viewOrFilter, 'structurizr.title', 'true') === 'true';
-        const showDescription = getViewOrViewSetProperty(viewOrFilter, 'structurizr.description', 'true') === 'true';
-        const showMetadata = getViewOrViewSetProperty(viewOrFilter, 'structurizr.metadata', 'true') === 'true';
 
         const padding = 10;
         const titleHeight = calculateHeight(diagramTitle, elementStyleForDiagramTitle.fontSize, 0) + padding;
