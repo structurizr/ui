@@ -18,12 +18,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         Dotted: '4,4'
     };
     const defaultBoundaryColoursLight = {
-        'Enterprise': '#444444',
-        'Group': '#444444'
+        'Enterprise': structurizr.ui.LIGHT_MODE_DEFAULTS.color,
+        'Group': structurizr.ui.LIGHT_MODE_DEFAULTS.color
     };
     const defaultBoundaryColoursDark = {
-        'Enterprise': '#cccccc',
-        'Group': '#cccccc'
+        'Enterprise': structurizr.ui.DARK_MODE_DEFAULTS.color,
+        'Group': structurizr.ui.DARK_MODE_DEFAULTS.color
     };
 
     var scale = 0.5;
@@ -450,28 +450,28 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         if (darkMode === true) {
             elementStyleForDiagramTitle = {
-                color: '#bbbbbb',
+                color: structurizr.ui.DARK_MODE_DEFAULTS.color,
                 fontSize: 36
             };
             elementStyleForDiagramDescription = {
-                color: '#bbbbbb',
+                color: structurizr.ui.DARK_MODE_DEFAULTS.color,
                 fontSize: 22
             };
             elementStyleForDiagramMetadata = {
-                color: '#777777',
+                color: structurizr.ui.DARK_MODE_DEFAULTS.color,
                 fontSize: 22
             }
         } else {
             elementStyleForDiagramTitle = {
-                color: '#000000',
+                color: structurizr.ui.LIGHT_MODE_DEFAULTS.color,
                 fontSize: 36
             };
             elementStyleForDiagramDescription = {
-                color: '#aaaaaa',
+                color: structurizr.ui.LIGHT_MODE_DEFAULTS.color,
                 fontSize: 22
             };
             elementStyleForDiagramMetadata = {
-                color: '#aaaaaa',
+                color: structurizr.ui.LIGHT_MODE_DEFAULTS.color,
                 fontSize: 22
             }
         }
@@ -606,7 +606,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     continue;
                 }
 
-                var elementStyle = structurizr.ui.findElementStyle(element);
+                var elementStyle = structurizr.ui.findElementStyle(element, darkMode);
 
                 var box;
 
@@ -3557,7 +3557,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         if (type === 'Group') {
             dashArray = '5,5'; // dotted line
-            elementStyle = structurizr.ui.findElementStyle( { type: 'Boundary', tags: 'Group, Group:' + name });
+            elementStyle = structurizr.ui.findElementStyle( { type: 'Boundary', tags: 'Group, Group:' + name }, darkMode);
             icon = elementStyle.icon;
             strokeWidth = elementStyle.strokeWidth;
 
@@ -3586,7 +3586,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             textColor = structurizr.util.shadeColor(textColor, 100 - elementStyle.opacity, darkMode);
             stroke = structurizr.util.shadeColor(stroke, 100-elementStyle.opacity, darkMode);
         } else if (type === 'Enterprise') {
-            elementStyle = structurizr.ui.findElementStyle({type: 'Boundary', tags: 'Boundary, Boundary:Enterprise'});
+            elementStyle = structurizr.ui.findElementStyle({type: 'Boundary', tags: 'Boundary, Boundary:Enterprise'}, darkMode);
             icon = elementStyle.icon;
             strokeWidth = elementStyle.strokeWidth;
 
@@ -3609,8 +3609,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             elementStyle = structurizr.ui.findElementStyle({
                 type: 'Boundary',
                 tags: 'Boundary, Boundary:' + element.type
-            });
-            const elementStyleForBoundaryElement = structurizr.ui.findElementStyle(element);
+            }, darkMode);
+            const elementStyleForBoundaryElement = structurizr.ui.findElementStyle(element, darkMode);
             strokeWidth = elementStyle.strokeWidth;
 
             icon = elementStyle.icon;
@@ -6532,7 +6532,6 @@ structurizr.shapes.Box = joint.dia.Element.extend({
                 ry: 1
             },
             '.structurizrBox': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
@@ -6578,8 +6577,6 @@ structurizr.shapes.Boundary = joint.dia.Element.extend({
                 ry: 0
             },
             '.structurizrBoundary': {
-                fill: '#ffffff',
-                'stroke': '#444444',
                 'stroke-width': '2',
                 'stroke-dasharray': '20,20',
                 'pointer-events': 'none'
@@ -6587,7 +6584,6 @@ structurizr.shapes.Boundary = joint.dia.Element.extend({
             '.structurizrName': {
                 'font-weight': 'normal',
                 'font-size': '21px',
-                'fill': '#444444',
                 ref: 'rect',
                 'text-anchor': 'start',
                 'pointer-events': 'visible'
@@ -6595,7 +6591,6 @@ structurizr.shapes.Boundary = joint.dia.Element.extend({
             '.structurizrMetaData': {
                 'font-weight': 'normal',
                 'font-size': '15px',
-                'fill': '#444444',
                 ref: 'rect',
                 'text-anchor': 'start',
                 'pointer-events': 'visible'
@@ -6619,8 +6614,6 @@ structurizr.shapes.DeploymentNode = joint.dia.Element.extend({
                 ry: 10
             },
             '.structurizrDeploymentNode': {
-                fill: '#ffffff',
-                'stroke': '#444444',
                 'stroke-width': '1',
                 'pointer-events': 'none'
             },
@@ -6734,12 +6727,10 @@ structurizr.shapes.Person = joint.dia.Element.extend({
         type: 'structurizr.person',
         attrs: {
             '.structurizrPersonHead': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
             '.structurizrPersonBody': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
@@ -6782,17 +6773,14 @@ structurizr.shapes.Robot = joint.dia.Element.extend({
         type: 'structurizr.robot',
         attrs: {
             '.structurizrRobotHead': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
             '.structurizrRobotEars': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
             '.structurizrRobotBody': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
@@ -6835,7 +6823,6 @@ structurizr.shapes.Cylinder = joint.dia.Element.extend({
         type: 'structurizr.cylinder',
         attrs: {
             '.structurizrCylinderPath': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
@@ -6882,7 +6869,6 @@ structurizr.shapes.Pipe = joint.dia.Element.extend({
         type: 'structurizr.pipe',
         attrs: {
             '.structurizrPipePath': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
@@ -6933,13 +6919,11 @@ structurizr.shapes.Folder = joint.dia.Element.extend({
                 ry: 1
             },
             '.structurizrFolderTab': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
 
             },
             '.structurizrFolder': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
 
@@ -6987,19 +6971,16 @@ structurizr.shapes.Component = joint.dia.Element.extend({
                 ry: 1
             },
             '.structurizrComponentBlockTop': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
 
             },
             '.structurizrComponentBlockBottom': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
 
             },
             '.structurizrComponent': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
 
@@ -7045,7 +7026,6 @@ structurizr.shapes.Ellipse = joint.dia.Element.extend({
             ellipse: {
             },
             '.structurizrEllipse': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
@@ -7090,7 +7070,6 @@ structurizr.shapes.Hexagon = joint.dia.Element.extend({
             polygon: {
             },
             '.structurizrHexagon': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
@@ -7135,7 +7114,6 @@ structurizr.shapes.Diamond = joint.dia.Element.extend({
             polygon: {
             },
             '.structurizrDiamond': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
@@ -7182,17 +7160,14 @@ structurizr.shapes.WebBrowser = joint.dia.Element.extend({
                 ry: 1
             },
             '.structurizrWebBrowser': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
             '.structurizrWebBrowserPanel': {
-                stroke: '#444444',
                 'stroke-width': 0,
                 'pointer-events': 'visiblePainted'
             },
             '.structurizrWebBrowserUrlBar': {
-                stroke: '#444444',
                 'stroke-width': 0,
                 'pointer-events': 'visiblePainted'
             },
@@ -7239,12 +7214,10 @@ structurizr.shapes.Window = joint.dia.Element.extend({
                 ry: 1
             },
             '.structurizrWindow': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
             '.structurizrWindowPanel': {
-                stroke: '#444444',
                 'stroke-width': 0,
                 'pointer-events': 'visiblePainted'
             },
@@ -7291,12 +7264,10 @@ structurizr.shapes.MobileDevice = joint.dia.Element.extend({
                 ry: 1
             },
             '.structurizrMobileDevice': {
-                stroke: '#444444',
                 'stroke-width': 2,
                 'pointer-events': 'visiblePainted'
             },
             '.structurizrMobileDeviceDisplay': {
-                stroke: '#444444',
                 'stroke-width': 0,
                 'pointer-events': 'visiblePainted'
             },

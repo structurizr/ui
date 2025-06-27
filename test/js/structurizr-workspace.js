@@ -487,3 +487,98 @@ QUnit.test("Workspace.getPerspectiveNames() returns perspective names from eleme
     assert.deepEqual(workspace.getPerspectiveNames(), ['Perspective 1', 'Perspective 2', 'Perspective 3']);
 });
 
+QUnit.test("Workspace() initialises a workspace with sorted element styles", function( assert ) {
+    var workspace = new structurizr.Workspace(
+        {
+             views: {
+                configuration: {
+                    styles: {
+                        elements: [
+                            {
+                                tag: 'Element',
+                                colorScheme: 'Dark',
+                                background: '#000000'
+                            },
+                            {
+                                tag: 'Element',
+                                colorScheme: 'Light',
+                                background: '#ffffff'
+                            },
+                            {
+                                tag: 'Element',
+                                background: '#777777'
+                            }
+                        ],
+                        relationships: []
+                    }
+                }
+             } 
+        }
+    );
+    assert.deepEqual(workspace.views.configuration.styles.elements,
+        [
+            {
+                "tag": "Element",
+                "background": "#777777"
+            },
+            {
+                "tag": "Element",
+                "background": "#000000",
+                "colorScheme": "Dark"
+            },
+            {
+                "tag": "Element",
+                "background": "#ffffff",
+                "colorScheme": "Light"
+            }
+        ]     
+    );
+});
+
+QUnit.test("Workspace() initialises a workspace with sorted relationship styles", function( assert ) {
+    var workspace = new structurizr.Workspace(
+        {
+             views: {
+                configuration: {
+                    styles: {
+                        relationships: [
+                            {
+                                tag: 'Relationship',
+                                colorScheme: 'Dark',
+                                color: '#ffffff'
+                            },
+                            {
+                                tag: 'Relationship',
+                                colorScheme: 'Light',
+                                color: '#000000'
+                            },
+                            {
+                                tag: 'Relationship',
+                                color: '#777777'
+                            }
+                        ]
+                    }
+                }
+             } 
+        }
+    );
+    assert.deepEqual(workspace.views.configuration.styles.relationships,
+        [
+            {
+                "tag": "Relationship",
+                "color": "#777777"
+            },
+            {
+                "tag": "Relationship",
+                "color": "#ffffff",
+                "colorScheme": "Dark"
+            },
+            {
+                "tag": "Relationship",
+                "color": "#000000",
+                "colorScheme": "Light"
+            }
+        ]    
+    );
+});
+

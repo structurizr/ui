@@ -27,7 +27,7 @@ QUnit.test("structurizr.ui.findElementStyle() finds the element style", function
     structurizr.ui.themes = [];
 
     var element = structurizr.workspace.findElementById('1');
-    var elementStyle = structurizr.ui.findElementStyle(element);
+    var elementStyle = structurizr.ui.findElementStyle(element, false);
 
     assert.equal(elementStyle.width, 450);
     assert.equal(elementStyle.height, 300);

@@ -699,10 +699,16 @@ structurizr.Workspace = class Workspace {
 
         if (this.#workspace.views.configuration.styles.elements === undefined) {
             this.#workspace.views.configuration.styles.elements = [];
+        } else {
+            // sort element styles by color scheme (unspecified first, followed by dark and light) and tag
+            this.#workspace.views.configuration.styles.elements.sort(structurizr.util.sortStyles);
         }
 
         if (this.#workspace.views.configuration.styles.relationships === undefined) {
             this.#workspace.views.configuration.styles.relationships = [];
+        } else {
+            // sort relationship styles by color scheme (unspecified first, followed by dark and light) and tag
+            this.#workspace.views.configuration.styles.relationships.sort(structurizr.util.sortStyles);
         }
 
         if (this.#workspace.views.configuration.metadataSymbols === undefined) {

@@ -130,6 +130,22 @@ structurizr.util.shadeColor = function(color, percentAsInteger, darkMode) {
     return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
 };
 
+structurizr.util.sortStyles = function(a, b) {
+    if (a.colorScheme === undefined && b.colorScheme === undefined) {
+        return a.tag.localeCompare(b.tag);
+    }
+
+    if (a.colorScheme === undefined) {
+        return -1;
+    }
+
+    if (b.colorScheme === undefined) {
+        return 1;
+    }
+
+    return (a.colorScheme + '/' + a.tag).localeCompare(b.colorScheme + '/' + b.tag);
+};
+
 if (!String.prototype.startsWith) {
     String.prototype.startsWith = function(searchString, position){
         return this.substr(position || 0, searchString.length) === searchString;
