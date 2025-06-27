@@ -626,6 +626,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 if (elementStyle.shape === 'Cylinder') {
                     box = createCylinder(view, element, elementStyle, positionX, positionY);
+                } else if (elementStyle.shape === 'Bucket') {
+                    box = createBucket(view, element, elementStyle, positionX, positionY);
                 } else if (elementStyle.shape === 'Person') {
                     box = createPerson(view, element, elementStyle, positionX, positionY);
                 } else if (elementStyle.shape === 'Robot') {
@@ -2241,6 +2243,61 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         path += ' l 0,' + (configuration.height - ry);
         path += ' a ' + (width / 2) + ',' + (ry/2) + ' 0,0,0 ' + width + ' ' + 0;
         path += ' l 0,-' + (configuration.height - ry);
+
+        var cell = new structurizr.shapes.Cylinder({
+            position: {
+                x: x,
+                y: y
+            },
+            size: {
+                width: configuration.width,
+                height: configuration.height
+            },
+            attrs: {
+                '.structurizrCylinderPath': {
+                    fill: fill,
+                    stroke: stroke,
+                    'stroke-width': configuration.strokeWidth,
+                    d: path
+                },
+                '.structurizrCylinderFace': {
+                    fill: 'none',
+                    stroke: 'none',
+                    width: configuration.width,
+                    height: (configuration.height - (ry/2)),
+                    x: 0,
+                    y: (ry/2)
+                }
+            },
+            element: element
+        });
+
+        if (configuration.border !== 'Solid') {
+            cell.attributes.attrs['.structurizrCylinderPath']['stroke-dasharray'] = borderStyles[configuration.border];
+        }
+
+        renderElementInternals(element, cell, configuration, width, 0, height, 30);
+
+        graph.addCell(cell);
+        mapOfIdToBox[element.id] = cell;
+
+        return cell;
+    }
+
+    function createBucket(view, element, configuration, x, y) {
+        var ry = 60;
+        var width = configuration.width;
+        var height = configuration.height - (ry/2);
+
+        var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
+        var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
+
+        var path = 'M 0,' + (ry/2);
+        path += ' a ' + (width / 2) + ',' + (ry/2) + ' 0,0,0 ' + width + ' ' + 0;
+        path += ' a ' + (width / 2) + ',' + (ry/2) + ' 0,0,0 -' + width + ' ' + 0;
+        path += ' l ' + (configuration.width/10) + ',' + (configuration.height - ry);
+        path += ' a ' + (width / 2) + ',' + (ry) + ' 0,0,0 ' + (width - (width*0.2)) + ' ' + 0;
+        path += ' l ' + (configuration.width/10) + ',-' + (configuration.height - ry);
 
         var cell = new structurizr.shapes.Cylinder({
             position: {
@@ -4350,6 +4407,23 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 path += ' l 0,' + (height - lidRadius);
                 path += ' a ' + (width / 2) + ',' + (lidRadius/2) + ' 0,0,0 ' + width + ' ' + 0;
                 path += ' l 0,-' + (height - lidRadius);
+
+                svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
+                svg += '<path id="' + uniqueKey.concat("Path") + '" d="' + path + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '></path>';
+                svg += createTextForKey(width, height, 0, lidRadius, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += '</g>';
+            } else if (elementStyle.shape === "Bucket") {
+                var lidRadius = 45;
+                var uniqueKey = "key" + elementStyle.tag.replace(/ /g, "") + "Cylinder";
+                var width = keyElementWidth;
+                var height = keyElementWidth * (elementStyle.height / elementStyle.width);
+
+                var path = 'M 0,' + (lidRadius/2);
+                path += ' a ' + (width / 2) + ',' + (lidRadius/2) + ' 0,0,0 ' + width + ' ' + 0;
+                path += ' a ' + (width / 2) + ',' + (lidRadius/2) + ' 0,0,0 -' + width + ' ' + 0;
+                path += ' l ' + (width/10) + ',' + (height - lidRadius);
+                path += ' a ' + (width / 2) + ',' + lidRadius + ' 0,0,0 ' + (width - (width*0.2)) + ' ' + 0;
+                path += ' l ' + (width/10) + ',-' + (height - lidRadius);
 
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<path id="' + uniqueKey.concat("Path") + '" d="' + path + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '></path>';
