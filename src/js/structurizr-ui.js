@@ -215,20 +215,8 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
     }
 
     const defaults = darkMode ? structurizr.ui.DARK_MODE_DEFAULTS : structurizr.ui.LIGHT_MODE_DEFAULTS;
-    const defaultElementStyle = new structurizr.ui.ElementStyle(450, 300, defaults.background, defaults.color, 24, 'Box', undefined, 'Solid', defaults.color, 2, 100, true, true);
-    const defaultElementStyleForDeploymentNode = new structurizr.ui.ElementStyle(450, 300, defaults.background, defaults.color, 24, 'Box', undefined, 'Solid', defaults.color, 1, 100, true, true);
-    const defaultBoundaryStyle = new structurizr.ui.ElementStyle(undefined, undefined, undefined, undefined, 24, undefined, undefined, undefined, undefined, 1, 100, true, true);
-
-    var defaultStyle;
+    var defaultStyle = new structurizr.ui.ElementStyle(450, 300, undefined, undefined, 24, 'Box', undefined, 'Solid', undefined, 2, 100, true, true);
     var defaultSizeInUse = true;
-
-    if (element.type === structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE) {
-        defaultStyle = defaultElementStyleForDeploymentNode;
-    } else if (element.type === 'Boundary') {
-        defaultStyle = defaultBoundaryStyle;
-    } else {
-        defaultStyle = defaultElementStyle;
-    }
 
     var elementStylesMap = {};
     var elementStyles = [];
@@ -314,8 +302,27 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
         }
     }
 
-    if (style.stroke === undefined && style.background) {
-        style.stroke = structurizr.util.shadeColor(style.background, -10);
+    if (element.type === 'Boundary') {
+        // do nothing
+    } else {
+        if (style.background !== undefined) {
+            // the background has been defined, so default the stroke to a darker version if necessary
+            if (style.stroke === undefined) {
+                style.stroke = structurizr.util.shadeColor(style.background, -10);
+            }
+        }
+
+        if (style.background === undefined) {
+            style.background = defaults.background;
+        }
+
+        if (style.stroke === undefined) {
+            style.stroke = defaults.color;
+        }
+
+        if (style.color === undefined) {
+            style.color = defaults.color;
+        }
     }
 
     if (style.strokeWidth !== undefined) {
