@@ -381,9 +381,6 @@
         healthCheck.stop();
 
         if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
-            if (embed) {
-                $('#diagramControls').addClass('hidden');
-            }
             $('#diagramEditButtons').addClass('hidden');
             $('#diagramNotEditableMessage').addClass('hidden');
             $('#editDiagramButton').addClass('hidden');
