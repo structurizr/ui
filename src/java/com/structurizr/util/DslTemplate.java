@@ -49,6 +49,10 @@ workspace "%s" "%s" {
             element "Database" {
                 shape cylinder
             }
+            relationship "Relationship" {
+                thickness 4
+                width 300
+            }
         }
     }
     
