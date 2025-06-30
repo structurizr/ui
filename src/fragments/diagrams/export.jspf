@@ -68,7 +68,6 @@
 
 <script nonce="${scriptNonce}">
     var exportFormat = 'png';
-    const exportFilenamePrefix = 'structurizr-' + (structurizr.workspace.id > 0 ? structurizr.workspace.id + '-' : '');
 
     $('#exportCurrentViewButton').click(function() { exportCurrentView(); });
     $('#exportSelectedViewsButton').click(function() { exportSelectedViews(); });
@@ -253,7 +252,7 @@
         const currentView = structurizr.diagram.getCurrentViewOrFilter();
         const viewTitle = structurizr.ui.getTitleForView(currentView);
 
-        var downloadFilenamePrefix = exportFilenamePrefix;
+        var downloadFilenamePrefix = 'structurizr-' + (structurizr.workspace.id > 0 ? structurizr.workspace.id + '-' : '');
         downloadFilenamePrefix += currentView.key;
         var downloadFilenameSuffix = '.png';
 
@@ -348,7 +347,7 @@
         const currentView = structurizr.diagram.getCurrentViewOrFilter();
         const viewTitle = structurizr.ui.getTitleForView(currentView);
 
-        var baseFilename = exportFilenamePrefix;
+        var baseFilename = 'structurizr-' + (structurizr.workspace.id > 0 ? structurizr.workspace.id + '-' : '');
         baseFilename += currentView.key;
         const diagramFilename = baseFilename + '.svg';
         const keyFilename = baseFilename + '-key.svg'
