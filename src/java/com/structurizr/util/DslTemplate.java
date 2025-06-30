@@ -51,7 +51,6 @@ workspace "%s" "%s" {
             }
             relationship "Relationship" {
                 thickness 4
-                width 300
             }
         }
     }
