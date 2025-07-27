@@ -2530,10 +2530,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function createWebBrowser(view, element, configuration, x, y) {
+        const heightOfWindowControls = 40;
         var width = configuration.width;
         var height = configuration.height;
-        var webBrowserPanelWidth = configuration.width - 20;
-        var webBrowserPanelHeight = height - 50;
+        var webBrowserPanelWidth = configuration.width - (configuration.strokeWidth * 2);
+        var webBrowserPanelHeight = height - heightOfWindowControls - configuration.strokeWidth;
 
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
@@ -2561,8 +2562,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     stroke: stroke,
                     width: webBrowserPanelWidth,
                     height: webBrowserPanelHeight,
-                    x: 10,
-                    y: 40,
+                    x: configuration.strokeWidth,
+                    y: heightOfWindowControls,
                     rx: 10,
                     ry: 10
                 },
@@ -2613,10 +2614,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function createWindow(view, element, configuration, x, y) {
+        const heightOfWindowControls = 40;
         var width = configuration.width;
         var height = configuration.height;
-        var windowPanelWidth = width - 20;
-        var windowPanelHeight = height - 50;
+        var windowPanelWidth = configuration.width - (configuration.strokeWidth * 2);
+        var windowPanelHeight = height - heightOfWindowControls - configuration.strokeWidth;
 
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
@@ -2644,8 +2646,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     stroke: stroke,
                     width: windowPanelWidth,
                     height: windowPanelHeight,
-                    x: 10,
-                    y: 40,
+                    x: configuration.strokeWidth,
+                    y: heightOfWindowControls,
                     rx: 10,
                     ry: 10
                 },
@@ -4594,8 +4596,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 var height = keyElementHeight;
 
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
-                svg += '<rect width="' + width + '" height="' + height + '" rx="10" ry="10" x="0" y="0" fill="' + stroke + '" stroke-width="5" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
-                svg += '<rect width="' + (width-20) + '" height="' + (height-50) + '" rx="10" ry="10" x="10" y="40" fill="' + fill + '" stroke-width="0"/>';
+                svg += '<rect width="' + width + '" height="' + height + '" rx="10" ry="10" x="0" y="0" fill="' + stroke + '" stroke-width="0" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
+                svg += '<rect width="' + (width-strokeWidth*2) + '" height="' + (height-40-strokeWidth) + '" rx="10" ry="10" x="' + strokeWidth + '" y="40" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<rect width="' + (width-110) + '" height="20" rx="10" ry="10" x="100" y="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="20" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="50" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
@@ -4607,8 +4609,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 var height = keyElementHeight;
 
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
-                svg += '<rect width="' + width + '" height="' + height + '" rx="10" ry="10" x="0" y="0" fill="' + stroke + '" stroke-width="5" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
-                svg += '<rect width="' + (width-20) + '" height="' + (height-50) + '" rx="10" ry="10" x="10" y="40" fill="' + fill + '" stroke-width="0"/>';
+                svg += '<rect width="' + width + '" height="' + height + '" rx="10" ry="10" x="0" y="0" fill="' + stroke + '" stroke-width="0" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
+                svg += '<rect width="' + (width-strokeWidth*2) + '" height="' + (height-40-strokeWidth) + '" rx="10" ry="10" x="' + strokeWidth + '" y="40" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="20" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="50" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="80" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
@@ -4726,9 +4728,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
 
         textY += offsetY;
+        textY -= (fontSize + 10);
 
         var svg = "";
-        svg += '<text x="' + textX + '" y="' + textY + '" text-anchor="middle" fill="' + textColor + '" font-size="' + fontSize + 'px" font-family="' + font.name + '">';
+        svg += '<text x="' + textX + '" y="' + textY + '" text-anchor="middle" dominant-baseline="hanging" fill="' + textColor + '" font-size="' + fontSize + 'px" font-family="' + font.name + '">';
 
         text.split("\n").forEach(function(line) {
             svg += '<tspan x="' + textX + '" dy="' + (fontSize + 10) + 'px">' + line + '</tspan>';
