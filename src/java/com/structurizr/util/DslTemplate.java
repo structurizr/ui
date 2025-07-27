@@ -40,14 +40,14 @@ workspace "%s" "%s" {
                 strokeWidth 7
                 shape roundedbox
             }
-            element "Boundary" {
-                strokeWidth 5
-            }
             element "Person" {
                 shape person
             }
             element "Database" {
                 shape cylinder
+            }
+            element "Boundary" {
+                strokeWidth 5
             }
             relationship "Relationship" {
                 thickness 4
