@@ -650,6 +650,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     box = createWebBrowser(view, element, elementStyle, positionX, positionY);
                 } else if (elementStyle.shape === 'Window') {
                     box = createWindow(view, element, elementStyle, positionX, positionY);
+                } else if (elementStyle.shape === 'Shell') {
+                    box = createShell(view, element, elementStyle, positionX, positionY);
                 } else if (elementStyle.shape === 'MobileDevicePortrait') {
                     box = createMobileDevicePortrait(view, element, elementStyle, positionX, positionY);
                 } else if (elementStyle.shape === 'MobileDeviceLandscape') {
@@ -2684,6 +2686,53 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         return cell;
     }
 
+    function createShell(view, element, configuration, x, y) {
+        var width = configuration.width;
+        var height = configuration.height;
+
+        var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
+        var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
+
+        var cell = new structurizr.shapes.Shell({
+            position: {
+                x: x,
+                y: y
+            },
+            size: {
+                width: configuration.width,
+                height: configuration.height
+            },
+            attrs: {
+                '.structurizrShell': {
+                    fill: fill,
+                    stroke: stroke,
+                    'stroke-width': configuration.strokeWidth,
+                    width: configuration.width,
+                    height: height,
+                    rx: 10,
+                    ry: 10
+                },
+                '.structurizrShellPrompt': {
+                    fill: stroke,
+                    rx: 20,
+                    ry: 20
+                }
+            },
+            element: element
+        });
+
+        if (configuration.border !== 'Solid') {
+            cell.attributes.attrs['.structurizrShell']['stroke-dasharray'] = borderStyles[configuration.border];
+        }
+
+        renderElementInternals(element, cell, configuration, width, 0, height, 0);
+
+        graph.addCell(cell);
+        mapOfIdToBox[element.id] = cell;
+
+        return cell;
+    }
+
     function createMobileDevicePortrait(view, element, configuration, x, y) {
         var width = configuration.width;
         var height = configuration.height;
@@ -4564,6 +4613,17 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += '<ellipse cx="50" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="80" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += createTextForKey(width, height, 0, 40, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += '</g>';
+            } else if (elementStyle.shape === "Shell") {
+                var width = keyElementWidth;
+                var height = keyElementHeight;
+
+                svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
+                svg += '<rect width="' + width + '" height="' + height + '" rx="10" ry="10" x="0" y="0" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
+                svg += '<text x="50" y="50" text-anchor="middle" fill="' + stroke + '" font-size="50px" font-family="Courier New, Arial" font-weight="bold">';
+                svg += '<tspan>>_</tspan>';
+                svg += '</text>';
+                svg += createTextForKey(width, height, 0, 0, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "MobileDevicePortrait") {
                 var width = keyElementHeight;
@@ -7260,6 +7320,60 @@ structurizr.shapes.Window = joint.dia.Element.extend({
             },
             '.structurizrIcon': {
                 ref: '.structurizrWindowPanel'
+            }
+        }
+    }, joint.dia.Element.prototype.defaults)
+});
+
+structurizr.shapes.Shell = joint.dia.Element.extend({
+    markup: '<g class="structurizrElement"><rect class="structurizrShell structurizrHighlightableElement"/><text class="structurizrShellPrompt"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'structurizr.shell',
+        attrs: {
+            rect: {
+                rx: 1,
+                ry: 1
+            },
+            '.structurizrShell': {
+                'stroke-width': 2,
+                'pointer-events': 'visiblePainted'
+            },
+            '.structurizrShellPrompt': {
+                'text': '>_',
+                'font-family': 'Courier New, Arial',
+                'font-weight': 'bold',
+                'font-size': 50,
+                ref: 'rect',
+                'x': 50,
+                'y': 50,
+                'text-anchor': 'middle',
+                'pointer-events': 'visible'
+            },
+            '.structurizrName': {
+                'font-weight': 'bold',
+                ref: 'rect',
+                'ref-x': 0.5,
+                'ref-y': 0.15,
+                'text-anchor': 'middle',
+                'pointer-events': 'visible'
+            },
+            '.structurizrMetaData': {
+                ref: 'rect',
+                'ref-x': 0.5,
+                'ref-y': 0.30,
+                'text-anchor': 'middle'
+            },
+            '.structurizrDescription': {
+                ref: 'rect',
+                'ref-x': 0.5,
+                'ref-y': 0.45,
+                'text-anchor': 'middle'
+            },
+            '.structurizrNavigation': {
+                ref: 'rect',
+            },
+            '.structurizrIcon': {
+                ref: 'rect'
             }
         }
     }, joint.dia.Element.prototype.defaults)
