@@ -2534,7 +2534,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     function createWebBrowser(view, element, configuration, x, y) {
         const heightOfWindowControls = 40;
         var width = configuration.width;
-        var height = configuration.height;
+        var height = configuration.height + configuration.strokeWidth;
         var webBrowserPanelWidth = configuration.width - (configuration.strokeWidth * 2);
         var webBrowserPanelHeight = height - heightOfWindowControls - configuration.strokeWidth;
 
@@ -2618,7 +2618,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     function createWindow(view, element, configuration, x, y) {
         const heightOfWindowControls = 40;
         var width = configuration.width;
-        var height = configuration.height;
+        var height = configuration.height + configuration.strokeWidth;
         var windowPanelWidth = configuration.width - (configuration.strokeWidth * 2);
         var windowPanelHeight = height - heightOfWindowControls - configuration.strokeWidth;
 
@@ -2886,7 +2886,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     function createMobileDeviceLandscape(view, element, configuration, x, y) {
         var width = configuration.width;
-        var height = configuration.height;
+        var height = configuration.height + configuration.strokeWidth;
 
         var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
