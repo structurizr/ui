@@ -650,6 +650,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     box = createWebBrowser(view, element, elementStyle, positionX, positionY);
                 } else if (elementStyle.shape === 'Window') {
                     box = createWindow(view, element, elementStyle, positionX, positionY);
+                } else if (elementStyle.shape === 'Terminal') {
+                    box = createTerminal(view, element, elementStyle, positionX, positionY);
                 } else if (elementStyle.shape === 'Shell') {
                     box = createShell(view, element, elementStyle, positionX, positionY);
                 } else if (elementStyle.shape === 'MobileDevicePortrait') {
@@ -2688,6 +2690,86 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         return cell;
     }
 
+    function createTerminal(view, element, configuration, x, y) {
+        const heightOfWindowControls = 40;
+        var width = configuration.width;
+        var height = configuration.height + configuration.strokeWidth;
+        var windowPanelWidth = configuration.width - (configuration.strokeWidth * 2);
+        var windowPanelHeight = height - heightOfWindowControls - configuration.strokeWidth;
+
+        var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
+        var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
+
+        var cell = new structurizr.shapes.Terminal({
+            position: {
+                x: x,
+                y: y
+            },
+            size: {
+                width: configuration.width,
+                height: configuration.height
+            },
+            attrs: {
+                '.structurizrTerminal': {
+                    fill: stroke,
+                    stroke: stroke,
+                    width: configuration.width,
+                    height: height,
+                    rx: 10,
+                    ry: 10
+                },
+                '.structurizrTerminalPanel': {
+                    fill: fill,
+                    stroke: stroke,
+                    width: windowPanelWidth,
+                    height: windowPanelHeight,
+                    x: configuration.strokeWidth,
+                    y: heightOfWindowControls,
+                    rx: 10,
+                    ry: 10
+                },
+                '.structurizrTerminalButton1': {
+                    fill: fill,
+                    cx: 20,
+                    cy: 20,
+                    rx: 10,
+                    ry: 10
+                },
+                '.structurizrTerminalButton2': {
+                    fill: fill,
+                    cx: 50,
+                    cy: 20,
+                    rx: 10,
+                    ry: 10
+                },
+                '.structurizrTerminalButton3': {
+                    fill: fill,
+                    cx: 80,
+                    cy: 20,
+                    rx: 10,
+                    ry: 10
+                },
+                '.structurizrTerminalPrompt': {
+                    fill: stroke,
+                    rx: 20,
+                    ry: 20
+                }
+            },
+            element: element
+        });
+
+        if (configuration.border !== 'Solid') {
+            cell.attributes.attrs['.structurizrTerminal']['stroke-dasharray'] = borderStyles[configuration.border];
+        }
+
+        renderElementInternals(element, cell, configuration, windowPanelWidth, 0, windowPanelHeight, 40);
+
+        graph.addCell(cell);
+        mapOfIdToBox[element.id] = cell;
+
+        return cell;
+    }
+
     function createShell(view, element, configuration, x, y) {
         var width = configuration.width;
         var height = configuration.height;
@@ -4611,6 +4693,21 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<rect width="' + width + '" height="' + height + '" rx="10" ry="10" x="0" y="0" fill="' + stroke + '" stroke-width="0" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
                 svg += '<rect width="' + (width-strokeWidth*2) + '" height="' + (height-40-strokeWidth) + '" rx="10" ry="10" x="' + strokeWidth + '" y="40" fill="' + fill + '" stroke-width="0"/>';
+                svg += '<ellipse cx="20" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
+                svg += '<ellipse cx="50" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
+                svg += '<ellipse cx="80" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
+                svg += createTextForKey(width, height, 0, 40, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += '</g>';
+            } else if (elementStyle.shape === "Terminal") {
+                var width = keyElementWidth;
+                var height = keyElementHeight;
+
+                svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
+                svg += '<rect width="' + width + '" height="' + height + '" rx="10" ry="10" x="0" y="0" fill="' + stroke + '" stroke-width="0" stroke="' + stroke + '"' + (elementStyle.border !== 'Solid' ? ' stroke-dasharray="' + borderStylesForKey[elementStyle.border] + '"' : '') + '/>';
+                svg += '<rect width="' + (width-strokeWidth*2) + '" height="' + (height-40-strokeWidth) + '" rx="10" ry="10" x="' + strokeWidth + '" y="40" fill="' + fill + '" stroke-width="0"/>';
+                svg += '<text x="50" y="90" text-anchor="middle" fill="' + stroke + '" font-size="50px" font-family="Courier New, Arial" font-weight="bold">';
+                svg += '<tspan>>_</tspan>';
+                svg += '</text>';
                 svg += '<ellipse cx="20" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="50" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="80" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
@@ -7323,6 +7420,67 @@ structurizr.shapes.Window = joint.dia.Element.extend({
             },
             '.structurizrIcon': {
                 ref: '.structurizrWindowPanel'
+            }
+        }
+    }, joint.dia.Element.prototype.defaults)
+});
+
+structurizr.shapes.Terminal = joint.dia.Element.extend({
+    markup: '<g class="structurizrElement"><rect class="structurizrTerminal structurizrHighlightableElement"/><rect class="structurizrTerminalPanel"/><text class="structurizrTerminalPrompt"/><ellipse class="structurizrTerminalButton1"/><ellipse class="structurizrTerminalButton2"/><ellipse class="structurizrTerminalButton3"/><text class="structurizrName"/><text class="structurizrMetaData"/><text class="structurizrDescription"/><g class="structurizrNavigation"><g class="structurizrZoom" /><g class="structurizrDocumentation" /><g class="structurizrDecisions" /><g class="structurizrLink" /></g><image class="structurizrIcon" /></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'structurizr.window',
+        attrs: {
+            rect: {
+                rx: 1,
+                ry: 1
+            },
+            '.structurizrTerminal': {
+                'stroke-width': 2,
+                'pointer-events': 'visiblePainted'
+            },
+            '.structurizrTerminalPanel': {
+                'stroke-width': 0,
+                'pointer-events': 'visiblePainted'
+            },
+            '.structurizrTerminalPrompt': {
+                'text': '>_',
+                'font-family': 'Courier New, Arial',
+                'font-weight': 'bold',
+                'font-size': 50,
+                ref: 'rect',
+                'x': 50,
+                'y': 90,
+                'text-anchor': 'middle',
+                'pointer-events': 'visible'
+            },
+            '.structurizrName': {
+                'font-weight': 'bold',
+                ref: '.structurizrTerminalPanel',
+                'ref-x': 0.5,
+                'ref-y': 0.15,
+                'text-anchor': 'middle',
+                'pointer-events': 'visible'
+            },
+            '.structurizrMetaData': {
+                ref: '.structurizrTerminalPanel',
+                'ref-x': 0.5,
+                'ref-y': 0.30,
+                'text-anchor': 'middle'
+            },
+            '.structurizrDescription': {
+                ref: '.structurizrTerminalPanel',
+                'ref-x': 0.5,
+                'ref-y': 0.45,
+                'text-anchor': 'middle'
+            },
+            '.structurizrNavigation': {
+                ref: '.structurizrTerminalPanel',
+                'font-weight': 'normal',
+                'ref-x': 0.5,
+                'text-anchor': 'middle'
+            },
+            '.structurizrIcon': {
+                ref: '.structurizrTerminalPanel'
             }
         }
     }, joint.dia.Element.prototype.defaults)
