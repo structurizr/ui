@@ -1,5 +1,6 @@
 body {
     font-family: "Open Sans", sans-serif;
+    font-size: 14px;
     padding-left: 0;
     padding-right: 0;
     line-height: 1.5;
@@ -129,4 +130,7 @@ body {
     border-radius: 6px;
     white-space: nowrap;
     display: inline-block;
+}
+.hidden {
+    display: none !important;
 }

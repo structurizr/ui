@@ -12,7 +12,7 @@ function openNavigationModal(options) {
         navigationList.attr('size', Math.min(8, options.length));
         navigationList.val(options[0].url);
 
-        $('#navigationModal').modal();
+        $('#navigationModal').modal('show');
     }
 }
 

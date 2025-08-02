@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="./js/jquery-3.6.3.min.js"></script>
-    <script src="./js/bootstrap-3.3.7.min.js"></script>
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script src="./js/bootstrap-5.3.7.min.js"></script>
     <script type="text/javascript" src="./js/lodash-4.17.21.js"></script>
     <script type="text/javascript" src="./js/backbone-1.4.1.js"></script>
     <script type="text/javascript" src="./js/joint-3.6.5.js"></script>
@@ -13,7 +13,7 @@
     <script type="text/javascript" src="./js/structurizr-diagram.js"></script>
     <script type="text/javascript" src="./workspace.js"></script>
 
-    <link href="./css/bootstrap-3.3.7.min.css" rel="stylesheet" media="screen" />
+    <link href="./css/bootstrap-5.3.7.min.css" rel="stylesheet" media="screen" />
     <link href="./css/joint-3.6.5.css" rel="stylesheet" media="screen" />
     <link href="./css/structurizr-static.css" rel="stylesheet" media="screen" />
     <link href="./css/structurizr-diagram.css" rel="stylesheet" media="screen" />
@@ -28,13 +28,11 @@
 <body>
     <div id="diagram"></div>
 
-    <div class="modal fade" id="quickFindModal" tabindex="-1" role="dialog" aria-labelledby="quickFindModalLabel" aria-hidden="true">
+    <div class="modal fade" id="quickFindModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <div class="modal-title">
-                        <input id="quickFindModalFilter" type="text" placeholder="Start typing..." class="form-control" />
-                    </div>
+                    <input id="quickFindModalFilter" type="text" placeholder="Start typing..." class="form-control" />
                 </div>
                 <div class="modal-body">
                     <div id="quickFindModalItems"></div>
@@ -43,7 +41,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="navigationModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="navigationModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-body" style="padding: 0">
@@ -55,11 +53,13 @@
         </div>
     </div>
 
-    <div class="modal fade" id="keyModal" tabindex="-1" role="dialog" aria-labelledby="keyModalLabel" aria-hidden="true">
+    <div class="modal fade" id="keyModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body centered">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <div id="diagramKey"></div>
                 </div>
             </div>
