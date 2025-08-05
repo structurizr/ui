@@ -385,8 +385,55 @@
 
     function relationshipDoubleClicked(event, relationshipId) {
         const relationship = structurizr.workspace.findRelationshipById(relationshipId);
-        if (relationship.url) {
-            window.open(relationship.url);
+        if (relationship) {
+            const options = [];
+
+            if (relationship.url !== undefined) {
+                options.push({
+                    url: relationship.url,
+                    label: relationship.url
+                });
+            }
+
+            if (relationship.properties) {
+                Object.keys(relationship.properties).forEach(function(name) {
+                    const value = relationship.properties[name];
+                    if (value.indexOf('http://') === 0 || value.indexOf('https://') === 0) {
+                        options.push({
+                            url: value,
+                            label: name
+                        })
+                    }
+                });
+            }
+
+            if (relationship.linkedRelationshipId) {
+                const linkedRelationship = structurizr.workspace.findRelationshipById(relationship.linkedRelationshipId);
+                if (linkedRelationship.url !== undefined) {
+                    options.push({
+                        url: linkedRelationship.url,
+                        label: linkedRelationship.url
+                    });
+                }
+
+                if (linkedRelationship.properties) {
+                    Object.keys(linkedRelationship.properties).forEach(function(name) {
+                        const value = linkedRelationship.properties[name];
+                        if (value.indexOf('http://') === 0 || value.indexOf('https://') === 0) {
+                            options.push({
+                                url: value,
+                                label: name
+                            })
+                        }
+                    });
+                }
+            }
+
+            if (options.length === 1) {
+                navigateTo(options[0].url);
+            } else {
+                openNavigationModal(options);
+            }
         }
     }
 
