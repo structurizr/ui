@@ -1172,12 +1172,11 @@
         const relationship = structurizr.workspace.findRelationshipById(relationshipId);
         if (relationship) {
             const options = [];
-            const relationshipUrl = relationship.url;
 
-            if (relationshipUrl !== undefined) {
+            if (relationship.url !== undefined) {
                 options.push({
-                    url: processWorkspaceLink(relationshipUrl),
-                    label: relationshipUrl
+                    url: processWorkspaceLink(relationship.url),
+                    label: relationship.url
                 });
             }
 
@@ -1191,6 +1190,28 @@
                         })
                     }
                 });
+            }
+
+            if (relationship.linkedRelationshipId) {
+                const linkedRelationship = structurizr.workspace.findRelationshipById(relationship.linkedRelationshipId);
+                if (linkedRelationship.url !== undefined) {
+                    options.push({
+                        url: processWorkspaceLink(linkedRelationship.url),
+                        label: linkedRelationship.url
+                    });
+                }
+
+                if (linkedRelationship.properties) {
+                    Object.keys(linkedRelationship.properties).forEach(function(name) {
+                        const value = linkedRelationship.properties[name];
+                        if (value.indexOf('http://') === 0 || value.indexOf('https://') === 0) {
+                            options.push({
+                                url: value,
+                                label: name
+                            })
+                        }
+                    });
+                }
             }
 
             if (options.length === 1) {

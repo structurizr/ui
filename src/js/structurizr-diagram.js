@@ -1323,20 +1323,31 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         });
     }
 
-    function addDoubleClickHandlerForRelationship(linkView, relationship) {
-        var url = false;
+    function relationshipHasUrl(relationship) {
+        var result = (relationship.url !== undefined);
 
-        url = relationship.url !== undefined;
-        if (relationship.properties) {
-            Object.keys(relationship.properties).forEach(function(name) {
-                const value = relationship.properties[name];
-                if (value.indexOf('http://') === 0 || value.indexOf('https://') === 0) {
-                    url = true;
-                }
-            });
+        if (!result) {
+            if (relationship.properties) {
+                Object.keys(relationship.properties).forEach(function(name) {
+                    const value = relationship.properties[name];
+                    if (value.indexOf('http://') === 0 || value.indexOf('https://') === 0) {
+                        result = true;
+                    }
+                });
+            }
         }
 
-        if (url) {
+        if (result === false) {
+            if (relationship.linkedRelationshipId) {
+                return relationshipHasUrl(structurizr.workspace.findRelationshipById(relationship.linkedRelationshipId));
+            }
+        }
+
+        return result;
+    }
+
+    function addDoubleClickHandlerForRelationship(linkView, relationship) {
+        if (relationshipHasUrl(relationship)) {
             const domElement = $('#' + linkView.id);
 
             const svg =
