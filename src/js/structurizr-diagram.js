@@ -4837,12 +4837,14 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         var textX = (offsetX + (width / 2));
         var textY;
+        var iconY;
 
         if (icon === undefined) {
             textY = ((height - offsetY)/2) - (heightOfText/2);
         } else {
-            heightOfText += 10;
+            heightOfText += (fontSize + 20);
             textY = ((height - offsetY)/2) - ((heightOfText + heightOfIcon)/2);
+            iconY = textY + heightOfText;
         }
 
         textY += offsetY;
@@ -4859,7 +4861,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         if (icon) {
             var iconWidth = (getImageRatio(icon) * heightOfIcon);
-            svg += '<image xlink:href="' + icon + '" x="' + (offsetX + ((width-iconWidth)/2)) + '" y="' + (textY + heightOfText + 10) + '" width="' + iconWidth + '" height="' + heightOfIcon + '" opacity="' + (opacity ? (opacity/100) : 1) + '"/>';
+            svg += '<image xlink:href="' + icon + '" x="' + (offsetX + ((width-iconWidth)/2)) + '" y="' + iconY + '" width="' + iconWidth + '" height="' + heightOfIcon + '" opacity="' + (opacity ? (opacity/100) : 1) + '"/>';
         }
 
         return svg;
