@@ -263,12 +263,22 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         if (imageMetadata.length > 0 && imageMetadata.filter(function(im) { return im.loaded === false; }).length > 0 && imagePreloadAttempts < 50) {
             setTimeout(preloadImages, 100);
         } else {
+            var failedImages = [];
+
             imageMetadata.forEach(function(im) {
                 if (im.loaded === false) {
                     console.log('Failed to preload ' + im.src);
                     im.error = true;
                 }
+
+                if (im.error) {
+                    failedImages.push(im.src);
+                }
             });
+
+            if (failedImages.length > 0) {
+                alert('The following images/icons failed to load - please see your web browser’s developer console for more details:\n\n' + failedImages.join('\n'));
+            }
 
             if (constructionCompleteCallback) {
                 setTimeout(constructionCompleteCallback, 10);
