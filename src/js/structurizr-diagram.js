@@ -116,6 +116,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     var onKeyDownEventHandler;
     var onKeyPressEventHandler;
 
+    var taintedCanvasErrorImageAsDataUri;
     var imageMetadata = undefined;
     var imagePreloadAttempts = 0;
     var diagramRendered = false;
@@ -222,6 +223,18 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function preloadImages() {
+        const taintedCanvasErrorImage = new Image();
+        taintedCanvasErrorImage.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = this.naturalWidth;
+            canvas.height = this.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(this, 0, 0);
+
+            taintedCanvasErrorImageAsDataUri = canvas.toDataURL('image/png');
+        };
+        taintedCanvasErrorImage.src = '/static/img/tainted-canvas-error.png';
+
         if (imageMetadata === undefined) {
             imageMetadata = [];
 
@@ -237,7 +250,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             imageMetadata.forEach(function(im) {
                 const image = new Image();
-                image.setAttribute('crossorigin', 'anonymous');
                 image.addEventListener('load', function () {
                     im.width = this.naturalWidth;
                     im.height = this.naturalHeight;
@@ -4962,33 +4974,54 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         // remove any control characters (these shouldn't be there anyway, but...)
         svgMarkup = svgMarkup.replace(/[\x00-\x19]+/g, "");
 
-        var myCanvas = document.createElement("canvas");
-        myCanvas.width = canvas.outerWidth();
-        myCanvas.height = canvas.outerHeight();
+        return svgToPng(svgMarkup, canvas.outerWidth(), canvas.outerHeight(), callback);
+    }
 
-        var canvasContext = myCanvas.getContext("2d");
+    function svgToPng(svgMarkup, width, height, callback) {
+        const taintedCanvasMessage = 'tainted canvases may not be exported';
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const canvasContext = canvas.getContext("2d");
 
         if (callback) {
-            canvg(myCanvas,
+            canvg(canvas,
                 svgMarkup,
                 {
-                    useCORS: true,
+                    useCORS: false,
                     renderCallback: function () {
                         canvasContext.globalCompositeOperation = "destination-over";
                         canvasContext.fillStyle = canvasColor;
-                        canvasContext.fillRect(0, 0, myCanvas.width, myCanvas.height);
+                        canvasContext.fillRect(0, 0, canvas.width, canvas.height);
 
-                        callback(myCanvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG));
+                        try {
+                            const png = canvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG);
+                            callback(png);
+                        } catch (e) {
+                            console.log(e);
+                            if (e.message.toLowerCase().indexOf(taintedCanvasMessage) > 0) {
+                                callback(taintedCanvasErrorImageAsDataUri);
+                            }
+                        }
                     }
                 });
         } else {
-            canvg(myCanvas, svgMarkup);
+            canvg(canvas, svgMarkup, { useCORS: false });
 
             canvasContext.globalCompositeOperation = "destination-over";
             canvasContext.fillStyle = canvasColor;
-            canvasContext.fillRect(0, 0, myCanvas.width, myCanvas.height);
+            canvasContext.fillRect(0, 0, canvas.width, canvas.height);
 
-            return myCanvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG);
+            try {
+                return canvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG);
+            } catch (e) {
+                console.log(e);
+                if (e.message.toLowerCase().indexOf(taintedCanvasMessage) > 0) {
+                    return taintedCanvasErrorImageAsDataUri;
+                }
+            }
         }
     }
 
@@ -5096,36 +5129,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             return callback(undefined);
         }
 
-        var svgMarkup = diagramKey;
-
-        var myCanvas = document.createElement("canvas");
-        myCanvas.width = totalWidthOfKey;
-        myCanvas.height = totalHeightOfKey;
-
-        var canvasContext = myCanvas.getContext("2d");
-
-        if (callback) {
-            canvg(myCanvas,
-                svgMarkup,
-                {
-                    useCORS: true,
-                    renderCallback: function () {
-                        canvasContext.globalCompositeOperation = "destination-over";
-                        canvasContext.fillStyle = canvasColor;
-                        canvasContext.fillRect(0, 0, myCanvas.width, myCanvas.height);
-
-                        callback(myCanvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG));
-                    }
-                });
-        } else {
-            canvg(myCanvas, svgMarkup);
-
-            canvasContext.globalCompositeOperation = "destination-over";
-            canvasContext.fillStyle = canvasColor;
-            canvasContext.fillRect(0, 0, myCanvas.width, myCanvas.height);
-
-            return myCanvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG);
-        }
+        return svgToPng(diagramKey, totalWidthOfKey, totalHeightOfKey, callback);
     };
 
     this.exportCurrentThumbnailToPNG = function(callback) {
