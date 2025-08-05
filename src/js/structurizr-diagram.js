@@ -250,6 +250,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             imageMetadata.forEach(function(im) {
                 const image = new Image();
+                image.setAttribute('crossorigin', 'anonymous');
                 image.addEventListener('load', function () {
                     im.width = this.naturalWidth;
                     im.height = this.naturalHeight;
