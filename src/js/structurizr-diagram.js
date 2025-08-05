@@ -4991,7 +4991,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             canvg(canvas,
                 svgMarkup,
                 {
-                    useCORS: false,
+                    useCORS: true,
                     renderCallback: function () {
                         canvasContext.globalCompositeOperation = "destination-over";
                         canvasContext.fillStyle = canvasColor;
@@ -5009,7 +5009,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     }
                 });
         } else {
-            canvg(canvas, svgMarkup, { useCORS: false });
+            canvg(canvas, svgMarkup, { useCORS: true });
 
             canvasContext.globalCompositeOperation = "destination-over";
             canvasContext.fillStyle = canvasColor;
