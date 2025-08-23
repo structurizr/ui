@@ -218,9 +218,9 @@
         document.getElementById('diagram-viewport').addEventListener('wheel', function (event) {
                 if (event.ctrlKey === true) {
                     if (event.wheelDelta > 0) {
-                        structurizr.diagram.zoomIn(event);
+                        structurizr.diagram.zoomIn(event, true);
                     } else {
-                        structurizr.diagram.zoomOut(event);
+                        structurizr.diagram.zoomOut(event, true);
                     }
 
                     event.preventDefault();
