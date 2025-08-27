@@ -40,27 +40,33 @@
 
             <div class="navigationItemSeparator"></div>
 
-            <c:if test="${not empty sharingUrlPrefix}">
-            <div class="navigationItem">
-                <a id="shareLink" href="" class="hidden"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/share-fill.svg" class="icon-sm" /> Share</a>
-            </div>
+            <div class="navigationItemSeparator"></div>
 
-            <script nonce="${scriptNonce}">
-                $('#shareLink').click(function(event) {
-                    event.preventDefault();
-
-                    var scope = '<c:out value="${scope}" />';
-                    if (scope === WORKSPACE_SCOPE) {
-                        window.open('${sharingUrlPrefix}/documentation/' + window.location.hash);
-                    } else {
-                        window.open('${sharingUrlPrefix}/documentation/' + scope + window.location.hash);
-                    }
-                });
-            </script>
-            </c:if>
+            <div class="navigationItemSeparator"></div>
 
             <div class="navigationItem">
-                <a id="exportLink" href="" class="hidden"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/filetype-html.svg" class="icon-sm" /> Export to offline HTML page</a>
+                <c:if test="${not empty sharingUrlPrefix}">
+                <a id="shareLink" href="" title="Share"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/share-fill.svg" class="icon-sm" /></a>
+                |
+                <script nonce="${scriptNonce}">
+                    $('#shareLink').click(function(event) {
+                        event.preventDefault();
+
+                        if (requestedScope === WORKSPACE_SCOPE) {
+                            window.open('${sharingUrlPrefix}/documentation/' + window.location.hash);
+                        } else {
+                            window.open('${sharingUrlPrefix}/documentation/' + requestedScope + window.location.hash);
+                        }
+                    });
+                </script>
+                </c:if>
+                <a id="exportLink" href="" class="hidden" title="Export to offline HTML page"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/filetype-html.svg" class="icon-sm" /></a>
+                |
+                <a href="${urlPrefix}" title="Workspace"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/folder.svg" class="icon-sm" /></a>
+                |
+                <a href="${urlPrefix}/diagrams" title="Diagrams"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/bounding-box.svg" class="icon-sm" /></a>
+                |
+                <a href="${urlPrefix}/decisions" title="Decisions"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/journal-text.svg" class="icon-sm" /></a>
             </div>
 
             <div class="navigationItem">
@@ -191,8 +197,6 @@
                     timeZoneName : 'long'
                 }
             ));
-
-            $('#shareLink').removeClass('hidden');
         } else {
             showNoDocumentationPage();
         }

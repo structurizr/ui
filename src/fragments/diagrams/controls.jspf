@@ -19,13 +19,9 @@
             <button id="homeButton" class="btn btn-default" title="Home"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/house.svg" class="icon-btn" /></button>
             <script nonce="${scriptNonce}">$('#homeButton').click(function() { window.location.href='/'; });</script>
             </c:if>
-            <button id="documentationButton" class="btn btn-default" title="Documentation"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/book.svg" class="icon-btn" /></button>
-            <button id="decisionLogButton" class="btn btn-default" title="Decision log"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/journal-text.svg" class="icon-btn" /></button>
             <button id="backButton" class="btn btn-default backButton" title="Go back to the last viewed diagram [b]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/arrow-90deg-left.svg" class="icon-btn" /></button>
         </div>
         <script nonce="${scriptNonce}">
-            $('#documentationButton').click(function() { openDocumentation(); });
-            $('#decisionLogButton').click(function() { openDecisions(); });
             $('#backButton').click(function() { back(); });
         </script>
 

@@ -81,6 +81,14 @@
 
         <div id="diagramNavigation" style="padding-top: 15px"></div>
 
+        <div class="centered" style="margin-bottom: 5px">
+            <a href="${urlPrefix}" title="Workspace"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/folder.svg" class="icon-sm" /></a>
+            |
+            <a href="${urlPrefix}/documentation" title="Documentation"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/book.svg" class="icon-sm" /></a>
+            |
+            <a href="${urlPrefix}/decisions" title="Decisions"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/journal-text.svg" class="icon-sm" /></a>
+        </div>
+
         <div class="centered" style="margin-bottom: 20px">
             <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon.svg" class="icon-sm" />
             <a id="renderingModeLightLink" href="">Light</a> |
@@ -709,12 +717,6 @@
 
     function initControls() {
         $('#editorButton').prop('disabled', !${workspace.editable});
-        if (!structurizr.workspace.hasDocumentation()) {
-            $('#documentationButton').addClass('hidden');
-        }
-        if (!structurizr.workspace.hasDecisions()) {
-            $('#decisionLogButton').addClass('hidden');
-        }
 
         if (structurizr.ui.isFullScreenEnabled()) {
             $('#enterPresentationModeButton').removeClass('hidden');

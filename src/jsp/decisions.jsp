@@ -43,6 +43,14 @@
             <div class="navigationItemSeparator"></div>
 
             <div class="navigationItem">
+                <a href="${urlPrefix}" title="Workspace"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/folder.svg" class="icon-sm" /></a>
+                |
+                <a href="${urlPrefix}/diagrams" title="Diagrams"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/bounding-box.svg" class="icon-sm" /></a>
+                |
+                <a href="${urlPrefix}/documentation" title="Documentation"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/book.svg" class="icon-sm" /></a>
+            </div>
+
+            <div class="navigationItem">
                 <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon.svg" class="icon-sm" />
                 <a id="renderingModeLightLink" href="">Light</a> |
                 <a id="renderingModeDarkLink" href="">Dark</a> |
