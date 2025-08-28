@@ -758,6 +758,7 @@
             const f = 102;
             const h = 104;
             const i = 105;
+            const j = 106;
             const l = 108;
             const m = 109;
             const n = 110;
@@ -834,6 +835,12 @@
             } else if (e.which === r) {
                 if (structurizr.diagram.hasLinkHighlighted() && structurizr.diagram.isEditable()) {
                     structurizr.diagram.toggleRoutingOfHighlightedLink();
+                    e.preventDefault();
+                    return;
+                }
+            } else if (e.which === j) {
+                if (structurizr.diagram.hasLinkHighlighted() && structurizr.diagram.isEditable()) {
+                    structurizr.diagram.toggleJumpOfHighlightedLink();
                     e.preventDefault();
                     return;
                 }

@@ -187,11 +187,12 @@ structurizr.ui.ElementStyle = function(width, height, background, color, fontSiz
 
 };
 
-structurizr.ui.RelationshipStyle = function(thickness, color, dashed, routing, fontSize, width, position, opacity) {
+structurizr.ui.RelationshipStyle = function(thickness, color, dashed, routing, jump, fontSize, width, position, opacity) {
     this.thickness = thickness;
     this.color = color;
     this.dashed = dashed;
     this.routing = routing;
+    this.jump = jump;
     this.fontSize = fontSize;
     this.width = width;
     this.position = position;
@@ -204,7 +205,7 @@ structurizr.ui.RelationshipStyle = function(thickness, color, dashed, routing, f
     };
 
     this.toString = function() {
-        return "".concat(this.tag, ",", this.thickness, ",", this.color, ",", this.dashed, ",", this.routing, ",", this.fontSize, ",", this.width, ",", this.position, ",", this.opacity)
+        return "".concat(this.tag, ",", this.thickness, ",", this.color, ",", this.dashed, ",", this.routing, ",", this.jump, ",", this.fontSize, ",", this.width, ",", this.position, ",", this.opacity)
     };
 
 };
@@ -369,7 +370,7 @@ structurizr.ui.findRelationshipStyle = function(relationship, darkMode) {
     }
 
     const defaults = darkMode ? structurizr.ui.DARK_MODE_DEFAULTS : structurizr.ui.LIGHT_MODE_DEFAULTS;
-    const defaultRelationshipStyle = new structurizr.ui.RelationshipStyle(2, defaults.color, true, 'Direct', 24, 200, 50, 100);
+    const defaultRelationshipStyle = new structurizr.ui.RelationshipStyle(2, defaults.color, true, 'Direct', false, 24, 200, 50, 100);
 
     var defaultStyle = defaultRelationshipStyle;
 
@@ -398,6 +399,7 @@ structurizr.ui.findRelationshipStyle = function(relationship, darkMode) {
                 structurizr.util.copyAttributeIfSpecified(relationshipStyleDefinition, relationshipStyle, 'dashed');
                 structurizr.util.copyAttributeIfSpecified(relationshipStyleDefinition, relationshipStyle, 'style');
                 structurizr.util.copyAttributeIfSpecified(relationshipStyleDefinition, relationshipStyle, 'routing');
+                structurizr.util.copyAttributeIfSpecified(relationshipStyleDefinition, relationshipStyle, 'jump');
                 structurizr.util.copyAttributeIfSpecified(relationshipStyleDefinition, relationshipStyle, 'fontSize');
                 structurizr.util.copyAttributeIfSpecified(relationshipStyleDefinition, relationshipStyle, 'width');
                 structurizr.util.copyAttributeIfSpecified(relationshipStyleDefinition, relationshipStyle, 'position');
@@ -411,6 +413,7 @@ structurizr.ui.findRelationshipStyle = function(relationship, darkMode) {
         defaultStyle.color,
         defaultStyle.dashed,
         defaultStyle.routing,
+        defaultStyle.jump,
         defaultStyle.fontSize,
         defaultStyle.width,
         defaultStyle.position,
@@ -426,6 +429,7 @@ structurizr.ui.findRelationshipStyle = function(relationship, darkMode) {
             style.copyStyleAttributeIfSpecified(relationshipStyle, 'dashed');
             style.copyStyleAttributeIfSpecified(relationshipStyle, 'style');
             style.copyStyleAttributeIfSpecified(relationshipStyle, 'routing');
+            style.copyStyleAttributeIfSpecified(relationshipStyle, 'jump');
             style.copyStyleAttributeIfSpecified(relationshipStyle, 'fontSize');
             style.copyStyleAttributeIfSpecified(relationshipStyle, 'width');
             style.copyStyleAttributeIfSpecified(relationshipStyle, 'position');

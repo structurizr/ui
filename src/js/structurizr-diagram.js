@@ -3468,6 +3468,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 routing = relationshipInView.routing;
             }
 
+            var jump = configuration.jump;
+            if (relationshipInView.jump !== undefined) {
+                jump = relationshipInView.jump;
+            }
+
             var position = configuration.position;
             if (relationshipInView.position !== undefined) {
                 position = relationshipInView.position;
@@ -3589,7 +3594,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 });
             }
 
-            setRoutingAndConnector(link, routing);
+            setRouting(link, routing);
+            setJump(link, jump);
 
             link.relationshipInView = relationshipInView;
 
@@ -3627,16 +3633,26 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
     }
 
-    function setRoutingAndConnector(link, routing) {
+    function setRouting(link, routing) {
         if (routing === undefined || routing === 'Direct') {
             link.unset('router');
-            link.set('connector', { name: 'rounded' });
+            link.connector('rounded');
         } else if (routing === 'Orthogonal') {
             link.set('router', { name: 'orthogonal' });
-            link.set('connector', { name: 'rounded' });
+            link.connector('rounded');
         } else if (routing === 'Curved') {
             link.unset('router');
-            link.set('connector', { name: 'smooth' });
+            link.connector('smooth');
+        }
+    }
+
+    function setJump(link, jump) {
+        if (jump !== undefined) {
+            if (jump === true) {
+                link.connector('jumpover', { size: 10, radius: 10 } );
+            } else {
+                link.connector('rounded');
+            }
         }
     }
 
@@ -5639,28 +5655,49 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     this.toggleRoutingOfHighlightedLink = function() {
         if (highlightedLink.model.relationshipInView.routing === undefined) {
             highlightedLink.model.relationshipInView.routing = 'Direct';
-            setRoutingAndConnector(highlightedLink.model, 'Direct');
+            setRouting(highlightedLink.model, 'Direct');
 
         } else if (highlightedLink.model.relationshipInView.routing === 'Direct') {
             highlightedLink.model.relationshipInView.routing = 'Curved';
-            setRoutingAndConnector(highlightedLink.model, 'Curved');
+            setRouting(highlightedLink.model, 'Curved');
 
         } else if (highlightedLink.model.relationshipInView.routing === 'Curved') {
             highlightedLink.model.set('vertices', []);
             highlightedLink.model.relationshipInView.routing = 'Orthogonal';
-            setRoutingAndConnector(highlightedLink.model, 'Orthogonal');
+            setRouting(highlightedLink.model, 'Orthogonal');
 
         } else if (highlightedLink.model.relationshipInView.routing === 'Orthogonal') {
             var relationship = structurizr.workspace.findRelationshipById(highlightedLink.model.relationshipInView.id);
             if (relationship) {
-                var configuration = structurizr.ui.findRelationshipStyle(relationship, darkMode);
+                const configuration = structurizr.ui.findRelationshipStyle(relationship, darkMode);
                 highlightedLink.model.relationshipInView.routing = undefined;
-                setRoutingAndConnector(highlightedLink.model, configuration.routing);
+                setRouting(highlightedLink.model, configuration.routing);
             }
         }
 
         fireWorkspaceChangedEvent();
     };
+
+    this.toggleJumpOfHighlightedLink = function() {
+        if (highlightedLink.model.relationshipInView.jump === undefined) {
+            highlightedLink.model.relationshipInView.jump = true;
+            setJump(highlightedLink.model, true);
+
+        } else if (highlightedLink.model.relationshipInView.jump === true) {
+            highlightedLink.model.relationshipInView.jump = false;
+            setJump(highlightedLink.model, false);
+
+        } else if (highlightedLink.model.relationshipInView.jump === false) {
+            var relationship = structurizr.workspace.findRelationshipById(highlightedLink.model.relationshipInView.id);
+            if (relationship) {
+                const configuration = structurizr.ui.findRelationshipStyle(relationship, darkMode);
+                highlightedLink.model.relationshipInView.jump = undefined;
+                setJump(highlightedLink.model, configuration.jump);
+            }
+        }
+
+        fireWorkspaceChangedEvent();
+    }
 
     this.addVertex = function() {
         if (editable) {
