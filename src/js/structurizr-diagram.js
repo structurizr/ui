@@ -3744,6 +3744,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
         var textColor;
         var stroke;
+        var fill;
         var icon;
         var strokeWidth = 2;
         var dashArray = '20,20';
@@ -3779,6 +3780,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             // and apply opacity
             textColor = structurizr.util.shadeColor(textColor, 100 - elementStyle.opacity, darkMode);
             stroke = structurizr.util.shadeColor(stroke, 100-elementStyle.opacity, darkMode);
+            fill = structurizr.util.shadeColor(elementStyle.background, 100-elementStyle.opacity, darkMode);
         } else if (type === 'Enterprise') {
             elementStyle = structurizr.ui.findElementStyle({type: 'Boundary', tags: 'Boundary, Boundary:Enterprise'}, darkMode);
             icon = elementStyle.icon;
@@ -3799,11 +3801,13 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             textColor = structurizr.util.shadeColor(textColor, 100 - elementStyle.opacity, darkMode);
             stroke = structurizr.util.shadeColor(stroke, 100 - elementStyle.opacity, darkMode);
+            fill = structurizr.util.shadeColor(elementStyle.background, 100-elementStyle.opacity, darkMode);
         } else if (element !== undefined) {
             elementStyle = structurizr.ui.findElementStyle({
                 type: 'Boundary',
                 tags: 'Boundary, Boundary:' + element.type
             }, darkMode);
+
             const elementStyleForBoundaryElement = structurizr.ui.findElementStyle(element, darkMode);
             strokeWidth = elementStyle.strokeWidth;
 
@@ -3827,6 +3831,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             textColor = structurizr.util.shadeColor(textColor, 100 - elementStyle.opacity, darkMode);
             stroke = structurizr.util.shadeColor(stroke, 100 - elementStyle.opacity, darkMode);
+            fill = structurizr.util.shadeColor(elementStyle.background, 100-elementStyle.opacity, darkMode);
         }
 
         var heightOfIcon = elementStyle.fontSize;
@@ -3843,7 +3848,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             attrs: {
                 '.structurizrBoundary': {
                     stroke: stroke,
-                    fill: canvasColor,
+                    fill: fill,
                     'stroke-width': strokeWidth,
                     'stroke-dasharray': dashArray
                 },
@@ -3867,7 +3872,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         boundary.on('change:position', moveLinksBetweenElementsContainedWithin);
 
         boundary._computedStyle = {};
-        boundary._computedStyle.background = canvasColor;
+        boundary._computedStyle.background = fill;
         boundary._computedStyle.color = textColor;
         boundary._computedStyle.borderStyle = 'Dashed';
         boundary._computedStyle.stroke = stroke;

@@ -303,27 +303,23 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
         }
     }
 
-    if (element.type === 'Boundary') {
-        // do nothing
-    } else {
-        if (style.background !== undefined) {
-            // the background has been defined, so default the stroke to a darker version if necessary
-            if (style.stroke === undefined) {
-                style.stroke = structurizr.util.shadeColor(style.background, -10);
-            }
-        }
-
-        if (style.background === undefined) {
-            style.background = defaults.background;
-        }
-
+    if (style.background !== undefined) {
+        // the background has been defined, so default the stroke to a darker version if necessary
         if (style.stroke === undefined) {
-            style.stroke = defaults.color;
+            style.stroke = structurizr.util.shadeColor(style.background, -10);
         }
+    }
 
-        if (style.color === undefined) {
-            style.color = defaults.color;
-        }
+    if (style.background === undefined) {
+        style.background = defaults.background;
+    }
+
+    if (style.stroke === undefined) {
+        style.stroke = defaults.color;
+    }
+
+    if (style.color === undefined) {
+        style.color = defaults.color;
     }
 
     if (style.strokeWidth !== undefined) {
