@@ -3896,6 +3896,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
         var strokeWidth = configuration.strokeWidth;
+        var fill = structurizr.util.shadeColor(configuration.background, 100-configuration.opacity, darkMode);
 
         var instanceCount = '';
         if (element.instances && element.instances !== '1') {
@@ -3917,7 +3918,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrDeploymentNode': {
                     stroke: stroke,
                     'stroke-width': strokeWidth,
-                    fill: canvasColor
+                    fill: fill
                 },
                 '.structurizrName': {
                     text: element.name,
@@ -3950,7 +3951,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         mapOfIdToBox[element.id] = cell;
 
         cell._computedStyle = {};
-        cell._computedStyle.background = canvasColor;
+        cell._computedStyle.background = configuration.background;
         cell._computedStyle.color = textColor;
         cell._computedStyle.borderStyle = configuration.border;
         cell._computedStyle.stroke = stroke;
@@ -4524,7 +4525,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             var elementInView = elementsInView[i];
             if (elementInView.type === "DeploymentNode") {
                 var elementStyle = structurizr.ui.findElementStyle(elementInView, darkMode);
-                elementStyle.background = canvasColor;
                 elementStyle.shape = 'Box';
 
                 var elementStyleIdentifier = createTagsList(elementStyle, "Deployment Node");
@@ -4801,7 +4801,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 if (elementStyle.tags.indexOf('Deployment Node') > -1) {
                     cornerRadius = 15;
-                    fill = canvasColor;
                 }
 
                 var width = keyElementWidth;
