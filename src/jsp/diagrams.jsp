@@ -79,9 +79,7 @@
         </div>
         </c:if>
 
-        <div id="diagramNavigation" style="padding-top: 15px"></div>
-
-        <div class="centered" style="margin-bottom: 5px">
+        <div class="centered" style="margin-top: 20px; margin-bottom: 5px">
             <a href="${urlPrefix}" title="Workspace"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/folder.svg" class="icon-sm" /></a>
             |
             <a href="${urlPrefix}/documentation" title="Documentation"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/book.svg" class="icon-sm" /></a>
@@ -89,12 +87,26 @@
             <a href="${urlPrefix}/decisions" title="Decisions"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/journal-text.svg" class="icon-sm" /></a>
         </div>
 
+        <c:if test="${inspectionSummary eq true}">
+        <div id="inspectionSummary" class="centered hidden" style="margin-bottom: 5px">
+            <a href="${urlPrefix}/inspections" target="_blank" title="Inspections">
+            <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/exclamation-diamond.svg" class="icon-sm" /> <span id="inspectionsError"></span> |
+            <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/exclamation-triangle.svg" class="icon-sm" /> <span id="inspectionsWarning"></span> |
+            <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/info-circle.svg" class="icon-sm" /> <span id="inspectionsInfo"></span> |
+            <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/x-circle.svg" class="icon-sm" /> <span id="inspectionsIgnore"></span>
+            </a>
+        </div>
+        </c:if>
+
         <div class="centered" style="margin-bottom: 20px">
             <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon.svg" class="icon-sm" />
             <a id="renderingModeLightLink" href="">Light</a> |
             <a id="renderingModeDarkLink" href="">Dark</a> |
             <a id="renderingModeSystemLink" href="">System</a>
         </div>
+
+        <div id="diagramNavigation" style="padding-top: 15px"></div>
+
     </div>
 
     <div class="col-sm-10" style="padding: 0">
@@ -357,6 +369,7 @@
         initSizing();
         initControls();
         initKeyboardShortcuts();
+        initInspectionSummary();
 
         <c:if test="${structurizrConfiguration.type ne 'lite'}">
         <c:if test="${workspace.editable && workspace.ownerUserType.allowedToLockWorkspaces && not empty workspace.apiKey}">
@@ -870,6 +883,29 @@
                 return;
             }
         });
+    }
+
+    function initInspectionSummary() {
+        const errors = structurizr.workspace.getProperty('structurizr.inspection.error');
+        if (errors !== undefined) {
+            $('#inspectionsError').text(errors);
+            $('#inspectionSummary').removeClass('hidden');
+        }
+
+        const warnings = structurizr.workspace.getProperty('structurizr.inspection.warning');
+        if (warnings !== undefined) {
+            $('#inspectionsWarning').text(warnings);
+        }
+
+        const infos = structurizr.workspace.getProperty('structurizr.inspection.info');
+        if (infos !== undefined) {
+            $('#inspectionsInfo').text(infos);
+        }
+        const ignores = structurizr.workspace.getProperty('structurizr.inspection.ignore');
+        if (ignores !== undefined) {
+            $('#inspectionsIgnore').text(ignores);
+        }
+
     }
 
     function navigateToPreviousDiagram() {
