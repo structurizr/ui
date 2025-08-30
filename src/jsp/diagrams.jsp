@@ -47,10 +47,10 @@
                 <c:otherwise>
                     <div id="banner"></div>
                     <div class="row">
-                        <div class="col-sm-2" style="padding: 18px 20px 10px 20px">
+                        <div class="col-xs-2" style="padding: 18px 20px 10px 20px">
                             <a href="<c:out value="${urlPrefix}" /><c:out value="${urlSuffix}" escapeXml="false" />"><img src="${structurizrConfiguration.cdnUrl}/img/structurizr-banner.png" alt="Structurizr" class="structurizrBannerLight img-responsive brandingLogo" /><img src="${structurizrConfiguration.cdnUrl}/img/structurizr-banner-dark.png" alt="Structurizr" class="structurizrBannerDark img-responsive brandingLogo" /></a>
                         </div>
-                        <div class="col-sm-10 centered" style="padding: 20px 30px 0px 30px">
+                        <div class="col-xs-10 centered" style="padding: 20px 30px 0px 30px">
                             <div class="centered">
                                 <%@ include file="/WEB-INF/fragments/diagrams/controls.jspf" %>
                             </div>
@@ -63,7 +63,7 @@
 </c:choose>
 
 <div class="row" style="padding: 0; margin: 0">
-    <div id="diagramNavigationPanel" class="col-sm-2 hidden-xs hidden-sm <c:if test="${embed eq true}">hidden</c:if>">
+    <div id="diagramNavigationPanel" class="col-xs-2 hidden-xs hidden-sm <c:if test="${embed eq true}">hidden</c:if>">
         <c:if test="${not empty workspace.branch || not empty param.version}">
         <div style="margin-top: 20px">
             <c:if test="${not empty workspace.branch}">
@@ -109,7 +109,7 @@
 
     </div>
 
-    <div class="col-sm-10" style="padding: 0">
+    <div class="col-xs-10" style="padding: 0">
         <div id="diagram" tabindex="1" style="position: relative; <c:if test="${embed}">background: transparent;</c:if>">
             <%@ include file="/WEB-INF/fragments/progress-message.jspf" %>
             <%@ include file="/WEB-INF/fragments/diagrams/key.jspf" %>
@@ -838,11 +838,17 @@
                 structurizr.diagram.undo();
                 e.preventDefault();
                 return;
-            } else if (e.which === n && structurizr.diagram.isEditable()) {
-                var regex = prompt("Please enter a regex.", "");
-                if (regex !== undefined) {
-                    structurizr.diagram.selectElementsWithName(regex);
+            } else if (e.which === n && !${embed}) {
+                const navigationIsVisible = $('#diagramNavigationPanel').is(":visible");
+
+                if (navigationIsVisible) {
+                    $('#diagramNavigationPanel').addClass('hidden');
+                } else {
+                    $('#diagramNavigationPanel').removeClass('hidden');
                 }
+
+                resize();
+
                 e.preventDefault();
                 return;
             } else if (e.which === r) {
@@ -1438,7 +1444,19 @@
     );
 
     $(window).resize(function() {
+        resize();
+    });
+
+    function resize() {
         if (structurizr.diagram) {
+            const navigationIsVisible = $('#diagramNavigationPanel').is(":visible");
+
+            if (navigationIsVisible) {
+                $('#diagram').parent().css('width', '');
+            } else {
+                $('#diagram').parent().css('width', '100%');
+            }
+
             structurizr.diagram.resize();
             structurizr.diagram.zoomToWidthOrHeight();
 
@@ -1450,7 +1468,7 @@
             postDiagramAspectRatioToParentWindow();
             </c:if>
         }
-    });
+    }
 
     window.onorientationchange = function() {
         if (structurizr.diagram) {
