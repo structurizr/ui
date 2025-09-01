@@ -315,11 +315,19 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
     }
 
     if (style.stroke === undefined) {
-        style.stroke = defaults.color;
+        if (element.type === 'Boundary') {
+            // do nothing - stroke is taken from the element the boundary represents
+        } else {
+            style.stroke = defaults.color;
+        }
     }
 
     if (style.color === undefined) {
-        style.color = defaults.color;
+        if (element.type === 'Boundary') {
+            // do nothing - color is taken from the element the boundary represents
+        } else {
+            style.color = defaults.color;
+        }
     }
 
     if (style.strokeWidth !== undefined) {
