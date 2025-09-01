@@ -4804,25 +4804,22 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     function createTextForKey(width, height, offsetX, offsetY, tag, stereotype, textColor, icon, opacity) {
         var fontSize = 30;
         var heightOfIcon = 60;
+        const paddingBetweenTextAndIcon = fontSize;
         var text = breakText(structurizr.util.escapeHtml(tag), width * 0.8, font.name, fontSize);
 
         var heightOfText = calculateHeight(text, fontSize, 0);
-
-        offsetY = offsetY / 2;
 
         var textX = (offsetX + (width / 2));
         var textY;
         var iconY;
 
         if (icon === undefined) {
-            textY = ((height - offsetY)/2) - (heightOfText/2);
+            textY = ((height - offsetY - heightOfText)/2) + offsetY;
         } else {
-            heightOfText += (fontSize + 20);
-            textY = ((height - offsetY)/2) - ((heightOfText + heightOfIcon)/2);
-            iconY = textY + heightOfText;
+            textY = ((height - offsetY - heightOfText - paddingBetweenTextAndIcon - heightOfIcon)/2) + offsetY;
+            iconY = textY + heightOfText + paddingBetweenTextAndIcon;
         }
 
-        textY += offsetY;
         textY -= (fontSize + 10);
 
         var svg = "";
