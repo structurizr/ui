@@ -1134,7 +1134,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             if (includeParentBoundary && boundaryElement.parentId) {
                 var parentBoundary = boundariesByElementId[boundaryElement.parentId];
-                var parentBoundary = boundariesByElementId[boundaryElement.parentId];
                 if (parentBoundary === undefined) {
                     var parentBoundaryElement = structurizr.workspace.findElementById(boundaryElement.parentId);
                     if (parentBoundaryElement) {
@@ -3747,12 +3746,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var fill;
         var icon;
         var strokeWidth = 2;
-        var dashArray = '20,20';
         var nameText = name;
 
         if (type === 'Group') {
-            dashArray = '5,5'; // dotted line
-            elementStyle = structurizr.ui.findElementStyle( { type: 'Boundary', tags: 'Group, Group:' + name }, darkMode);
+            elementStyle = structurizr.ui.findElementStyle( { type: 'Group', tags: 'Group, Group:' + name }, darkMode);
             icon = elementStyle.icon;
             strokeWidth = elementStyle.strokeWidth;
 
@@ -3844,13 +3841,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             metadata = '';
         }
 
-        var boundary = new structurizr.shapes.Boundary({
+        const boundary = new structurizr.shapes.Boundary({
             attrs: {
                 '.structurizrBoundary': {
                     stroke: stroke,
                     fill: fill,
-                    'stroke-width': strokeWidth,
-                    'stroke-dasharray': dashArray
+                    'stroke-width': strokeWidth
                 },
                 '.structurizrName': {
                     text: nameText,
@@ -3867,6 +3863,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             }
         });
 
+        if (elementStyle.border !== 'Solid') {
+            boundary.attributes.attrs['.structurizrBoundary']['stroke-dasharray'] = borderStyles[elementStyle.border];
+        }
+
         graph.addCell(boundary);
 
         boundary.on('change:position', moveLinksBetweenElementsContainedWithin);
@@ -3874,7 +3874,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         boundary._computedStyle = {};
         boundary._computedStyle.background = fill;
         boundary._computedStyle.color = textColor;
-        boundary._computedStyle.borderStyle = 'Dashed';
+        boundary._computedStyle.borderStyle = elementStyle.border;
         boundary._computedStyle.stroke = stroke;
         boundary._computedStyle.fontSize = elementStyle.fontSize;
 
@@ -6818,7 +6818,6 @@ structurizr.shapes.Boundary = joint.dia.Element.extend({
             },
             '.structurizrBoundary': {
                 'stroke-width': '2',
-                'stroke-dasharray': '20,20',
                 'pointer-events': 'none'
             },
             '.structurizrName': {

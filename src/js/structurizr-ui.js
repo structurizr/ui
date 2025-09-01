@@ -216,7 +216,7 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
     }
 
     const defaults = darkMode ? structurizr.ui.DARK_MODE_DEFAULTS : structurizr.ui.LIGHT_MODE_DEFAULTS;
-    var defaultStyle = new structurizr.ui.ElementStyle(450, 300, undefined, undefined, 24, 'Box', undefined, 'Solid', undefined, 2, 100, true, true);
+    var defaultStyle = new structurizr.ui.ElementStyle(450, 300, undefined, undefined, 24, 'Box', undefined, undefined, undefined, 2, 100, true, true);
     var defaultSizeInUse = true;
 
     var elementStylesMap = {};
@@ -335,6 +335,16 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
             style.strokeWidth = 1;
         } else if (style.strokeWidth > 10) {
             style.strokeWidth = 10;
+        }
+    }
+
+    if (style.border === undefined) {
+        if (element.type === 'Boundary') {
+            style.border = 'Dashed';
+        } else if (element.type === 'Group') {
+            style.border = 'Dotted';
+        } else {
+            style.border = 'Solid';
         }
     }
 
