@@ -273,6 +273,10 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
 
     style.tags = ['Element'];
 
+    if (element.type === structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE) {
+        style.tags.push('Deployment Node');
+    }
+
     const tags = structurizr.workspace.getAllTagsForElement(element);
     for (var i = 0; i < tags.length; i++) {
         const tag = tags[i].trim();

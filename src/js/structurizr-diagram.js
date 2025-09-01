@@ -73,6 +73,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     var highlightedElement = undefined;
     var highlightedLink = undefined;
 
+    var elementStylesInUse = [];
+    var elementStylesInUseMap = {};
+
+    var relationshipStylesInUse = [];
+    var relationshipStylesInUseMap = {};
+
     var currentX;
     var currentY;
 
@@ -422,8 +428,14 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         mapOfIdToBox = {};
         cells = [];
         cellsByElementId = {};
+        elementStylesInUse = [];
+        elementStylesInUseMap = {};
+
         lines = [];
         linesByRelationshipId = {};
+        relationshipStylesInUse = [];
+        relationshipStylesInUseMap = {};
+
         diagramMetadataWidth = 0;
         diagramMetadataHeight = 0;
         selectedElements = [];
@@ -620,6 +632,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 }
 
                 var elementStyle = structurizr.ui.findElementStyle(element, darkMode);
+                registerElementStyle(elementStyle);
 
                 var box;
 
@@ -3398,6 +3411,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 configuration = structurizr.ui.findRelationshipStyle(relationship, darkMode);
             }
 
+            registerRelationshipStyle(configuration);
+
             var triangle = calculateArrowHead(configuration.thickness);
 
             var description = "";
@@ -3850,6 +3865,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     function createDeploymentNode(element) {
         var configuration = structurizr.ui.findElementStyle(element, darkMode);
+        configuration.shape = 'Box';
+        registerElementStyle(configuration);
 
         var textColor = structurizr.util.shadeColor(configuration.color, 100-configuration.opacity, darkMode);
         var stroke = structurizr.util.shadeColor(configuration.stroke, 100-configuration.opacity, darkMode);
@@ -4468,50 +4485,32 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         })[0];
     }
 
+    function registerElementStyle(elementStyle) {
+        var elementStyleIdentifier = createTagsList(elementStyle, "Element");
+        elementStyle.id = elementStyleIdentifier;
+
+        if (elementStylesInUse.indexOf(elementStyleIdentifier) === -1) {
+            elementStylesInUse.push(elementStyleIdentifier);
+            elementStylesInUseMap[elementStyleIdentifier] = elementStyle;
+        }
+    }
+
+    function registerRelationshipStyle(relationshipStyle) {
+        var relationshipStyleIdentifier = createTagsList(relationshipStyle, "Relationship");
+        relationshipStyle.id = relationshipStyleIdentifier;
+
+        if (relationshipStylesInUse.indexOf(relationshipStyleIdentifier) === -1) {
+            relationshipStylesInUse.push(relationshipStyleIdentifier);
+            relationshipStylesInUseMap[relationshipStyleIdentifier] = relationshipStyle;
+        }
+    }
+
     function createDiagramKey() {
         var keyElementWidth = 450;
         var keyElementHeight = 300;
         var fontSize = "30px";
 
-        var elementStylesInUse = [];
-        var elementStylesInUseMap = {};
-        var elementsInView = currentView.elements.map(function(element) { return structurizr.workspace.findElementById(element.id); });
-        for (var i = 0; i < elementsInView.length; i++) {
-            var elementInView = elementsInView[i];
-            if (elementInView.type === "DeploymentNode") {
-                var elementStyle = structurizr.ui.findElementStyle(elementInView, darkMode);
-                elementStyle.shape = 'Box';
-
-                var elementStyleIdentifier = createTagsList(elementStyle, "Deployment Node");
-                if (elementStylesInUse.indexOf(elementStyleIdentifier) === -1) {
-                    elementStylesInUse.push(elementStyleIdentifier);
-                    elementStylesInUseMap[elementStyleIdentifier] = elementStyle;
-                }
-            } else {
-                var elementStyle = structurizr.ui.findElementStyle(elementInView, darkMode);
-                var elementStyleIdentifier = createTagsList(elementStyle, "Element");
-                if (elementStylesInUse.indexOf(elementStyleIdentifier) === -1) {
-                    elementStylesInUse.push(elementStyleIdentifier);
-                    elementStylesInUseMap[elementStyleIdentifier] = elementStyle;
-                }
-            }
-        }
-
         elementStylesInUse.sort(function(a, b){ return a.localeCompare(b); });
-
-        var relationshipStylesInUse = [];
-        var relationshipStylesInUseMap = {};
-        var relationshipsInView = currentView.relationships.map(function(relationship) { return structurizr.workspace.findRelationshipById(relationship.id); });
-        for (var i = 0; i < relationshipsInView.length; i++) {
-            var relationshipInView = relationshipsInView[i];
-            var relationshipStyle = structurizr.ui.findRelationshipStyle(relationshipInView, darkMode);
-            var relationshipStyleIdentifier = createTagsList(relationshipStyle, "Relationship");
-            if (relationshipStylesInUse.indexOf(relationshipStyleIdentifier) === -1) {
-                relationshipStylesInUse.push(relationshipStyleIdentifier);
-                relationshipStylesInUseMap[relationshipStyleIdentifier] = relationshipStyle;
-            }
-        }
-
         relationshipStylesInUse.sort(function(a, b){ return a.localeCompare(b); });
 
         var numberOfItemsInKey = elementStylesInUse.length + relationshipStylesInUse.length;
@@ -4543,7 +4542,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<rect width="' + width + '" height="' + height + '" rx="20" ry="20" x="0" y="0" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
-                svg += createTextForKey(width, height, 0, 0, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 0, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Cylinder") {
                 var lidRadius = 45;
@@ -4560,7 +4559,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<path id="' + uniqueKey.concat("Path") + '" d="' + path + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"></path>';
-                svg += createTextForKey(width, height, 0, lidRadius, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, lidRadius, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Bucket") {
                 var lidRadius = 45;
@@ -4577,7 +4576,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<path id="' + uniqueKey.concat("Path") + '" d="' + path + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"></path>';
-                svg += createTextForKey(width, height, 0, lidRadius, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, lidRadius, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Pipe") {
                 var lidRadius = 45;
@@ -4594,7 +4593,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<path id="' + uniqueKey.concat("Path") + '" d="' + path + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"></path>';
-                svg += createTextForKey(width, height, 0, 0, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 0, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Person") {
                 var width = keyElementWidth;
@@ -4604,7 +4603,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += '<circle cx="' + width/2 + '" cy="' + height/4.5 + '" r="' + height/4.5 + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
                 svg += '<line x1="' + width/5 + '" y1="' + height/1.5 + '" x2="' + width/5 + '" y2="' + height + '" stroke-width="1" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
                 svg += '<line x1="' + (width-(width/5)) + '" y1="' + height/1.5 + '" x2="' + (width-(width/5)) + '" y2="' + height + '" stroke-width="1" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
-                svg += createTextForKey(width, height, 0, height/2.5, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, height/2.5, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Robot") {
                 var width = keyElementWidth;
@@ -4615,7 +4614,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += '<rect x="' + (height - height/2.25)/2 + '" y="0" width="' + width/2.25 + '" height="' + height/2.25 + '" rx="40" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
                 svg += '<line x1="' + width/5 + '" y1="' + height/1.5 + '" x2="' + width/5 + '" y2="' + height + '" stroke-width="1" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
                 svg += '<line x1="' + (width-(width/5)) + '" y1="' + height/1.5 + '" x2="' + (width-(width/5)) + '" y2="' + height + '" stroke-width="1" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
-                svg += createTextForKey(width, height, 0, height/2.5, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, height/2.5, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Folder") {
                 var width = keyElementWidth;
@@ -4624,7 +4623,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<rect width="' + (width / 3) + '" height="' + (height / 4) + '" rx="15" ry="15" x="15" y="0" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
                 svg += '<rect width="' + width + '" height="' + (height - (height / 8)) + '" rx="6" ry="6" x="0" y="' + (height / 8) + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
-                svg += createTextForKey(width, height, 0, height / 8, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, height / 8, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Component") {
                 var width = keyElementWidth;
@@ -4635,7 +4634,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += '<rect width="' + (width - (blockWidth / 2)) + '" height="' + height + '" rx="10" ry="10" x="' + (blockWidth / 2) + '" y="0" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
                 svg += '<rect width="' + blockWidth + '" height="' + blockHeight + '" rx="5" ry="5" x="0" y="' + (blockHeight * 0.6) + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
                 svg += '<rect width="' + blockWidth + '" height="' + blockHeight + '" rx="5" ry="5" x="0" y="' + (blockHeight * 2) + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
-                svg += createTextForKey((width - (blockWidth / 2)), height, (blockWidth / 2), 0, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey((width - (blockWidth / 2)), height, (blockWidth / 2), 0, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Circle") {
                 var width = keyElementWidth;
@@ -4643,7 +4642,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<ellipse cx="' + width/2 + '" cy="' + height/2 + '" rx="' + width/2 + '" ry="' + height/2 + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
-                svg += createTextForKey(width, height, 0, 0, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 0, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Ellipse") {
                 var width = keyElementWidth;
@@ -4651,7 +4650,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<ellipse cx="' + width/2 + '" cy="' + height/2 + '" rx="' + width/2 + '" ry="' + height/2 + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
-                svg += createTextForKey(width, height, 0, 0, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 0, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Hexagon") {
                 var width = keyElementWidth;
@@ -4665,7 +4664,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<polygon points="' + points + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
-                svg += createTextForKey(width, height, 0, 0, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 0, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Diamond") {
                 var width = keyElementWidth;
@@ -4677,7 +4676,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<polygon points="' + points + '" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
-                svg += createTextForKey(width, height, 0, 0, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 0, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "WebBrowser") {
                 var width = keyElementWidth;
@@ -4690,7 +4689,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += '<ellipse cx="20" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="50" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="80" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
-                svg += createTextForKey(width, height, 0, 40, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 40, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Window") {
                 var width = keyElementWidth;
@@ -4702,7 +4701,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += '<ellipse cx="20" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="50" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="80" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
-                svg += createTextForKey(width, height, 0, 40, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 40, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Terminal") {
                 var width = keyElementWidth;
@@ -4717,7 +4716,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += '<ellipse cx="20" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="50" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="80" cy="20" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
-                svg += createTextForKey(width, height, 0, 40, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 40, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "Shell") {
                 var width = keyElementWidth;
@@ -4728,7 +4727,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += '<text x="50" y="50" text-anchor="middle" fill="' + stroke + '" font-size="50px" font-family="Courier New, Arial" font-weight="bold">';
                 svg += '<tspan>>_</tspan>';
                 svg += '</text>';
-                svg += createTextForKey(width, height, 0, 0, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 0, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "MobileDevicePortrait") {
                 var width = keyElementHeight;
@@ -4739,7 +4738,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += '<rect width="' + (width-20) + '" height="' + (height-80) + '" rx="5" ry="5" x="10" y="40" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="' + (width/2) + '" cy="' + (height-20) + '" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<line x1="' + ((width-50)/2) + '" y1="20" x2="' + (width-((width-50)/2)) + '" y2="20" stroke-width="5" stroke="' + fill + '"/>';
-                svg += createTextForKey(width, height, 0, 0, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 0, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else if (elementStyle.shape === "MobileDeviceLandscape") {
                 var width = keyElementWidth;
@@ -4750,7 +4749,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 svg += '<rect width="' + (width-80) + '" height="' + (height-20) + '" rx="5" ry="5" x="40" y="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<ellipse cx="20" cy="' + (height/2) + '" rx="10" ry="10" fill="' + fill + '" stroke-width="0"/>';
                 svg += '<line x1="' + (width-20) + '" y1="' + ((height-50)/2) + '" x2="' + (width-20) + '" y2="' + (height - ((height-50)/2)) + '" stroke-width="5" stroke="' + fill + '"/>';
-                svg += createTextForKey(width, height, 0, 0, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 0, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             } else {
                 var cornerRadius = 3;
@@ -4763,7 +4762,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 var height = keyElementHeight;
                 svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
                 svg += '<rect width="' + width + '" height="' + height + '" rx="' + cornerRadius + '" ry="' + cornerRadius + '" x="0" y="0" fill="' + fill + '" stroke-width="' + strokeWidth + '" stroke="' + stroke + '" stroke-dasharray="' + strokeDashArray + '"/>';
-                svg += createTextForKey(width, height, 0, 0, createTagsList(elementStyle, "Element"), undefined, textColor, elementStyle.icon, elementStyle.opacity);
+                svg += createTextForKey(width, height, 0, 0, elementStyle.id, undefined, textColor, elementStyle.icon, elementStyle.opacity);
                 svg += '</g>';
             }
 
@@ -4781,7 +4780,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
             svg += '<path d="M' + (width-60) + ',0 L' + (width-60) + ',60 L' + width + ',30 L ' + (width-60) + ',0" style="fill:' + fill + '" stroke-dasharray="" />';
             svg += '<path d="M0,30 L' + (width-60) + ',30" style="stroke:' + fill + '; stroke-width: ' + relationshipStyle.thickness + '; fill: none; stroke-dasharray: ' + strokeDashArray + ';" />';
-            svg += createTextForKey(width, height, 0, 60, createTagsList(relationshipStyle, "Relationship"), undefined, fill);
+            svg += createTextForKey(width, height, 0, 60, relationshipStyle.id, undefined, fill);
             svg += '</g>';
 
             counter++;
