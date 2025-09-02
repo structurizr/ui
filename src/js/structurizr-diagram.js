@@ -3,18 +3,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     const self = this;
     const font = structurizr.ui.getBranding().font;
     const gridSize = 5;
-    const nameFontSizeDifference = +10;
-    const metaDataFontSizeDifference = -7;
+    const nameFontSizeDifferenceRatio = 1.4;
+    const metadataFontSizeDifferenceRatio = 0.7;
 
     const darkenPercentage = -10;
-    const defaultBoundaryColoursLight = {
-        'Enterprise': structurizr.ui.LIGHT_MODE_DEFAULTS.color,
-        'Group': structurizr.ui.LIGHT_MODE_DEFAULTS.color
-    };
-    const defaultBoundaryColoursDark = {
-        'Enterprise': structurizr.ui.DARK_MODE_DEFAULTS.color,
-        'Group': structurizr.ui.DARK_MODE_DEFAULTS.color
-    };
 
     var scale = 0.5;
     var minZoomScale = 0.1;
@@ -833,7 +825,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                     if (element.type === structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE) {
                         var deploymentNodeCell = createDeploymentNode(element);
-                        deploymentNodeCell.elementInView = elementView;
+                        deploymentNodeCell.elementInView = element;
                         deploymentNodeCell.positionCalculated = true;
                         unusedDeploymentNodeCells.push(deploymentNodeCell);
 
@@ -1265,7 +1257,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         if (element.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE) {
             if (currentView.type === structurizr.constants.SYSTEM_LANDSCAPE_VIEW_TYPE || currentView.softwareSystemId !== element.id) {
-                views = structurizr.workspace.findSystemContextViewsForSoftwareSystem(element.id);
+                views = structurizr.workspace.findSystemContextViewsForSoftwareSystem(element.id).concat(structurizr.workspace.findContainerViewsForSoftwareSystem(element.id));
             } else if (currentView.type === structurizr.constants.SYSTEM_CONTEXT_VIEW_TYPE) {
                 views = structurizr.workspace.findContainerViewsForSoftwareSystem(element.id);
             }
@@ -1748,10 +1740,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         return diagramHeight;
     };
 
-    function calculateElementPadding(configuration) {
-        return configuration.width * 0.07;
-    }
-
     function renderElementInternals(element, cell, configuration, width, horizontalOffset, height, verticalOffset) {
         const defaultIconWidth = 60;
         const defaultIconHeight = 60;
@@ -1789,9 +1777,9 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
 
         const name = formatName(element, configuration, maxWidth);
-        const nameHeight = calculateHeight(name, configuration.fontSize, nameFontSizeDifference);
+        const nameHeight = calculateHeight(name, configuration.fontSize * nameFontSizeDifferenceRatio, 0);
         const metadata = formatMetaData(element, configuration, maxWidth);
-        const metadataHeight = calculateHeight(metadata, configuration.fontSize, metaDataFontSizeDifference);
+        const metadataHeight = calculateHeight(metadata, configuration.fontSize * metadataFontSizeDifferenceRatio, 0);
         const description = formatDescription(element, configuration, maxWidth);
         const descriptionHeight = calculateHeight(description, configuration.fontSize, 0);
 
@@ -1871,7 +1859,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         cell.attributes.attrs['.structurizrName']['font-family'] = font.name;
         cell.attributes.attrs['.structurizrName']['fill'] = color;
         cell.attributes.attrs['.structurizrName']['dominant-baseline'] = 'hanging';
-        cell.attributes.attrs['.structurizrName']['font-size'] = configuration.fontSize+nameFontSizeDifference;
+        cell.attributes.attrs['.structurizrName']['font-size'] = configuration.fontSize*nameFontSizeDifferenceRatio;
         cell.attributes.attrs['.structurizrName']['ref-y'] = undefined;
         cell.attributes.attrs['.structurizrName']['y'] = nameY;
         cell.attributes.attrs['.structurizrName']['lineHeight'] = lineHeight;
@@ -1880,7 +1868,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         cell.attributes.attrs['.structurizrMetaData']['font-family'] = font.name;
         cell.attributes.attrs['.structurizrMetaData']['fill'] = color;
         cell.attributes.attrs['.structurizrMetaData']['dominant-baseline'] = 'hanging';
-        cell.attributes.attrs['.structurizrMetaData']['font-size'] = configuration.fontSize+metaDataFontSizeDifference;
+        cell.attributes.attrs['.structurizrMetaData']['font-size'] = configuration.fontSize*metadataFontSizeDifferenceRatio;
         cell.attributes.attrs['.structurizrMetaData']['ref-y'] = undefined;
         cell.attributes.attrs['.structurizrMetaData']['y'] = metadataY;
         cell.attributes.attrs['.structurizrMetaData']['lineHeight'] = lineHeight;
@@ -3177,7 +3165,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function formatName(element, configuration, width) {
-        return breakText(element.name ? element.name : "", Math.max(0, width), font.name, (configuration.fontSize + nameFontSizeDifference));
+        return breakText(element.name ? element.name : "", Math.max(0, width), font.name, (configuration.fontSize * nameFontSizeDifferenceRatio));
     }
 
     function formatDescription(element, configuration, width) {
@@ -3196,7 +3184,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         if (configuration.metadata !== undefined && configuration.metadata === false) {
             return '';
         } else {
-            var metadata = breakText(structurizr.ui.getMetadataForElement(element, true), width, font.name, (configuration.fontSize + metaDataFontSizeDifference));
+            var metadata = breakText(structurizr.ui.getMetadataForElement(element, true), width, font.name, (configuration.fontSize * metadataFontSizeDifferenceRatio));
 
             if (currentView.type === 'Deployment') {
                 if (element.type === 'ContainerInstance') {
@@ -3241,11 +3229,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         switch(elementStyle.border) {
             case 'Dashed':
-                dasharray = (elementStyle.strokeWidth * 3) + ',' + (elementStyle.strokeWidth * 3);
+                dasharray = (elementStyle.strokeWidth * 4) + ',' + (elementStyle.strokeWidth * 4);
 
                 break;
             case 'Dotted':
-                dasharray = (elementStyle.strokeWidth) + ',' + (elementStyle.strokeWidth);
+                dasharray = (elementStyle.strokeWidth) + ',' + (elementStyle.strokeWidth * 2);
 
                 break;
             default:
@@ -3260,11 +3248,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         switch(relationshipStyle.style) {
             case 'Dashed':
-                dasharray = (relationshipStyle.thickness * 5) + ' ' + (relationshipStyle.thickness * 5);
+                dasharray = (relationshipStyle.thickness * 4) + ' ' + (relationshipStyle.thickness * 4);
 
                 break;
             case 'Dotted':
-                dasharray = (relationshipStyle.thickness) + ' ' + (relationshipStyle.thickness);
+                dasharray = (relationshipStyle.thickness) + ' ' + (relationshipStyle.thickness * 2);
 
                 break;
             default:
@@ -3436,8 +3424,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             const heightOfDescription = calculateHeight(description, configuration.fontSize, 0);
 
             var technology = formatTechnologyForRelationship(relationship);
-            technology = breakText(technology, configuration.width, font.name, configuration.fontSize + metaDataFontSizeDifference);
-            const heightOfTechnology = calculateHeight(technology, configuration.fontSize, metaDataFontSizeDifference);
+            technology = breakText(technology, configuration.width, font.name, configuration.fontSize * metadataFontSizeDifferenceRatio);
+            const heightOfTechnology = calculateHeight(technology, configuration.fontSize * metadataFontSizeDifferenceRatio, 0);
 
             var totalHeight = heightOfDescription;
             if (heightOfTechnology > 0) {
@@ -3517,7 +3505,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                             fill: fill,
                             'font-family': font.name,
                             'font-weight': 'normal',
-                            'font-size': configuration.fontSize + metaDataFontSizeDifference + 'px',
+                            'font-size': (configuration.fontSize * metadataFontSizeDifferenceRatio) + 'px',
                             'pointer-events': 'none',
                             'lineHeight': lineHeight
                         }
@@ -3562,7 +3550,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             });
 
             setRouting(link, routing);
-            setJump(link, jump);
+            setJump(link, jump, configuration.thickness);
 
             link.relationshipInView = relationshipInView;
 
@@ -3613,10 +3601,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
     }
 
-    function setJump(link, jump) {
+    function setJump(link, jump, thickness) {
         if (jump !== undefined) {
             if (jump === true) {
-                link.connector('jumpover', { size: 10, radius: 10 } );
+                link.connector('jumpover', { size: 5 * thickness, radius: 5 * thickness } );
             } else {
                 link.connector('rounded');
             }
@@ -3704,11 +3692,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     function createBoundary(name, metadata, type, element) {
         var elementStyle;
-
-        var defaultColours = defaultBoundaryColoursLight;
-        if (darkMode === true) {
-            defaultColours = defaultBoundaryColoursDark;
-        }
         var textColor;
         var stroke;
         var fill;
@@ -3716,9 +3699,15 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var strokeWidth = 2;
         var nameText = name;
 
-        if (type === 'Group') {
-            elementStyle = structurizr.ui.findElementStyle( { type: 'Group', tags: 'Group, Group:' + name }, darkMode);
+        if (type === structurizr.constants.GROUP_ELEMENT_TYPE) {
+            elementStyle = structurizr.ui.findElementStyle( {
+                type: structurizr.constants.GROUP_ELEMENT_TYPE,
+                tags: 'Group, Group:' + name
+            }, darkMode);
+
             icon = elementStyle.icon;
+            stroke = elementStyle.stroke;
+            textColor = elementStyle.color;
             strokeWidth = elementStyle.strokeWidth;
 
             if (useNestedGroups()) {
@@ -3726,78 +3715,101 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 nameText = name.substring(name.lastIndexOf(separator) + separator.length);
             }
 
-            stroke = elementStyle.stroke;
-            if (stroke === undefined) {
-                // fallback to the colour property
-                stroke = elementStyle.color;
-            }
-            if (stroke === undefined) {
-                // use the default colour for groups
-                stroke = defaultColours[type];
-            }
-
-            textColor = elementStyle.color;
-            if (textColor === undefined) {
-                // use the default colour for groups
-                textColor = defaultColours[type];
-            }
-
             // and apply opacity
             textColor = structurizr.util.shadeColor(textColor, 100 - elementStyle.opacity, darkMode);
             stroke = structurizr.util.shadeColor(stroke, 100-elementStyle.opacity, darkMode);
             fill = structurizr.util.shadeColor(elementStyle.background, 100-elementStyle.opacity, darkMode);
-        } else if (type === 'Enterprise') {
-            elementStyle = structurizr.ui.findElementStyle({type: 'Boundary', tags: 'Boundary, Boundary:Enterprise'}, darkMode);
+
+            if (elementStyle.shape === 'RoundedBox') {
+                // do nothing, this is permitted
+            } else {
+                // default to a regular box
+                elementStyle.shape = 'Box';
+            }
+            registerElementStyle(elementStyle);
+        } else if (type === 'Enterprise') { // for backwards compatibility with older workspaces
+            elementStyle = structurizr.ui.findElementStyle( {
+                type: structurizr.constants.GROUP_ELEMENT_TYPE,
+                tags: 'Boundary, Boundary:Enterprise'
+            }, darkMode);
+
             icon = elementStyle.icon;
-            strokeWidth = elementStyle.strokeWidth;
-
             stroke = elementStyle.stroke;
-            if (stroke === undefined) {
-                stroke = elementStyle.color;
-            }
-            if (stroke === undefined) {
-                stroke = defaultColours[type];
-            }
-
             textColor = elementStyle.color;
-            if (textColor === undefined) {
-                textColor = defaultColours[type];
-            }
+            strokeWidth = elementStyle.strokeWidth;
+            elementStyle.shape = 'Box';
 
             textColor = structurizr.util.shadeColor(textColor, 100 - elementStyle.opacity, darkMode);
             stroke = structurizr.util.shadeColor(stroke, 100 - elementStyle.opacity, darkMode);
             fill = structurizr.util.shadeColor(elementStyle.background, 100-elementStyle.opacity, darkMode);
         } else if (element !== undefined) {
-            elementStyle = structurizr.ui.findElementStyle({
-                type: 'Boundary',
+            elementStyle = structurizr.ui.findElementStyle(element, darkMode);
+
+            // use this as an override
+            const elementStyleForBoundary = structurizr.ui.findElementStyle({
+                type: structurizr.constants.BOUNDARY_ELEMENT_TYPE,
                 tags: 'Boundary, Boundary:' + element.type
             }, darkMode);
 
-            const elementStyleForBoundaryElement = structurizr.ui.findElementStyle(element, darkMode);
+            if (elementStyleForBoundary.icon !== undefined) {
+                elementStyle.icon = elementStyleForBoundary.icon;
+            }
+            icon = elementStyle.icon;
+
+            if (elementStyleForBoundary.background !== undefined) {
+                elementStyle.background = elementStyleForBoundary.background;
+            }
+            fill = elementStyle.background;
+
+            if (elementStyleForBoundary.stroke !== undefined) {
+                elementStyle.stroke = elementStyleForBoundary.color;
+            }
+            stroke = elementStyle.stroke;
+
+            if (elementStyleForBoundary.strokeWidth !== undefined) {
+                elementStyle.strokeWidth = elementStyleForBoundary.strokeWidth;
+            }
             strokeWidth = elementStyle.strokeWidth;
 
-            icon = elementStyle.icon;
-            if (icon === undefined) {
-                icon = elementStyleForBoundaryElement.icon;
+            if (elementStyleForBoundary.color !== undefined) {
+                elementStyle.color = elementStyleForBoundary.color;
+            } else {
+                // check the default color isn't the same as the background
+                if (elementStyle.color === elementStyle.background) {
+                    // use the stroke instead
+                    elementStyle.color = elementStyle.stroke;
+                }
             }
-
-            stroke = elementStyle.stroke;
-            if (stroke === undefined) {
-                stroke = elementStyle.color;
-            }
-            if (stroke === undefined) {
-                stroke = elementStyleForBoundaryElement.stroke;
-            }
-
             textColor = elementStyle.color;
-            if (textColor === undefined) {
-                textColor = elementStyleForBoundaryElement.stroke;
+
+            if (elementStyleForBoundary.shape !== undefined) {
+                elementStyle.shape = elementStyleForBoundary.shape;
             }
+            if (shapeHasRoundedCorners(elementStyle.shape)) {
+                elementStyle.shape = 'RoundedBox';
+            } else {
+                // default to a regular box
+                elementStyle.shape = 'Box';
+            }
+
+            if (elementStyleForBoundary.border !== undefined) {
+                elementStyle.border = elementStyleForBoundary.border;
+            }
+            fill = elementStyle.background;
+
+            if (elementStyleForBoundary.fontSize !== undefined) {
+                elementStyle.fontSize = elementStyleForBoundary.fontSize;
+            }
+
+            elementStyle.tags = [ 'Boundary' ].concat(elementStyle.tags);
+            registerElementStyle(elementStyle);
 
             textColor = structurizr.util.shadeColor(textColor, 100 - elementStyle.opacity, darkMode);
             stroke = structurizr.util.shadeColor(stroke, 100 - elementStyle.opacity, darkMode);
-            fill = structurizr.util.shadeColor(elementStyle.background, 100-elementStyle.opacity, darkMode);
+            fill = structurizr.util.shadeColor(fill, 100-elementStyle.opacity, darkMode);
         }
+
+        const cornerRadius = (elementStyle.shape === 'Box' ? 0 : 20);
 
         var heightOfIcon = elementStyle.fontSize;
         if (metadata !== undefined) {
@@ -3814,26 +3826,26 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrBoundary': {
                     stroke: stroke,
                     fill: fill,
-                    'stroke-width': strokeWidth
+                    'stroke-width': strokeWidth,
+                    'stroke-dasharray': dashArrayForElement(elementStyle),
+                    rx: cornerRadius,
+                    ry: cornerRadius
                 },
                 '.structurizrName': {
                     text: nameText,
                     'font-family': font.name,
-                    'font-size': elementStyle.fontSize + 'px',
+                    'font-weight': 'bold',
+                    'font-size': (elementStyle.fontSize * nameFontSizeDifferenceRatio) + 'px',
                     fill: textColor
                 },
                 '.structurizrMetaData': {
                     text: metadata,
                     'font-family': font.name,
-                    'font-size': elementStyle.fontSize + metaDataFontSizeDifference + 'px',
+                    'font-size': (elementStyle.fontSize * metadataFontSizeDifferenceRatio) + 'px',
                     fill: textColor
                 }
             }
         });
-
-        if (elementStyle.border !== 'Solid') {
-            boundary.attributes.attrs['.structurizrBoundary']['stroke-dasharray'] = dashArrayForElement(elementStyle);
-        }
 
         graph.addCell(boundary);
 
@@ -3861,6 +3873,20 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         $('#' + cellView.id).attr('style', 'cursor: ' + (editable === true ? 'move' : 'default') + ' !important');
 
         return boundary;
+    }
+
+    function shapeHasRoundedCorners(shape) {
+        return [
+            'RoundedBox',
+            'Folder',
+            'WebBrowser',
+            'Window',
+            'Terminal',
+            'Shell',
+            'MobileDevicePortrait',
+            'MobileDeviceLandscape',
+            'Component'
+        ].indexOf(shape) > -1;
     }
 
     function createDeploymentNode(element) {
@@ -3899,13 +3925,14 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 '.structurizrName': {
                     text: element.name,
                     'font-family': font.name,
-                    'font-size': configuration.fontSize + 'px',
+                    'font-weight': 'bold',
+                    'font-size': (configuration.fontSize * nameFontSizeDifferenceRatio) + 'px',
                     'fill': textColor
                 },
                 '.structurizrMetaData': {
                     text: metadata,
                     'font-family': font.name,
-                    'font-size': configuration.fontSize + metaDataFontSizeDifference + 'px',
+                    'font-size': (configuration.fontSize * metadataFontSizeDifferenceRatio) + 'px',
                     'fill': textColor
                 },
                 '.structurizrInstanceCount': {
@@ -4019,29 +4046,34 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     function reposition(parentCell) {
-        var padding;
-        var metadataText;
-        var fontSize;
-
         if (parentCell && parentCell.getEmbeddedCells().length > 0) {
-            metadataText = parentCell.attr('.structurizrMetaData').text;
-            fontSize = parentCell._computedStyle.fontSize;
+            const viewOrFilter = (currentFilter !== undefined ? currentFilter : currentView);
+            const metadataText = parentCell.attr('.structurizrMetaData').text;
+            const fontSize = parentCell._computedStyle.fontSize;
 
-            if (parentCell.elementInView && parentCell.positionCalculated === false) {
-                // this is an element from the model
-                var element = structurizr.workspace.findElementById(parentCell.elementInView.id);
-                if (element.type === 'DeploymentNode') {
-                    padding = { top: 50, right: 50, bottom: 50, left: 50 };
-                }
+            var defaultInternalPadding = '20';
+            var internalPadding;
+            var margin = 15;
+
+            if (parentCell.elementInView === undefined) {
+                internalPadding = parseInt(getViewOrViewSetProperty(viewOrFilter, 'structurizr.groupPadding', defaultInternalPadding));
             } else {
-                // this is a boundary box
-                padding = { top: 20, right: 20, bottom: 50, left: 20 };
+                if (parentCell.elementInView.type === structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE) {
+                    internalPadding = parseInt(getViewOrViewSetProperty(viewOrFilter, 'structurizr.deploymentNodePadding', defaultInternalPadding));
+                } else {
+                    internalPadding = parseInt(getViewOrViewSetProperty(viewOrFilter, 'structurizr.boundaryPadding', defaultInternalPadding));
+                }
             }
 
+            const padding = { top: internalPadding, right: internalPadding, bottom: internalPadding + margin, left: internalPadding };
+
+            var nameFontSize = parseInt(parentCell.attr('.structurizrName')['font-size']);
+            var metadataFontSize = parseInt(parentCell.attr('.structurizrMetaData')['font-size']);
+
             if (metadataText && metadataText.length > 0) {
-                padding.bottom = padding.bottom + fontSize + fontSize + metaDataFontSizeDifference;
+                padding.bottom = padding.bottom + nameFontSize + metadataFontSize + margin;
             } else {
-                padding.bottom = padding.bottom + fontSize;
+                padding.bottom = padding.bottom + nameFontSize + margin;
             }
 
             var minX = Number.MAX_VALUE;
@@ -4065,19 +4097,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 // }
             }
 
-            padding = {
-                top: padding.top,
-                right: padding.right,
-                bottom: padding.bottom,
-                left: padding.left
-            };
-
             var newWidth = maxX - minX + padding.left + padding.right;
             var newHeight = maxY - minY + padding.top + padding.bottom;
             var newX = minX - padding.left;
             var newY = minY - padding.top;
 
-            var margin = 15;
             var refX = (margin / newWidth);
 
             if (parentCell._computedStyle.icon !== undefined) {
@@ -4486,7 +4510,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function registerElementStyle(elementStyle) {
-        var elementStyleIdentifier = createTagsList(elementStyle, "Element");
+        const elementStyleIdentifier = createTagsList(elementStyle, "Element");
         elementStyle.id = elementStyleIdentifier;
 
         if (elementStylesInUse.indexOf(elementStyleIdentifier) === -1) {
@@ -4496,7 +4520,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function registerRelationshipStyle(relationshipStyle) {
-        var relationshipStyleIdentifier = createTagsList(relationshipStyle, "Relationship");
+        const relationshipStyleIdentifier = createTagsList(relationshipStyle, "Relationship");
         relationshipStyle.id = relationshipStyleIdentifier;
 
         if (relationshipStylesInUse.indexOf(relationshipStyleIdentifier) === -1) {
@@ -4517,10 +4541,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         if (currentView.type === "Deployment") {
             numberOfItemsInKey++;
         }
-        var columns = 5;
-        var columnWidth = 500;
-        var rowHeight = 500;
-        var rows = Math.ceil(numberOfItemsInKey / columns);
+        const columns = 5;
+        const columnWidth = 500;
+        const rowHeight = 500;
+        const rows = Math.ceil(numberOfItemsInKey / columns);
         totalWidthOfKey = columns * columnWidth;
         totalHeightOfKey = rows * rowHeight;
         var counter = 1;
@@ -4777,9 +4801,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             var width = keyElementWidth;
             var height = 160;
+            const arrowSize = 20 + (relationshipStyle.thickness * 4);
             svg += createSvgGroup(counter, columns, columnWidth, rowHeight, width, height);
-            svg += '<path d="M' + (width-60) + ',0 L' + (width-60) + ',60 L' + width + ',30 L ' + (width-60) + ',0" style="fill:' + fill + '" stroke-dasharray="" />';
-            svg += '<path d="M0,30 L' + (width-60) + ',30" style="stroke:' + fill + '; stroke-width: ' + relationshipStyle.thickness + '; fill: none; stroke-dasharray: ' + strokeDashArray + ';" />';
+            svg += '<path d="M' + (width-arrowSize) + ',0 L' + (width-arrowSize) + ',' + (30 + (arrowSize/2)) + ' L' + width + ',30 L ' + (width-arrowSize) + ',' + (30 - (arrowSize/2)) + '" style="fill:' + fill + '" />';
+            svg += '<path d="M0,30 L' + (width-arrowSize) + ',30" style="stroke:' + fill + '; stroke-width: ' + relationshipStyle.thickness + '; fill: none; stroke-dasharray: ' + strokeDashArray + ';" />';
             svg += createTextForKey(width, height, 0, 60, relationshipStyle.id, undefined, fill);
             svg += '</g>';
 
@@ -5621,24 +5646,25 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     this.toggleJumpOfHighlightedLink = function() {
-        if (highlightedLink.model.relationshipInView.jump === undefined) {
-            highlightedLink.model.relationshipInView.jump = true;
-            setJump(highlightedLink.model, true);
+        var relationship = structurizr.workspace.findRelationshipById(highlightedLink.model.relationshipInView.id);
+        if (relationship) {
+            const configuration = structurizr.ui.findRelationshipStyle(relationship, darkMode);
 
-        } else if (highlightedLink.model.relationshipInView.jump === true) {
-            highlightedLink.model.relationshipInView.jump = false;
-            setJump(highlightedLink.model, false);
+            if (highlightedLink.model.relationshipInView.jump === undefined) {
+                highlightedLink.model.relationshipInView.jump = true;
+                setJump(highlightedLink.model, true, configuration.thickness);
 
-        } else if (highlightedLink.model.relationshipInView.jump === false) {
-            var relationship = structurizr.workspace.findRelationshipById(highlightedLink.model.relationshipInView.id);
-            if (relationship) {
-                const configuration = structurizr.ui.findRelationshipStyle(relationship, darkMode);
+            } else if (highlightedLink.model.relationshipInView.jump === true) {
+                highlightedLink.model.relationshipInView.jump = false;
+                setJump(highlightedLink.model, false, configuration.thickness);
+
+            } else if (highlightedLink.model.relationshipInView.jump === false) {
                 highlightedLink.model.relationshipInView.jump = undefined;
-                setJump(highlightedLink.model, configuration.jump);
+                setJump(highlightedLink.model, configuration.jump, configuration.thickness);
             }
-        }
 
-        fireWorkspaceChangedEvent();
+            fireWorkspaceChangedEvent();
+        }
     }
 
     this.addVertex = function() {

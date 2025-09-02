@@ -8,11 +8,13 @@ structurizr.ui.RENDERING_MODE_DARK = 'dark';
 
 structurizr.ui.LIGHT_MODE_DEFAULTS = {
     background: '#ffffff',
-    color: '#444444'
+    color: '#444444',
+    strokeWidth: 2
 };
 structurizr.ui.DARK_MODE_DEFAULTS = {
     background: '#111111',
-    color: '#cccccc'
+    color: '#cccccc',
+    strokeWidth: 2
 };
 
 structurizr.ui.themes = [];
@@ -216,7 +218,7 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
     }
 
     const defaults = darkMode ? structurizr.ui.DARK_MODE_DEFAULTS : structurizr.ui.LIGHT_MODE_DEFAULTS;
-    var defaultStyle = new structurizr.ui.ElementStyle(450, 300, undefined, undefined, 24, 'Box', undefined, undefined, undefined, 2, 100, true, true);
+    var defaultStyle = new structurizr.ui.ElementStyle(450, 300, undefined, undefined, 24, undefined, undefined, undefined, undefined, undefined, 100, true, true);
     var defaultSizeInUse = true;
 
     var elementStylesMap = {};
@@ -273,13 +275,21 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
 
     style.tags = ['Element'];
 
-    if (element.type === structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE) {
-        style.tags.push('Deployment Node');
+    switch (element.type) {
+        case structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE:
+            style.tags.push('Deployment Node');
+            break;
+        case structurizr.constants.GROUP_ELEMENT_TYPE:
+            style.tags.push('Group');
+            break;
+        case structurizr.constants.BOUNDARY_ELEMENT_TYPE:
+            style.tags.push('Boundary');
+            break;
     }
 
     const tags = structurizr.workspace.getAllTagsForElement(element);
     for (var i = 0; i < tags.length; i++) {
-        const tag = tags[i].trim();
+        var tag = tags[i].trim();
         var elementStyle = elementStylesMap[tag];
         if (elementStyle) {
             if (elementStyle.width !== undefined || elementStyle.height !== undefined) {
@@ -299,7 +309,11 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
             style.copyStyleAttributeIfSpecified(elementStyle, 'opacity');
             style.copyStyleAttributeIfSpecified(elementStyle, 'metadata');
             style.copyStyleAttributeIfSpecified(elementStyle, 'description');
-            style.tag = tag;
+
+            if (tag.indexOf('Group:') === 0) {
+                // special treatment for tags prefixed Group: ... remove the prefix
+                tag = tag.substring('Group:'.length);
+            }
 
             if (style.tags.indexOf(tag) === -1) {
                 style.tags.push(tag);
@@ -308,8 +322,8 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
     }
 
     if (style.background !== undefined) {
-        // the background has been defined, so default the stroke to a darker version if necessary
         if (style.stroke === undefined) {
+            // the background has been defined, so default the stroke to a darker version if necessary
             style.stroke = structurizr.util.shadeColor(style.background, -10);
         }
     }
@@ -319,22 +333,36 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
     }
 
     if (style.stroke === undefined) {
-        if (element.type === 'Boundary') {
+        if (element.type === structurizr.constants.BOUNDARY_ELEMENT_TYPE) {
             // do nothing - stroke is taken from the element the boundary represents
+        } else if (element.type === structurizr.constants.GROUP_ELEMENT_TYPE) {
+            if (style.color !== undefined) {
+                // fallback to the colour property
+                style.stroke = style.color;
+            } else {
+                // use the default colour for groups
+                style.stroke = defaults.color;
+            }
         } else {
             style.stroke = defaults.color;
         }
     }
 
     if (style.color === undefined) {
-        if (element.type === 'Boundary') {
+        if (element.type === structurizr.constants.BOUNDARY_ELEMENT_TYPE) {
             // do nothing - color is taken from the element the boundary represents
         } else {
             style.color = defaults.color;
         }
     }
 
-    if (style.strokeWidth !== undefined) {
+    if (style.strokeWidth === undefined) {
+        if (element.type === structurizr.constants.BOUNDARY_ELEMENT_TYPE) {
+            // do nothing - stroke width is taken from the element the boundary represents
+        } else {
+            style.strokeWidth = defaults.strokeWidth;
+        }
+    } else {
         if (style.strokeWidth < 1) {
             style.strokeWidth = 1;
         } else if (style.strokeWidth > 10) {
@@ -342,10 +370,18 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
         }
     }
 
+    if (style.shape === undefined) {
+        if (element.type === structurizr.constants.BOUNDARY_ELEMENT_TYPE) {
+            // default to element style
+        } else {
+            style.shape = 'Box';
+        }
+    }
+
     if (style.border === undefined) {
-        if (element.type === 'Boundary') {
-            style.border = 'Dashed';
-        } else if (element.type === 'Group') {
+        if (element.type === structurizr.constants.BOUNDARY_ELEMENT_TYPE) {
+            // default to element style
+        } else if (element.type === structurizr.constants.GROUP_ELEMENT_TYPE) {
             style.border = 'Dotted';
         } else {
             style.border = 'Solid';
@@ -388,7 +424,7 @@ structurizr.ui.findRelationshipStyle = function(relationship, darkMode) {
     }
 
     const defaults = darkMode ? structurizr.ui.DARK_MODE_DEFAULTS : structurizr.ui.LIGHT_MODE_DEFAULTS;
-    const defaultRelationshipStyle = new structurizr.ui.RelationshipStyle(2, defaults.color, true, 'Direct', false, 24, 200, 50, 100);
+    const defaultRelationshipStyle = new structurizr.ui.RelationshipStyle(2, defaults.color, true, 'Direct', undefined, 24, 200, 50, 100);
 
     var defaultStyle = defaultRelationshipStyle;
 
@@ -452,7 +488,6 @@ structurizr.ui.findRelationshipStyle = function(relationship, darkMode) {
             style.copyStyleAttributeIfSpecified(relationshipStyle, 'width');
             style.copyStyleAttributeIfSpecified(relationshipStyle, 'position');
             style.copyStyleAttributeIfSpecified(relationshipStyle, 'opacity');
-            style.tag = tags[i].trim();
 
             if (style.tags.indexOf(tags[i].trim()) === -1) {
                 style.tags.push(tags[i].trim());
@@ -466,6 +501,12 @@ structurizr.ui.findRelationshipStyle = function(relationship, darkMode) {
         } else {
             style.style = 'Dashed';
         }
+    }
+
+    if (style.thickness < 1) {
+        style.thickness = 1;
+    } else if (style.thickness > 10) {
+        style.thickness = 10;
     }
 
     return style;
