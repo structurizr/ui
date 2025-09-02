@@ -142,7 +142,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 }
             }
         }),
-        linkConnectionPoint: (editable ? undefined : shapePerimeterConnectionPoint),
+        linkConnectionPoint: undefined,
         clickThreshold: 1,
         sorting: joint.dia.Paper.sorting.APPROX
     });
@@ -306,49 +306,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     this.setLasso = function(l) {
         lasso = l;
     };
-
-    function shapePerimeterConnectionPoint(linkView, view, magnet, reference) {
-        var bbox;
-        var spot;
-
-        // orthogonal routing already snaps to the compass points, so we're only interested in links without a routing algorithm set
-        if (linkView.model.get('router') === undefined) {
-            var type = view.model.get('type');
-            if (type === 'structurizr.box' || type === 'structurizr.ellipse' || type === 'structurizr.hexagon' || type === 'structurizr.webBrowser' || type === 'structurizr.window' || type === 'structurizr.mobileDevice') {
-                magnet = view.$('.structurizrHighlightableElement')[0];
-            } else if (type === 'structurizr.person' || type === 'structurizr.robot') {
-                // calculate the angle from the centre point of the shape to the reference point, and prefer the head if the angle is too steep
-                var shapeBBox = view.model.getBBox();
-                var centrePointX = shapeBBox.x + (shapeBBox.width/2);
-                var centrePointY = shapeBBox.y + (shapeBBox.height/2);
-
-                var radians = Math.atan2(centrePointY - reference.y, reference.x - centrePointX);
-                var degrees = radians * 180 / Math.PI;
-
-                if (degrees > 45 && degrees < 135) {
-                    if (type === 'structurizr.person') {
-                        magnet = view.$('.structurizrPersonHead')[0];
-                    } else {
-                        magnet = view.$('.structurizrRobotHead')[0];
-                    }
-                } else {
-                    // do nothing
-                }
-            }
-        }
-
-        if (magnet) {
-            spot = V(magnet).findIntersection(reference, linkView.paper.viewport);
-            if (!spot) {
-                bbox = g.rect(V(magnet).bbox(false, linkView.paper.viewport));
-            }
-        } else {
-            bbox = view.model.getBBox();
-            spot = bbox.intersectionWithLineFromCenterToPoint(reference);
-        }
-
-        return spot || bbox.center();
-    }
 
     function fireWorkspaceChangedEvent() {
         if (workspaceChangedEventHandler !== undefined) {
