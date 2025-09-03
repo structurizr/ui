@@ -612,33 +612,63 @@
     function initThumbnails() {
         var html = '';
         var index = 1;
-        views.forEach(function(view) {
-            viewKeys.push(view.key);
-            var id = 'diagram' + index;
-            var title = structurizr.util.escapeHtml(structurizr.ui.getTitleForView(view));
 
-            html += '<div id="' + id + 'Thumbnail" class="diagramThumbnail centered small">';
+        // determine view group based on view property viewGroup if present
+        const viewGroups = views.reduce((acc, view) => {
+          const viewGroup = (view.properties?.viewGroup ?? 'default').toLowerCase();
+          if (!acc[viewGroup]) {
+            acc[viewGroup] = [];
+          }
+          acc[viewGroup].push(view);
+          return acc;
+        }, { default: []});
 
-            if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
-                html += '  <img src="' + view.content + '" class="img-thumbnail viewThumbnail" style="margin-bottom: 10px;" /><br />';
-            } else {
-            <c:choose>
-            <c:when test="${not empty workspace.branch or not empty param.version or embed eq true}">
-            html += '  <img src="/static/img/thumbnail-not-available.png" class="img-thumbnail" style="margin-bottom: 10px" /></a>';
-            </c:when>
-            <c:otherwise>
-            html += '  <img src="${thumbnailUrl}' + structurizr.util.escapeHtml(view.key) + '-thumbnail.png" class="img-thumbnail viewThumbnail" style="margin-bottom: 10px;" /><br />';
-            </c:otherwise>
-            </c:choose>
-            }
+        function _renderViews(views) {
+            views.forEach(function(view) {
+                viewKeys.push(view.key);
+                var id = 'diagram' + index;
+                var title = structurizr.util.escapeHtml(structurizr.ui.getTitleForView(view));
 
-            html += '<div>';
-            html += title;
-            html += '<br /><span class="small">#' + structurizr.util.escapeHtml(view.key) + '</span>';
-            html += '</div></div>';
+                html += '<div id="' + id + 'Thumbnail" class="diagramThumbnail centered small">';
+                
+                if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
+                    html += '  <img src="' + view.content + '" class="img-thumbnail viewThumbnail" style="margin-bottom: 10px;" /><br />';
+                } else {
+                    <c:choose>
+                    <c:when test="${not empty workspace.branch or not empty param.version or embed eq true}">
+                    html += '  <img src="/static/img/thumbnail-not-available.png" class="img-thumbnail" style="margin-bottom: 10px" />';
+                    </c:when>
+                    <c:otherwise>
+                    html += '  <img src="${thumbnailUrl}' + structurizr.util.escapeHtml(view.key) + '-thumbnail.png" class="img-thumbnail viewThumbnail" style="margin-bottom: 10px;" /><br />';
+                    </c:otherwise>
+                    </c:choose>
+                }
 
-            index++;
-        });
+                html += '<div>';
+                html += title;
+                html += '<br /><span class="small">#' + structurizr.util.escapeHtml(view.key) + '</span>';
+                html += '</div></div>';
+
+                index++;
+            });
+        }
+
+        // if only a single viewGroup is present, render the views directly
+        // this happends if no view has the custom property viewGroup set
+        if (Object.keys(viewGroups).length === 1) {
+          _renderViews(views);
+        } else {
+            Object.entries(viewGroups).forEach(([keyGroup, _views]) => {
+                html += '<details class="thumbnailGroup">';
+                html += '<summary>' + keyGroup + '</summary>';
+                html += '<div class="thumbnailGroupContent">';
+                
+                _renderViews(_views);
+
+                html += '</div>';
+                html += '</details>';
+            })
+        }
 
         $('#diagramNavigation').append(html);
 
