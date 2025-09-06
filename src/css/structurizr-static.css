@@ -62,7 +62,8 @@ body {
 }
 
 .modal-xl {
-    width: 95%
+    width: 95%;
+    max-width: 95%;
 }
 .modal-content {
     font-size: 15px;
