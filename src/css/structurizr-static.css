@@ -64,6 +64,10 @@ body {
 .modal-xl {
     width: 95%
 }
+.modal-content {
+    font-size: 15px;
+}
+
 .btn-active {
     background: #999999;
 }
@@ -133,4 +137,16 @@ body {
 }
 .hidden {
     display: none !important;
+}
+
+code {
+    color: #000000;
+    font-weight: bold;
+}
+
+.structurizrBannerLight {
+    display: block;
+}
+.structurizrBannerDark {
+    display: none;
 }
