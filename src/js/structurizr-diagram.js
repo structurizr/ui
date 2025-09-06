@@ -505,8 +505,8 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             if (imageMetadata.contentType === structurizr.constants.CONTENT_TYPE_IMAGE_SVG) {
                 // scale smaller SVGs, otherwise the diagram title becomes too large
-                const minimumWidth = self.getPossibleViewportWidth() * 2;
-                const minimumHeight = self.getPossibleViewportHeight() * 1;
+                const minimumWidth = self.getPossibleViewportWidth() * 3;
+                const minimumHeight = self.getPossibleViewportHeight() * 2;
 
                 if (imageMetadata.ratio >= 1 && imageWidth < minimumWidth) {
                     // landscape image
@@ -544,10 +544,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             view.dimensions = {
                 width: imageWidth,
-                height: imageHeight
+                height: imageHeight + (diagramMetadataHeight * 1.5)
             }
 
             self.setPaperSize(view);
+            centreCellHorizontally(image);
 
             if (embedded) {
                 self.zoomFitWidth();
@@ -3962,10 +3963,18 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function centreCell(cell) {
-        var width = cell.get('size').width;
-        var height = cell.get('size').height;
-        var x = (diagramWidth - width) / 2;
-        var y = (diagramHeight - height) / 2;
+        const width = cell.get('size').width;
+        const height = cell.get('size').height;
+        const x = (diagramWidth - width) / 2;
+        const y = (diagramHeight - height) / 2;
+
+        cell.set({ position: { x: x, y: y }});
+    }
+
+    function centreCellHorizontally(cell) {
+        const width = cell.get('size').width;
+        const x = (diagramWidth - width) / 2;
+        const y = cell.get('position').y;
 
         cell.set({ position: { x: x, y: y }});
     }
