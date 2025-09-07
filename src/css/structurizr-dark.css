@@ -80,11 +80,13 @@ code {
 }
 
 .modal-content {
-    background: #333333;
+    background: #111111;
+    border: #dddddd 1px solid;
+    color: #dddddd;
 }
 
 .modal-header {
-    border-bottom: 1px solid #333333;
+    border-bottom: 1px solid #111111;
 }
 
 .modal-header .close {
@@ -92,7 +94,7 @@ code {
 }
 
 .modal-footer {
-    border-top: 1px solid #333333;
+    border-top: 1px solid #111111;
 }
 
 #diagramViewport {
