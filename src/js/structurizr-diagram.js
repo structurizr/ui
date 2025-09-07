@@ -1712,12 +1712,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         var maxWidth;
         if (configuration.iconPosition === 'Left') {
             if (configuration.icon !== undefined) {
-                maxWidth = configuration.width - (horizontalOffset + horizontalPadding + horizontalPadding + defaultIconWidth + horizontalIconPadding);
+                maxWidth = width - (horizontalOffset + horizontalPadding + horizontalPadding + defaultIconWidth + horizontalIconPadding);
             } else {
-                maxWidth = configuration.width - (horizontalOffset + horizontalPadding + horizontalPadding);
+                maxWidth = width - (horizontalOffset + horizontalPadding + horizontalPadding);
             }
         } else {
-            maxWidth = configuration.width - (horizontalOffset + horizontalPadding + horizontalPadding);
+            maxWidth = width - (horizontalOffset + horizontalPadding + horizontalPadding);
         }
 
         var widthOfIcon = 0;
@@ -1956,7 +1956,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             element: element
         });
 
-        renderElementInternals(element, cell, configuration, width, 0, height, 0);
+        renderElementInternals(element, cell, configuration, (width*0.9), 0, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2294,7 +2294,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             element: element
         });
 
-        renderElementInternals(element, cell, configuration, width, 0, height, 30);
+        renderElementInternals(element, cell, configuration, (width*0.9), 0, height, 30);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
@@ -2473,7 +2473,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             element: element
         });
 
-        renderElementInternals(element, cell, configuration, width, blockWidth, height, 0);
+        renderElementInternals(element, cell, configuration, width-20, blockWidth, height, 0);
 
         graph.addCell(cell);
         mapOfIdToBox[element.id] = cell;
