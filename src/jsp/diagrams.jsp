@@ -874,6 +874,9 @@
                     showKey();
                     return;
                 }
+            } else if (e.which === f) {
+                enterPresentationMode();
+                return;
             } else if (e.which === p && !e.metaKey) {
                 enterPresentationMode();
                 return;
