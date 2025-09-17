@@ -346,7 +346,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             return;
         }
 
-        if (view.type === "Filtered") {
+        if (view.type === structurizr.constants.FILTERED_VIEW_TYPE) {
             currentFilter = view;
             currentView = structurizr.workspace.findViewByKey(view.baseViewKey);
         } else {
@@ -891,17 +891,19 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     var element = structurizr.workspace.findElementById(elementView.id);
                     var cell = cellsByElementId[element.id];
 
-                    if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE || element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE || element.type === structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE) {
-                        var parentId = cell.get('parent');
-                        while (parentId) {
-                            var parentCell = graph.getCell(parentId);
+                    if (cell !== undefined) {
+                        if (element.type === structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE || element.type === structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE || element.type === structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE) {
+                            var parentId = cell.get('parent');
+                            while (parentId) {
+                                var parentCell = graph.getCell(parentId);
 
-                            var index = unusedDeploymentNodeCells.indexOf(parentCell);
-                            if (index > -1) {
-                                unusedDeploymentNodeCells.splice(index, 1);
+                                var index = unusedDeploymentNodeCells.indexOf(parentCell);
+                                if (index > -1) {
+                                    unusedDeploymentNodeCells.splice(index, 1);
+                                }
+
+                                parentId = parentCell.get('parent');
                             }
-
-                            parentId = parentCell.get('parent');
                         }
                     }
                 });
