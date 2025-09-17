@@ -335,14 +335,6 @@ structurizr.ui.findElementStyle = function(element, darkMode) {
     if (style.stroke === undefined) {
         if (element.type === structurizr.constants.BOUNDARY_ELEMENT_TYPE) {
             // do nothing - stroke is taken from the element the boundary represents
-        } else if (element.type === structurizr.constants.GROUP_ELEMENT_TYPE) {
-            if (style.color !== undefined) {
-                // fallback to the colour property
-                style.stroke = style.color;
-            } else {
-                // use the default colour for groups
-                style.stroke = defaults.color;
-            }
         } else {
             style.stroke = defaults.color;
         }
