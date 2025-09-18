@@ -1148,6 +1148,7 @@
                 views = structurizr.workspace.findComponentViewsForContainer(element.containerId);
             }
 
+            views = views.concat(structurizr.workspace.findDynamicViewsForElement(element.id));
             views = views.concat(structurizr.workspace.findImageViewsForElement(element.id));
 
             views.forEach(function(view) {
