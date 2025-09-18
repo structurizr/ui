@@ -505,7 +505,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             if (imageMetadata.contentType === structurizr.constants.CONTENT_TYPE_IMAGE_SVG) {
                 // scale smaller SVGs, otherwise the diagram title becomes too large
-                const minimumWidth = self.getPossibleViewportWidth() * 3;
+                const minimumWidth = self.getPossibleViewportWidth() * 2;
                 const minimumHeight = self.getPossibleViewportHeight() * 2;
 
                 if (imageMetadata.ratio >= 1 && imageWidth < minimumWidth) {
