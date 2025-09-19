@@ -499,9 +499,21 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             var content;
 
             if (structurizr.ui.isDarkMode()) {
-                content = view.contentDark !== undefined ? view.contentDark : view.content;
+                if (view.contentDark !== undefined) {
+                    content = view.contentDark;
+                } else if (view.content !== undefined) {
+                    content = view.content;
+                } else {
+                    content = view.contentLight;
+                }
             } else {
-                content = view.contentLight !== undefined ? view.contentLight : view.content;
+                if (view.contentLight !== undefined) {
+                    content = view.contentLight;
+                } else if (view.content !== undefined) {
+                    content = view.content;
+                } else {
+                    content = view.contentDark;
+                }
             }
 
             editable = false;
