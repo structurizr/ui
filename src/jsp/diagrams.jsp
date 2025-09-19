@@ -48,7 +48,7 @@
                     <div id="banner"></div>
                     <div class="row">
                         <div class="col-xs-2" style="padding: 18px 20px 10px 20px">
-                            <a href="<c:out value="${urlPrefix}" /><c:out value="${urlSuffix}" escapeXml="false" />"><img src="${structurizrConfiguration.cdnUrl}/img/structurizr-banner.png" alt="Structurizr" class="structurizrBannerLight img-responsive brandingLogo" /><img src="${structurizrConfiguration.cdnUrl}/img/structurizr-banner-dark.png" alt="Structurizr" class="structurizrBannerDark img-responsive brandingLogo" /></a>
+                            <a href="<c:out value="${urlPrefix}" /><c:out value="${urlSuffix}" escapeXml="false" />"><img src="${structurizrConfiguration.cdnUrl}/img/structurizr-banner.png" alt="Structurizr" class="img-light img-responsive brandingLogo" /><img src="${structurizrConfiguration.cdnUrl}/img/structurizr-banner-dark.png" alt="Structurizr" class="img-dark img-responsive brandingLogo" /></a>
                         </div>
                         <div class="col-xs-10 centered" style="padding: 20px 30px 0px 30px">
                             <div class="centered">
@@ -409,6 +409,7 @@
 
             structurizr.diagram.resize();
             structurizr.diagram.zoomToWidthOrHeight();
+            refreshThumbnail();
 
             return;
         }
@@ -543,22 +544,30 @@
         const view = structurizr.diagram.getCurrentViewOrFilter();
         const viewKey = view.key;
 
-        if (structurizr.workspace.id < 1 || structurizr.diagram.isDarkMode() === true || structurizr.diagram.hasPerspective() || structurizr.diagram.hasTags()) {
-            if (view.type !== structurizr.constants.IMAGE_VIEW_TYPE) {
-                structurizr.diagram.exportCurrentThumbnailToPNG(function (thumbnail) {
-                    const domId = '#diagram' + (viewKeys.indexOf(viewKey) + 1) + 'Thumbnail';
-                    $(domId + ' img').attr('src', thumbnail);
+        if (structurizr.workspace.id < 1 || structurizr.diagram.hasPerspective() || structurizr.diagram.hasTags()) {
+            // don't generate thumbnail
+        } else {
+            structurizr.diagram.exportCurrentThumbnailToPNG(function (thumbnail) {
+                const domId = '#diagram' + (viewKeys.indexOf(viewKey) + 1) + 'Thumbnail';
+                var suffix;
 
-                    if (publishThumbnails) {
-                        putImage(viewKey, viewKey + '-thumbnail.png', thumbnail);
+                if (structurizr.ui.isDarkMode()) {
+                    $(domId + ' img.img-dark').attr('src', thumbnail);
+                    suffix = 'thumbnail-dark.png';
+                } else {
+                    $(domId + ' img.img-light').attr('src', thumbnail);
+                    suffix = 'thumbnail.png';
+                }
 
-                        // and if this is the first view, make this the workspace thumbnail
-                        if (viewKey === views[0].key) {
-                            putImage(viewKey, 'thumbnail.png', thumbnail);
-                        }
+                if (publishThumbnails) {
+                    putImage(viewKey, viewKey + '-' + suffix, thumbnail);
+
+                    // and if this is the first view, make this the workspace thumbnail
+                    if (viewKey === views[0].key) {
+                        putImage(viewKey, suffix, thumbnail);
                     }
-                });
-            }
+                }
+            });
         }
     }
 
@@ -619,18 +628,15 @@
 
             html += '<div id="' + id + 'Thumbnail" class="diagramThumbnail centered small">';
 
-            if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
-                html += '  <img src="' + view.content + '" class="img-thumbnail viewThumbnail" style="margin-bottom: 10px;" /><br />';
-            } else {
             <c:choose>
             <c:when test="${not empty workspace.branch or not empty param.version or embed eq true}">
-            html += '  <img src="/static/img/thumbnail-not-available.png" class="img-thumbnail" style="margin-bottom: 10px" /></a>';
+            html += '  <img src="/static/img/thumbnail-not-available.png" class="img-thumbnail" /></a>';
             </c:when>
             <c:otherwise>
-            html += '  <img src="${thumbnailUrl}' + structurizr.util.escapeHtml(view.key) + '-thumbnail.png" class="img-thumbnail viewThumbnail" style="margin-bottom: 10px;" /><br />';
+            html += '<img src="${thumbnailUrl}' + structurizr.util.escapeHtml(view.key) + '-thumbnail.png" class="img-light img-thumbnail viewThumbnail" />';
+            html += '<img src="${thumbnailUrl}' + structurizr.util.escapeHtml(view.key) + '-thumbnail-dark.png" class="img-dark img-thumbnail viewThumbnail" />';
             </c:otherwise>
             </c:choose>
-            }
 
             html += '<div>';
             html += title;

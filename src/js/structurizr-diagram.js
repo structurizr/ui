@@ -204,7 +204,17 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
 
         structurizr.workspace.views.imageViews.forEach(function(view) {
-            images.push(view.content);
+            if (view.content) {
+                images.push(view.content);
+            }
+
+            if (view.contentLight) {
+                images.push(view.contentLight);
+            }
+
+            if (view.contentDark) {
+                images.push(view.contentDark);
+            }
         })
 
         return images;
@@ -486,7 +496,14 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         createDiagramMetadata();
 
         if (view.type === structurizr.constants.IMAGE_VIEW_TYPE) {
-            var content = view.content;
+            var content;
+
+            if (structurizr.ui.isDarkMode()) {
+                content = view.contentDark !== undefined ? view.contentDark : view.content;
+            } else {
+                content = view.contentLight !== undefined ? view.contentLight : view.content;
+            }
+
             editable = false;
             const imageMetadata = getImageMetadata(content);
 
@@ -1576,7 +1593,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     this.hasTags = function() {
-        return currentTags !== undefined;
+        return currentTags.length > 0;
     }
 
     this.isEditable = function() {

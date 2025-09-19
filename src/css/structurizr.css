@@ -389,11 +389,12 @@ hr {
 .modal-xl {
     width: 95%
 }
-.structurizrBannerLight {
+
+.img-light {
     display: block;
 }
-.structurizrBannerDark {
-     display: none;
+.img-dark {
+    display: none;
 }
 
 #exploreGraphPanel, #exploreTreePanel {
