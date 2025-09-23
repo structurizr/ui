@@ -70,10 +70,9 @@
             </div>
 
             <div class="navigationItem">
-                <img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon.svg" class="icon-sm" />
-                <a id="renderingModeLightLink" href="">Light</a> |
-                <a id="renderingModeDarkLink" href="">Dark</a> |
-                <a id="renderingModeSystemLink" href="">System</a>
+                <a id="renderingModeLightLink" href="" title="Light"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/sun.svg" class="icon-sm" /></a> |
+                <a id="renderingModeDarkLink" href="" title="Dark"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/moon-fill.svg" class="icon-sm" /></a> |
+                <a id="renderingModeSystemLink" href="" title="System"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/sliders.svg" class="icon-sm" /></a>
             </div>
 
             <div id="documentationMetadata">
