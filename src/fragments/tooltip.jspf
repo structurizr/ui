@@ -61,11 +61,13 @@
 </style>
 
 <div id="tooltip" class="hidden">
-    <div id="tooltipName"></div>
-    <div id="tooltipParent"></div>
-    <div id="tooltipMetadata"></div>
-    <div id="tooltipType"></div>
-    <div id="tooltipDescription"></div>
+    <div id="tooltipHeader">
+        <div id="tooltipName"></div>
+        <div id="tooltipParent"></div>
+        <div id="tooltipMetadata"></div>
+        <div id="tooltipDescription"></div>
+        <hr />
+    </div>
     <div id="tooltipTags"></div>
     <div id="tooltipProperties"></div>
     <div id="tooltipUrl"></div>

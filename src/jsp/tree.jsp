@@ -259,7 +259,7 @@
 
     function showTooltipForElement(event, d) {
         if (d.data.element) {
-            tooltip.showTooltipForElement(d.data.element, d.data.style, event.pageX, event.pageY, '');
+            tooltip.showTooltipForElement(d.data.element, d.data.style, event.pageX, event.pageY, true, undefined);
         }
     }
 

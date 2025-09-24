@@ -75,13 +75,13 @@
         perspectivesList.empty();
 
         if (perspectiveNames.length > 0) {
-            perspectiveNames.forEach(function (perspectiveName) {
+            perspectiveNames.forEach(function(perspectiveName) {
                 perspectivesList.append(
                     $('<option></option>').val(structurizr.util.escapeHtml(perspectiveName)).html(structurizr.util.escapeHtml(perspectiveName))
                 );
             });
 
-            perspectivesList.attr('size', Math.min(8, perspectiveNames.length));
+            perspectivesList.attr('size', Math.max(10, perspectiveNames.length));
             perspectivesList.val('');
             $('#perspectivesOnButton').removeClass('hidden');
         }

@@ -388,11 +388,11 @@
     }
 
     function showTooltipForElement(event, d) {
-        tooltip.showTooltipForElement(d.element, d.style, event.pageX, event.pageY, '');
+        tooltip.showTooltipForElement(d.element, d.style, event.pageX, event.pageY, true, undefined);
     }
 
     function showTooltipForRelationship(event, d) {
-        tooltip.showTooltipForRelationship(d.relationship, {}, d.style, event.pageX, event.pageY);
+        tooltip.showTooltipForRelationship(d.relationship, {}, d.style, event.pageX, event.pageY, true, undefined);
     }
 
     function moveTooltip(event) {
