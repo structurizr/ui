@@ -883,7 +883,7 @@
                 enterPresentationMode();
                 return;
             } else if (e.which === p && !e.metaKey) {
-                enterPresentationMode();
+                openPerspectivesModal();
                 return;
             } else if (e.which === t) {
                 toggleTooltip();
@@ -1158,7 +1158,7 @@
 
             views.forEach(function(view) {
                 options.push({
-                    url: '#' + view.key,
+                    value: '#' + view.key,
                     label: structurizr.ui.getTitleForView(view) + ' (#' + view.key + ')'
                 });
             });
@@ -1166,7 +1166,7 @@
             if (element.documentation && element.documentation.sections && element.documentation.sections.length > 0) {
                 const documentationUrl = '<c:out value="${urlPrefix}" />/documentation/' + encodeURI(toScope(element)) + '<c:out value="${urlSuffix}" escapeXml="false" />';
                 options.push({
-                    url: documentationUrl,
+                    value: documentationUrl,
                     label: 'Documentation'
                 });
             }
@@ -1174,7 +1174,7 @@
             if (element.documentation && element.documentation.decisions && element.documentation.decisions.length > 0) {
                 const decisionsUrl = '<c:out value="${urlPrefix}" />/decisions/' + encodeURI(toScope(element)) + '<c:out value="${urlSuffix}" escapeXml="false" />';
                 options.push({
-                    url: decisionsUrl,
+                    value: decisionsUrl,
                     label: 'Decisions'
                 });
             }
@@ -1189,7 +1189,7 @@
                     }
                 }
                 options.push({
-                    url: elementUrl,
+                    value: elementUrl,
                     label: label
                 });
             }
@@ -1199,7 +1199,7 @@
                     const value = element.properties[name];
                     if (value.indexOf('http://') === 0 || value.indexOf('https://') === 0) {
                         options.push({
-                            url: value,
+                            value: value,
                             label: name
                         })
                     }
@@ -1207,7 +1207,7 @@
             }
 
             if (options.length === 1) {
-                navigateTo(options[0].url);
+                navigateTo(options[0].value);
             } else {
                 openNavigationModal(options);
             }
@@ -1235,7 +1235,7 @@
 
             if (relationship.url !== undefined) {
                 options.push({
-                    url: processWorkspaceLink(relationship.url),
+                    value: processWorkspaceLink(relationship.url),
                     label: relationship.url
                 });
             }
@@ -1245,7 +1245,7 @@
                     const value = relationship.properties[name];
                     if (value.indexOf('http://') === 0 || value.indexOf('https://') === 0) {
                         options.push({
-                            url: value,
+                            value: value,
                             label: name
                         })
                     }
@@ -1256,7 +1256,7 @@
                 const linkedRelationship = structurizr.workspace.findRelationshipById(relationship.linkedRelationshipId);
                 if (linkedRelationship.url !== undefined) {
                     options.push({
-                        url: processWorkspaceLink(linkedRelationship.url),
+                        value: processWorkspaceLink(linkedRelationship.url),
                         label: linkedRelationship.url
                     });
                 }
@@ -1266,7 +1266,7 @@
                         const value = linkedRelationship.properties[name];
                         if (value.indexOf('http://') === 0 || value.indexOf('https://') === 0) {
                             options.push({
-                                url: value,
+                                value: value,
                                 label: name
                             })
                         }
@@ -1275,7 +1275,7 @@
             }
 
             if (options.length === 1) {
-                navigateTo(options[0].url);
+                navigateTo(options[0].value);
             } else {
                 openNavigationModal(options);
             }

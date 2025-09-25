@@ -1,89 +1,51 @@
-<div class="modal fade" id="perspectivesModal" tabindex="-1" role="dialog" aria-labelledby="perspectivesModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h2 class="modal-title">Perspectives</h2>
-            </div>
-            <div class="modal-body">
-                <p>
-                    The perspectives included in the software architecture model are listed below.
-                    Viewing a diagram with a particular perspective will highlight all elements and relationships that have content for that perspective.
-                    See <a href="https://docs.structurizr.com/ui/diagrams/perspectives" target="_blank">Help - Diagrams - Perspectives</a> for more details.
-                </p>
-
-                <div class="form-group">
-                    <select class="form-control" id="perspectivesList"></select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="clearPerspectiveButton" type="button" class="btn btn-default">Clear perspective</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script nonce="${scriptNonce}">
-
-    $('#clearPerspectiveButton').click(function() { clearPerspective(true); });
-
-    $('#perspectivesList').change(function() {
-        showPerspective();
-    });
-
-    function openPerspectivesModal() {
-        $('#perspectivesModal').modal();
-    }
-
-    function clearPerspective(render) {
-        $('#perspectivesList').val('');
-        structurizr.diagram.clearPerspective();
-        tooltip.enable();
-        toggleTooltip();
-
-        $('#perspectivesModal').modal('hide');
-
-        if ($('#perspectivesList > option').length > 0) {
-            $('#perspectivesOnButton').removeClass('hidden');
-        }
-
-        $('#perspectivesOffButton').addClass('hidden');
-        $('#perspectivesOffButton').attr('title', 'Perspectives');
-
-        if (render === true) {
-            structurizr.diagram.renderPerspectiveOrTagsFilter();
-        }
-    }
-
-    function showPerspective() {
-        clearTags(false);
-        var perspective = $('#perspectivesList').val();
-        structurizr.diagram.changePerspective(perspective);
-        structurizr.diagram.renderPerspectiveOrTagsFilter();
-        tooltip.disable();
-        toggleTooltip();
-
-        $('#perspectivesModal').modal('hide');
-        $('#perspectivesOnButton').addClass('hidden');
-        $('#perspectivesOffButton').removeClass('hidden');
-        $('#perspectivesOffButton').attr('title', 'Perspective: ' + perspective);
-    }
 
     function initPerspectives() {
         const perspectiveNames = structurizr.workspace.getPerspectiveNames();
-        const perspectivesList = $('#perspectivesList');
-        perspectivesList.empty();
-
         if (perspectiveNames.length > 0) {
-            perspectiveNames.forEach(function(perspectiveName) {
-                perspectivesList.append(
-                    $('<option></option>').val(structurizr.util.escapeHtml(perspectiveName)).html(structurizr.util.escapeHtml(perspectiveName))
-                );
-            });
-
-            perspectivesList.attr('size', Math.max(10, perspectiveNames.length));
-            perspectivesList.val('');
             $('#perspectivesOnButton').removeClass('hidden');
         }
     }
+
+    function openPerspectivesModal() {
+        const perspectiveNames = structurizr.workspace.getPerspectiveNames();
+
+        if (perspectiveNames.length > 0) {
+            const options = [
+                {
+                    label: '(none)',
+                    value: ''
+                }
+            ].concat(perspectiveNames.map(function (name) {
+                return {
+                    label: name,
+                    value: name
+                };
+            }));
+
+            openNavigationModal(options, function(perspective) {
+                if (perspective.length > 0) {
+                    clearTags(false);
+                    structurizr.diagram.changePerspective(perspective);
+                    structurizr.diagram.renderPerspectiveOrTagsFilter();
+                    tooltip.disable();
+                    toggleTooltip();
+
+                    $('#perspectivesOnButton').addClass('hidden');
+                    $('#perspectivesOffButton').removeClass('hidden');
+                    $('#perspectivesOffButton').attr('title', 'Perspective: ' + perspective);
+                } else {
+                    structurizr.diagram.clearPerspective();
+                    structurizr.diagram.renderPerspectiveOrTagsFilter();
+                    tooltip.enable();
+                    toggleTooltip();
+
+                    $('#perspectivesOnButton').removeClass('hidden');
+                    $('#perspectivesOffButton').addClass('hidden');
+                    $('#perspectivesOffButton').attr('title', 'Perspectives');
+                }
+            });
+        }
+    }
+
 </script>
