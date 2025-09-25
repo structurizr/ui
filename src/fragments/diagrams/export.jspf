@@ -45,6 +45,10 @@
                     </label>
                 </div>
 
+                <div class="centered" style="margin-bottom: 10px">
+                    <label for="exportFilenamePrefix">Filename prefix</label> <input type="text" id="exportFilenamePrefix" class="form-control" style="width: auto; display: inline-block;" />
+                </div>
+
                 <div class="centered">
                     <button id="exportCurrentViewButton" type="button" class="btn btn-default">Export current diagram</button>
                     <button id="exportSelectedViewsButton" type="button" class="btn btn-default">Export selected diagrams</button>
@@ -75,6 +79,14 @@
     $('#publishAllViewsButton').click(function() { publishAllViews(); });
     $('#exportAnimatedGIFButton').click(function() { createGIF(); });
 
+    $('#exportModal').on('shown.bs.modal', function () {
+        structurizr.diagram.setKeyboardShortcutsEnabled(false)
+    });
+
+    $('#exportModal').on('hidden.bs.modal', function () {
+        structurizr.diagram.setKeyboardShortcutsEnabled(true)
+    });
+
     function initExports() {
         const viewList = $('#exportViewList');
 
@@ -90,6 +102,8 @@
             var selectedItems = $(this).val();
             $('#exportSelectedViewsButton').attr('disabled', !(selectedItems && selectedItems.length > 0));
         });
+
+        $('#exportFilenamePrefix').val('structurizr-' + (structurizr.workspace.id > 0 ? structurizr.workspace.id + '-' : ''));
 
         $('#exportPNGCropDiagrams').change(function() {
             if ($('#exportPNGCropDiagrams').is(':checked') === true) {
@@ -252,7 +266,7 @@
         const currentView = structurizr.diagram.getCurrentViewOrFilter();
         const viewTitle = structurizr.ui.getTitleForView(currentView);
 
-        var downloadFilenamePrefix = 'structurizr-' + (structurizr.workspace.id > 0 ? structurizr.workspace.id + '-' : '');
+        var downloadFilenamePrefix = $('#exportFilenamePrefix').val();
         downloadFilenamePrefix += currentView.key;
         var downloadFilenameSuffix = '.png';
 
@@ -347,7 +361,7 @@
         const currentView = structurizr.diagram.getCurrentViewOrFilter();
         const viewTitle = structurizr.ui.getTitleForView(currentView);
 
-        var baseFilename = 'structurizr-' + (structurizr.workspace.id > 0 ? structurizr.workspace.id + '-' : '');
+        var baseFilename = $('#exportFilenamePrefix').val();
         baseFilename += currentView.key;
         const diagramFilename = baseFilename + '.svg';
         const keyFilename = baseFilename + '-key.svg'
@@ -363,7 +377,7 @@
         div.appendChild(title);
 
         var img = document.createElement('div');
-        img.className = "img-thumbnail exportedPNGDiagram";
+        img.className = "img-thumbnail";
         img.style = "display: block; margin-bottom: 5px";
         var link = document.createElement("a");
         link.appendChild(img);
@@ -374,6 +388,11 @@
         img.innerHTML = diagramAsSVG;
         link.download = diagramFilename;
         link.href = url;
+
+        var filename = document.createElement('div');
+        filename.appendChild(document.createTextNode(diagramFilename));
+        filename.style = "font-size: 8px; margin-bottom: 10px";
+        div.appendChild(filename);
 
         if (download) {
             link.click();
@@ -392,6 +411,11 @@
             imgKey.innerHTML = diagramKeyAsSVG;
             linkKey.download = keyFilename;
             linkKey.href = urlKey;
+
+            filename = document.createElement('div');
+            filename.appendChild(document.createTextNode(keyFilename));
+            filename.style = "font-size: 8px; margin-bottom: 10px";
+            div.appendChild(filename);
 
             if (download) {
                 linkKey.click();
