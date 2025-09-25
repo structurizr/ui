@@ -4232,7 +4232,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     };
 
     this.zoomFitContent = function() {
-        if (!currentView.elements) {
+        if (currentView.type !== structurizr.constants.IMAGE_VIEW_TYPE && !currentView.elements) {
             this.zoomFitHeight();
             return;
         }
@@ -4932,24 +4932,15 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function findContentArea(crop, margin) {
-        if (currentView && (currentView.elements === undefined || currentView.elements.length === 0)) {
-            return {
-                minX: 0,
-                maxX: 0,
-                minY: 0,
-                maxY: 0
-            };
-        }
-
-        var minX = Number.MAX_VALUE;
+        var minX = diagramWidth;
         var maxX = 0;
-        var minY = Number.MAX_VALUE;
+        var minY = diagramHeight;
         var maxY = 0;
 
         for (var i = 0; i < graph.getElements().length; i++) {
             var cell = graph.getElements()[i];
 
-            if (cell.elementInView !== undefined || cell.attributes.type === 'structurizr.boundary') {
+            if (cell.elementInView !== undefined || cell.attributes.type === 'structurizr.boundary' || cell.attributes.type === 'structurizr.image') {
                 var bbox = paper.findViewByModel(cell).getBBox();
                 minX = Math.min(minX, bbox.x);
                 minY = Math.min(minY, bbox.y);
