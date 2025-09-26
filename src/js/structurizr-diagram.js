@@ -3714,7 +3714,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             fill = elementStyle.background;
 
             if (elementStyleForBoundary.stroke !== undefined) {
-                elementStyle.stroke = elementStyleForBoundary.color;
+                elementStyle.stroke = elementStyleForBoundary.stroke;
             }
             stroke = elementStyle.stroke;
 
