@@ -68,7 +68,7 @@ define(
                     },
                     {
                         token: ["structurizr_keyword", "structurizr_variable"],
-                        regex: '(softwareSystemInstance|containerInstance)( .*)$',
+                        regex: '(softwareSystemInstance|containerInstance|instanceOf)( .*)$',
                         next: 'start'
                     },
                     {
