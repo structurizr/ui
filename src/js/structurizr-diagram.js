@@ -715,14 +715,17 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
                 if (view.type === structurizr.constants.CONTAINER_VIEW_TYPE && element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
                     // container on a container diagram - add a boundary to represent the parent software system
-                    const includeParentBoundary = false;
-                    addElementToBoundary(element, box, includeParentBoundary);
+                    addElementToBoundary(element, box, false);
                 }
 
                 if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE && element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) {
                     // component on a component diagram - add a boundary to represent the parent container
-                    const includeParentBoundary = (view.properties && view.properties['structurizr.softwareSystemBoundaries'] === 'true');
-                    addElementToBoundary(element, box, includeParentBoundary);
+                    addElementToBoundary(element, box, true);
+                }
+
+                if (view.type === structurizr.constants.COMPONENT_VIEW_TYPE && element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE) {
+                    // container on a component diagram - add a boundary to represent the parent software system
+                    addElementToBoundary(element, box, true);
                 }
 
                 if (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE && view.elementId) {
