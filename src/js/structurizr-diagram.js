@@ -728,19 +728,16 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     addElementToBoundary(element, box, true);
                 }
 
-                if (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE && view.elementId) {
-                    var scopedElement = structurizr.workspace.findElementById(view.elementId);
-
+                if (view.type === structurizr.constants.DYNAMIC_VIEW_TYPE) {
                     if (
-                        scopedElement.type === structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE && element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE ||
-                        scopedElement.type === structurizr.constants.CONTAINER_ELEMENT_TYPE && element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE
+                        element.type === structurizr.constants.CONTAINER_ELEMENT_TYPE ||
+                        element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE
                     ) {
                         // dynamic view with software system scope and element is a container or
                         // dynamic view with container scope and element is a component
                         //
                         // in both cases, add a boundary to represent the scoped element
-                        const includeParentBoundary = (element.type === structurizr.constants.COMPONENT_ELEMENT_TYPE) && (view.properties && view.properties['structurizr.softwareSystemBoundaries'] === 'true');
-                        addElementToBoundary(element, box, includeParentBoundary);
+                        addElementToBoundary(element, box, true);
                     }
                 }
 
