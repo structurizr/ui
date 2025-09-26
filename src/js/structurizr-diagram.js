@@ -5204,8 +5204,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     this.stepBackwardInAnimation = function() {
         if (this.currentViewIsDynamic()) {
-            if (this.animationStarted()) {
-
+            if (!this.animationStarted()) {
+                this.startAnimation(false);
+                animationIndex = linesToAnimate.length - 1;
+            }
+            else
+            {
                 if (animationIndex > 0) {
                     animationIndex--;
 
@@ -5223,37 +5227,43 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                         animationIndex++;
                     }
                 }
+            }
 
-                if (animationIndex >= 0) {
-                    this.continueAnimation(false);
-                } else {
-                    this.stopAnimation();
-                }
+            if (animationIndex >= 0) {
+                this.continueAnimation(false);
+            } else {
+                this.stopAnimation();
             }
         } else if (this.currentViewHasAnimation()) {
-            if (this.animationStarted()) {
-                if (animationIndex === 1) {
-                    this.stopAnimation();
-                } else if (animationIndex > 1) {
-                    animationIndex--;
+            if (!this.animationStarted()) {
+                this.startAnimation(false);
+                animationIndex = animationSteps.length;
+                hideAllElements(1.0);
+                hideAllLines(1.0);
+                unfadeAllElements();
+            }
 
-                    var animationStep = animationSteps[animationIndex];
-                    if (animationStep) {
-                        if (animationStep.elements) {
-                            animationStep.elements.forEach(function (elementId) {
-                                hideElement(elementId, "0.0");
-                            });
-                        }
-                        if (animationStep.relationships) {
-                            animationStep.relationships.forEach(function(relationshipId) {
-                                hideLine(relationshipId, "0.0");
-                            });
-                        }
+            if (animationIndex === 1) {
+                this.stopAnimation();
+            } else if (animationIndex > 1) {
+                animationIndex--;
+
+                var animationStep = animationSteps[animationIndex];
+                if (animationStep) {
+                    if (animationStep.elements) {
+                        animationStep.elements.forEach(function (elementId) {
+                            hideElement(elementId, "0.0");
+                        });
                     }
-
-                    animationIndex--;
-                    this.continueAnimation(false);
+                    if (animationStep.relationships) {
+                        animationStep.relationships.forEach(function(relationshipId) {
+                            hideLine(relationshipId, "0.0");
+                        });
+                    }
                 }
+
+                animationIndex--;
+                this.continueAnimation(false);
             }
         }
     };
