@@ -31,6 +31,8 @@
             <button id="diagramTooltipOffButton" class="btn btn-default hidden diagramTooltipOffButton" title="Diagram tooltips off [t]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/chat-square-text-fill.svg" class="icon-btn" /></button>
             <button id="tagsOnButton" class="btn btn-default"  title="Tags"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/tags.svg" class="icon-btn" /></button>
             <button id="tagsOffButton" class="btn btn-default hidden" title="Tags"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/tags-fill.svg" class="icon-btn" /></button>
+            <button id="excludeTagsOnButton" class="btn btn-default"  title="Exclude Tags"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/funnel.svg" class="icon-btn" /></button>
+            <button id="excludeTagsOffButton" class="btn btn-default hidden" title="Exclude Tags"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/funnel-fill.svg" class="icon-btn" /></button>
             <button id="perspectivesOnButton" class="btn btn-default hidden" title="Perspectives"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/binoculars.svg" class="icon-btn" /></button>
             <button id="perspectivesOffButton" class="btn btn-default hidden" title="Perspectives"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/binoculars-fill.svg" class="icon-btn" /></button>
             <button id="showDiagramScopeOnButton" class="btn btn-default hidden" title="Toggle diagram scope on"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/pin-map.svg" class="icon-btn" /></button>
@@ -45,6 +47,8 @@
             $('#diagramTooltipOffButton').click(function() { toggleTooltip(); });
             $('#tagsOnButton').click(function() { openTagsModal(); });
             $('#tagsOffButton').click(function() { openTagsModal(); });
+            $('#excludeTagsOnButton').click(function() { openExcludeTagsModal(); });
+            $('#excludeTagsOffButton').click(function() { openExcludeTagsModal(); });
             $('#perspectivesOnButton').click(function() { openPerspectivesModal(); });
             $('#perspectivesOffButton').click(function() { openPerspectivesModal(); });
             $('#showDiagramScopeOnButton').click(function() { showDiagramScope(true); });

@@ -1,0 +1,76 @@
+<div class="modal fade" id="excludeTagsModal" tabindex="-1" role="dialog" aria-labelledby="excludeTagsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title">Exclude Tags</h2>
+            </div>
+            <div class="modal-body">
+                <p>
+                    The tags included in the software architecture model are listed below.
+                    Viewing a diagram with one or more tags selected will hide all elements and relationships with those tags.
+                </p>
+
+                <div>
+                    <div class="form-group">
+                        <select class="form-control" id="excludeTagsList" multiple="multiple" size="15"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="clearExcludeTagsButton" type="button" class="btn btn-default">Clear exclude tags</button>
+                <button id="viewExcludeTagsButton" type="button" class="btn btn-default">Exclude tags</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script nonce="${scriptNonce}">
+
+    $('#clearExcludeTagsButton').click(function() { clearExcludeTags(true); });
+    $('#viewExcludeTagsButton').click(function() { showExcludeTags(); });
+
+    function initExcludeTags() {
+        var tags = structurizr.workspace.getTags();
+        var excludeTagsList = $('#excludeTagsList');
+        excludeTagsList.empty();
+
+        tags.forEach(function(tag) {
+            excludeTagsList.append(
+                $('<option></option>').val(structurizr.util.escapeHtml(tag)).html(structurizr.util.escapeHtml(tag))
+            );
+        });
+
+        excludeTagsList.attr('size', Math.min(8, tags.length));
+
+    }
+
+    function openExcludeTagsModal() {
+        $('#excludeTagsModal').modal();
+    }
+
+    function clearExcludeTags(render) {
+        structurizr.diagram.clearExcludeTags();
+
+        $('#excludeTagsModal').modal('hide');
+        $('#excludeTagsOnButton').removeClass('hidden');
+        $('#excludeTagsOffButton').addClass('hidden');
+        $('#excludeTagsOffButton').attr('title', 'Exclude Tags');
+
+        if (render === true) {
+            structurizr.diagram.renderPerspectiveOrTagsFilter();
+        }
+    }
+
+    function showExcludeTags() {
+        clearPerspective(false);
+        var tags = $('#excludeTagsList').val();
+        structurizr.diagram.changeExcludeTags(tags);
+        structurizr.diagram.renderPerspectiveOrTagsFilter();
+
+        $('#excludeTagsModal').modal('hide');
+        $('#excludeTagsOnButton').addClass('hidden');
+        $('#excludeTagsOffButton').removeClass('hidden');
+        $('#excludeTagsOffButton').attr('title', 'Exclude Tags (' + tags + ')');
+    }
+</script>
