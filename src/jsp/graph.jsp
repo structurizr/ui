@@ -29,12 +29,18 @@
             $('#openGraphInNewWindowButton').click(function() { openGraphInNewWindow(); });
         </script>
         </c:if>
+        <div class="btn-group">
+            <button id="zoomOutButton" class="btn btn-default" title="Decrease distance [-]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/zoom-out.svg" class="icon-btn" /></button>
+            <button id="zoomInButton" class="btn btn-default" title="Increase distance [+]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/zoom-in.svg" class="icon-btn" /></button>
+        </div>
         <button id="enterFullScreenButton" class="btn btn-default" title="Enter Full Screen [f]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen.svg" class="icon-btn" /></button>
         <button id="exitFullScreenButton" class="btn btn-default hidden" title="Exit Full Screen [Escape]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/fullscreen-exit.svg" class="icon-btn" /></button>
     </div>
     <script nonce="${scriptNonce}">
         $('#enterFullScreenButton').click(function() { structurizr.ui.enterFullScreen('exploreGraphPanel'); });
         $('#exitFullScreenButton').click(function() { structurizr.ui.exitFullScreen(); });
+        $('#zoomOutButton').click(function() { decreaseDistance(); });
+        $('#zoomInButton').click(function() { increaseDistance(); });
     </script>
 </div>
 
@@ -42,7 +48,7 @@
     var margin = 0;
     var width;
     var height;
-    const darkMode = false;
+    const distanceDelta = 50;
 
     var graph;
     var simulation;
@@ -152,7 +158,7 @@
         });
 
         elements.forEach(function(element) {
-            const elementStyle = structurizr.ui.findElementStyle(element, darkMode);
+            const elementStyle = structurizr.ui.findElementStyle(element, structurizr.ui.isDarkMode());
             graph.nodes.push({
                 id: element.id,
                 name: element.name,
@@ -166,7 +172,7 @@
             registerRelationship(element.id, element.id); // this prevents the nodes in the graph linking to themselves
 
             const elementType = structurizr.workspace.getTerminologyFor(element);
-            const html = '<span class="label smaller" style="background: ' + elementStyle.background + '; color: ' + elementStyle.color + '"> ' + structurizr.util.escapeHtml(elementType) + '</span> ' + structurizr.util.escapeHtml(element.name);
+            const html = '<span class="label smaller" style="background: ' + elementStyle.background + '; border: solid 1px ' + elementStyle.stroke + '; color: ' + elementStyle.color + '; margin-right: 10px"> ' + structurizr.util.escapeHtml(elementType) + '</span>' + structurizr.util.escapeHtml(element.name);
             quickNavigation.addHandler(html, function() {
                 highlightNode(element.id);
             });
@@ -182,7 +188,7 @@
                             target: relationship.destinationId,
                             type: 'Relationship',
                             description: relationship.description,
-                            style: structurizr.ui.findRelationshipStyle(relationship),
+                            style: structurizr.ui.findRelationshipStyle(relationship, structurizr.ui.isDarkMode()),
                             relationship: relationship
                         });
                     }
@@ -239,7 +245,7 @@
             }
         });
 
-        distance = Math.min(width, height) / 3;
+        distance = Math.min(width, height) / 5;
 
         simulation = d3.forceSimulation(graph.nodes)
             .force("link", d3.forceLink().distance(distance).id(function(d) { return d.id; }))
@@ -296,12 +302,11 @@
             .style("fill", function(d) {
                 return d.style.background;
             })
+            .style("stroke-width", function(d) {
+                return Math.max(2, d.style.strokeWidth / 2);
+            })
             .style("stroke", function(d) {
-                if (d.style.stroke) {
-                    return d.style.stroke;
-                } else {
-                    return structurizr.util.shadeColor(d.style.background, -20);
-                }
+                return d.style.stroke;
             });
 
         node.append("text")
@@ -465,18 +470,10 @@
             const equals = 61;
             const minus = 45;
 
-            var distanceDelta = 50;
-
             if (e.which === plus || e.which === equals) {
-                // increase the distance between nodes
-                distance = Math.min(distance + distanceDelta, Math.min(width, height)/2);
-                simulation.force("link").distance(distance);
-                simulation.alpha(0.3).restart();
+                increaseDistance();
             } else if (e.which === minus) {
-                // decrease the distance between nodes
-                distance = Math.max(distance - distanceDelta, 100);
-                simulation.force("link").distance(distance);
-                simulation.alpha(0.3).restart();
+                decreaseDistance();
             }
         });
 
@@ -494,6 +491,20 @@
             simulation.force("link").distance(distance);
             simulation.alpha(0.3).restart();
         }, false);
+    }
+
+    function increaseDistance() {
+        // increase the distance between nodes
+        distance = Math.min(distance + distanceDelta, Math.min(width, height)/2);
+        simulation.force("link").distance(distance);
+        simulation.alpha(0.3).restart();
+    }
+
+    function decreaseDistance() {
+        // decrease the distance between nodes
+        distance = Math.max(distance - distanceDelta, 100);
+        simulation.force("link").distance(distance);
+        simulation.alpha(0.3).restart();
     }
 
     function getLinks(source, target) {
