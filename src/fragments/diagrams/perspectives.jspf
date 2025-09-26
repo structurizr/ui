@@ -39,6 +39,7 @@
             openNavigationModal(options, function(perspective) {
                 if (perspective.length > 0) {
                     clearTags(false);
+                    clearExcludeTags(false);
                     structurizr.diagram.changePerspective(perspective);
                     structurizr.diagram.renderPerspectiveOrTagsFilter();
                     tooltip.disable();

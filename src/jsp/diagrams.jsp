@@ -176,6 +176,7 @@
 <%@ include file="/WEB-INF/fragments/diagrams/publish.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/perspectives.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/tags.jspf" %>
+<%@ include file="/WEB-INF/fragments/diagrams/exclude-tags.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/autolayout.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/no-views-model.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/lasso.jspf" %>
@@ -351,6 +352,7 @@
         initEmbed();
         initPerspectives();
         initTags();
+        initExcludeTags();
         initAutoLayout();
         initReview();
         healthCheck = new structurizr.HealthCheck(updateHealth);

@@ -84,6 +84,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     var currentFilter;
     var currentPerspective;
     var currentTags = [];
+    var currentExcludeTags = [];
 
     var lassoStart;
     var lassoEnd;
@@ -1404,8 +1405,28 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         return result;
     }
 
+    function hasExcludeTags(tags) {
+        var result = false;
+
+        currentExcludeTags.forEach(function(tag) {
+            result = (result || tags.indexOf(tag) > -1);
+        });
+
+        return result;
+    }
+
+    function areHiddenTags(tags) {
+        if (hasExcludeTags(tags) === true) {
+            return true;
+        }
+        if (currentTags.length === 0) {
+            return false;
+        }
+        return hasTags(tags) === false;
+    }
+
     this.renderPerspectiveOrTagsFilter = function() {
-        if (currentPerspective === undefined && currentTags.length === 0) {
+        if (currentPerspective === undefined && currentTags.length === 0 && currentExcludeTags.length === 0) {
             Object.keys(cellsByElementId).forEach(function(elementId) {
                 var cell = cellsByElementId[elementId];
                 changeColourOfCell(cell, cell._computedStyle.background, cell._computedStyle.color, cell._computedStyle.stroke);
@@ -1501,13 +1522,13 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             });
         }
 
-        if (currentTags.length > 0) {
+        if (currentTags.length > 0 || currentExcludeTags.length > 0) {
             Object.keys(cellsByElementId).forEach(function(elementId) {
                 var cell = cellsByElementId[elementId];
                 var element = structurizr.workspace.findElementById(cell.elementInView.id);
 
                 const tags = structurizr.workspace.getAllTagsForElement(element);
-                if (hasTags(tags) === false) {
+                if (areHiddenTags(tags)) {
                     hideElement(element.id, "0.2");
                 } else {
                     showElement(element.id);
@@ -1518,7 +1539,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 var relationship = structurizr.workspace.findRelationshipById(line.relationshipInView.id);
 
                 const tags = structurizr.workspace.getAllTagsForRelationship(relationship);
-                if (hasTags(tags) === false) {
+                if (areHiddenTags(tags)) {
                     hideLine(relationship.id, "0.2");
                 } else {
                     showLine(relationship.id);
@@ -1561,6 +1582,18 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     this.hasTags = function() {
         return currentTags.length > 0;
+    }
+
+    this.changeExcludeTags = function(tags) {
+        currentExcludeTags = tags;
+    };
+
+    this.clearExcludeTags = function() {
+        currentExcludeTags = [];
+    };
+
+    this.hasExcludeTags = function() {
+        return currentExcludeTags.length > 0;
     }
 
     this.isEditable = function() {
