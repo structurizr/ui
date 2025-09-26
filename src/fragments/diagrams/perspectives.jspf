@@ -7,6 +7,19 @@
         }
     }
 
+    function clearPerspective(render) {
+        structurizr.diagram.clearPerspective();
+        if (render === true) {
+            structurizr.diagram.renderPerspectiveOrTagsFilter();
+        }
+        tooltip.enable();
+        toggleTooltip();
+
+        $('#perspectivesOnButton').removeClass('hidden');
+        $('#perspectivesOffButton').addClass('hidden');
+        $('#perspectivesOffButton').attr('title', 'Perspectives');
+    }
+
     function openPerspectivesModal() {
         const perspectiveNames = structurizr.workspace.getPerspectiveNames();
 
@@ -35,14 +48,7 @@
                     $('#perspectivesOffButton').removeClass('hidden');
                     $('#perspectivesOffButton').attr('title', 'Perspective: ' + perspective);
                 } else {
-                    structurizr.diagram.clearPerspective();
-                    structurizr.diagram.renderPerspectiveOrTagsFilter();
-                    tooltip.enable();
-                    toggleTooltip();
-
-                    $('#perspectivesOnButton').removeClass('hidden');
-                    $('#perspectivesOffButton').addClass('hidden');
-                    $('#perspectivesOffButton').attr('title', 'Perspectives');
+                    clearPerspective(true);
                 }
             });
         }
