@@ -192,7 +192,9 @@
             .attr("fill", function(d) {
                 return d.data.style.background;
             })
-            .attr("stroke-width", 1)
+            .style("stroke-width", function(d) {
+                return Math.max(2, d.data.style.strokeWidth / 2);
+            })
             .attr("stroke", function(d) {
                 return d.data.style.stroke;
             })
@@ -213,7 +215,9 @@
             .attr("fill", function(d) {
                 return d.data.style.background;
             })
-            .attr("stroke-width", 1)
+            .style("stroke-width", function(d) {
+                return Math.max(2, d.data.style.strokeWidth / 2);
+            })
             .attr("stroke", function(d) {
                 return d.data.style.stroke;
             })
@@ -344,7 +348,7 @@
                     name: softwareSystem.name,
                     element: softwareSystem,
                     type: structurizr.constants.SOFTWARE_SYSTEM_ELEMENT_TYPE,
-                    style: structurizr.ui.findElementStyle(softwareSystem),
+                    style: structurizr.ui.findElementStyle(softwareSystem, structurizr.ui.isDarkMode()),
                     children: []
                 };
                 softwareSystems.push(s);
@@ -356,7 +360,7 @@
                                 name: container.name,
                                 element: container,
                                 type: structurizr.constants.CONTAINER_ELEMENT_TYPE,
-                                style: structurizr.ui.findElementStyle(container),
+                                style: structurizr.ui.findElementStyle(container, structurizr.ui.isDarkMode()),
                                 children: []
                             };
                             s.children.push(c);
@@ -368,7 +372,7 @@
                                             element: component,
                                             name: component.name,
                                             type: structurizr.constants.COMPONENT_ELEMENT_TYPE,
-                                            style: structurizr.ui.findElementStyle(component)
+                                            style: structurizr.ui.findElementStyle(component, structurizr.ui.isDarkMode())
                                         };
                                         c.children.push(cc);
                                     }
@@ -432,7 +436,7 @@
             name: deploymentNode.name,
             element: deploymentNode,
             type: structurizr.constants.DEPLOYMENT_NODE_ELEMENT_TYPE,
-            style: structurizr.ui.findElementStyle(deploymentNode),
+            style: structurizr.ui.findElementStyle(deploymentNode, structurizr.ui.isDarkMode()),
             children: []
         };
 
@@ -451,7 +455,7 @@
                         name: infrastructureNode.name,
                         element: infrastructureNode,
                         type: structurizr.constants.INFRASTRUCTURE_NODE_ELEMENT_TYPE,
-                        style: structurizr.ui.findElementStyle(infrastructureNode)
+                        style: structurizr.ui.findElementStyle(infrastructureNode, structurizr.ui.isDarkMode())
                     });
                 }
             });
@@ -464,7 +468,7 @@
                         name: softwareSystemInstance.name,
                         element: softwareSystemInstance,
                         type: structurizr.constants.SOFTWARE_SYSTEM_INSTANCE_ELEMENT_TYPE,
-                        style: structurizr.ui.findElementStyle(softwareSystemInstance)
+                        style: structurizr.ui.findElementStyle(softwareSystemInstance, structurizr.ui.isDarkMode())
                     });
                 }
             });
@@ -477,7 +481,7 @@
                         name: containerInstance.name,
                         element: containerInstance,
                         type: structurizr.constants.CONTAINER_INSTANCE_ELEMENT_TYPE,
-                        style: structurizr.ui.findElementStyle(containerInstance)
+                        style: structurizr.ui.findElementStyle(containerInstance, structurizr.ui.isDarkMode())
                     });
                 }
             });
