@@ -31,13 +31,13 @@ QUnit.test("structurizr.ui.findElementStyle() finds the element style", function
 
     assert.equal(elementStyle.width, 450);
     assert.equal(elementStyle.height, 300);
-    assert.equal(elementStyle.background, '#dddddd');
-    assert.equal(elementStyle.color, '#000000');
+    assert.equal(elementStyle.background, '#ffffff');
+    assert.equal(elementStyle.color, '#444444');
     assert.equal(elementStyle.fontSize, 24);
     assert.equal(elementStyle.shape, 'RoundedBox');
     assert.equal(elementStyle.icon, undefined);
     assert.equal(elementStyle.border, 'Solid');
-    assert.equal(elementStyle.stroke, '#c7c7c7');
+    assert.equal(elementStyle.stroke, '#444444');
     assert.equal(elementStyle.opacity, 100);
     assert.equal(elementStyle.metadata, true);
     assert.equal(elementStyle.description, true);
@@ -92,7 +92,7 @@ QUnit.test("structurizr.ui.findElementStyle() finds the element style when there
     assert.equal(elementStyle.width, 450);
     assert.equal(elementStyle.height, 300);
     assert.equal(elementStyle.background, '#ff0000'); // set in theme
-    assert.equal(elementStyle.color, '#000000');
+    assert.equal(elementStyle.color, '#444444');
     assert.equal(elementStyle.fontSize, 24);
     assert.equal(elementStyle.shape, 'RoundedBox'); // set in workspace
     assert.equal(elementStyle.icon, undefined);
@@ -253,7 +253,7 @@ QUnit.test("getTitleForView() returns the computed name of a system landscape vi
     const view = {
         type: 'SystemLandscape'
     };
-    assert.equal(structurizr.ui.getTitleForView(view), '[System Landscape]');
+    assert.equal(structurizr.ui.getTitleForView(view), 'System Landscape View');
 });
 
 QUnit.test("getTitleForView() returns the computed name of a system landscape view (no enterprise name)", function( assert ) {
@@ -268,7 +268,7 @@ QUnit.test("getTitleForView() returns the computed name of a system landscape vi
     const view = {
         type: 'SystemLandscape'
     };
-    assert.equal(structurizr.ui.getTitleForView(view), '[System Landscape] Enterprise');
+    assert.equal(structurizr.ui.getTitleForView(view), 'System Landscape View: Enterprise');
 });
 
 QUnit.test("getTitleForView() returns the computed name of a system context view", function( assert ) {
@@ -287,7 +287,7 @@ QUnit.test("getTitleForView() returns the computed name of a system context view
         type: 'SystemContext',
         softwareSystemId: '1'
     };
-    assert.equal(structurizr.ui.getTitleForView(view), '[System Context] Software System 1');
+    assert.equal(structurizr.ui.getTitleForView(view), 'System Context View: Software System 1');
 });
 
 QUnit.test("getTitleForView() returns the computed name of a container view", function( assert ) {
@@ -306,7 +306,7 @@ QUnit.test("getTitleForView() returns the computed name of a container view", fu
         type: 'Container',
         softwareSystemId: '1'
     };
-    assert.equal(structurizr.ui.getTitleForView(view), '[Container] Software System 1');
+    assert.equal(structurizr.ui.getTitleForView(view), 'Container View: Software System 1');
 });
 
 QUnit.test("getTitleForView() returns the computed name of a component view", function( assert ) {
@@ -332,7 +332,7 @@ QUnit.test("getTitleForView() returns the computed name of a component view", fu
         type: 'Component',
         containerId: '2'
     };
-    assert.equal(structurizr.ui.getTitleForView(view), '[Component] Software System 1 - Container 1');
+    assert.equal(structurizr.ui.getTitleForView(view), 'Component View: Software System 1 - Container 1');
 });
 
 QUnit.test("structurizr.ui.getBranding() returns the default branding when no branding has been defined", function( assert ) {
