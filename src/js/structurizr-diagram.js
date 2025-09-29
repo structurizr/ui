@@ -1338,6 +1338,10 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
     }
 
+    this.setPerspective = function(perspective) {
+        filter.perspective = perspective;
+    };
+
     this.showPerspective = function(perspective) {
         filter.perspective = perspective;
         runFilter();

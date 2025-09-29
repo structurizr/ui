@@ -353,7 +353,7 @@
         healthCheck = new structurizr.HealthCheck(updateHealth);
 
         <c:if test="${not empty perspective}">
-        structurizr.diagram.showPerspective('<c:out value="${perspective}" />');
+        structurizr.diagram.setPerspective('<c:out value="${perspective}" />');
         tooltip.disable();
         toggleTooltip();
         </c:if>
