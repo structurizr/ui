@@ -4,6 +4,7 @@
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-content${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-documentation${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/markdown-it-13.0.1.min.js"></script>
+<script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/mermaid-11.4.1.min.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/katex-0.16.4.min.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/asciidoctor-2.2.6.min.js"></script>
 
@@ -541,6 +542,10 @@
             }
 
             const result = contentRenderer.render(section);
+            mermaid.initialize({
+                startOnLoad: false
+            });
+            mermaid.run()
             const documentationContent = $('#documentationContent');
 
             var html = '';
