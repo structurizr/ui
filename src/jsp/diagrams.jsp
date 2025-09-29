@@ -185,7 +185,6 @@
 
     const DARK_MODE_COOKIE_NAME = 'structurizr.darkMode';
     structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
-    structurizr.ui.DEFAULT_FONT_URL = 'https://fonts.googleapis.com/css?family=Open+Sans:400,700';
 
     $('#renderingModeLightLink').click(function(event) {
         event.preventDefault();
