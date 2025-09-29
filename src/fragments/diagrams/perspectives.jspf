@@ -23,11 +23,9 @@
                 };
             }));
 
-            openNavigationModal(options, function(perspective) {
+            openNavigationModal(options, structurizr.diagram.getPerspective(), function(perspective) {
                 if (perspective.length > 0) {
-                    clearTags(false);
-                    structurizr.diagram.changePerspective(perspective);
-                    structurizr.diagram.renderPerspectiveOrTagsFilter();
+                    structurizr.diagram.showPerspective(perspective);
                     tooltip.disable();
                     toggleTooltip();
 
@@ -35,17 +33,22 @@
                     $('#perspectivesOffButton').removeClass('hidden');
                     $('#perspectivesOffButton').attr('title', 'Perspective: ' + perspective);
                 } else {
-                    structurizr.diagram.clearPerspective();
-                    structurizr.diagram.renderPerspectiveOrTagsFilter();
-                    tooltip.enable();
-                    toggleTooltip();
-
-                    $('#perspectivesOnButton').removeClass('hidden');
-                    $('#perspectivesOffButton').addClass('hidden');
-                    $('#perspectivesOffButton').attr('title', 'Perspectives');
+                    if (structurizr.diagram.hasPerspective()) {
+                        deactivatePerspective();
+                    }
                 }
             });
         }
+    }
+
+    function deactivatePerspective() {
+        structurizr.diagram.clearPerspective();
+        tooltip.enable();
+        toggleTooltip();
+
+        $('#perspectivesOnButton').removeClass('hidden');
+        $('#perspectivesOffButton').addClass('hidden');
+        $('#perspectivesOffButton').attr('title', 'Perspectives');
     }
 
 </script>

@@ -518,6 +518,28 @@ hr {
     padding: 5px;
 }
 
+#filterModal .tag {
+    padding: 5px 5px 5px 5px;
+    margin: 3px 3px 3px 3px;
+    border-radius: 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    display: inline-block;
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+}
+#filterModal .tagOn {
+    background: #aaaaaa;
+    color: #ffffff;
+    border: solid 1px #aaaaaa;
+}
+#filterModal .tagOff {
+    background: #ffffff;
+    color: #777777;
+    border: solid 1px #777777;
+}
+
 #quickFindModal .viewKey {
     font-size: 75%;
 }

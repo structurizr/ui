@@ -18,8 +18,6 @@
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-diagram${structurizrConfiguration.versionSuffix}.js"></script>
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-healthcheck${structurizrConfiguration.versionSuffix}.js"></script>
 
-<link href="${structurizrConfiguration.cdnUrl}/css/structurizr-diagram.css" rel="stylesheet" media="screen" />
-
 <c:if test="${structurizrConfiguration.type ne 'lite'}">
 <script type="text/javascript" src="${structurizrConfiguration.cdnUrl}/js/structurizr-lock${structurizrConfiguration.versionSuffix}.js"></script>
 </c:if>
@@ -175,7 +173,7 @@
 <%@ include file="/WEB-INF/fragments/diagrams/export.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/publish.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/perspectives.jspf" %>
-<%@ include file="/WEB-INF/fragments/diagrams/tags.jspf" %>
+<%@ include file="/WEB-INF/fragments/diagrams/filter.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/autolayout.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/no-views-model.jspf" %>
 <%@ include file="/WEB-INF/fragments/diagrams/lasso.jspf" %>
@@ -350,13 +348,13 @@
 
         initEmbed();
         initPerspectives();
-        initTags();
+        initFilter();
         initAutoLayout();
         initReview();
         healthCheck = new structurizr.HealthCheck(updateHealth);
 
         <c:if test="${not empty perspective}">
-        structurizr.diagram.changePerspective('<c:out value="${perspective}" />');
+        structurizr.diagram.showPerspective('<c:out value="${perspective}" />');
         tooltip.disable();
         toggleTooltip();
         </c:if>
@@ -545,7 +543,7 @@
         const view = structurizr.diagram.getCurrentViewOrFilter();
         const viewKey = view.key;
 
-        if (structurizr.workspace.id < 1 || structurizr.diagram.hasPerspective() || structurizr.diagram.hasTags()) {
+        if (structurizr.workspace.id < 1 || structurizr.diagram.hasPerspective() || structurizr.diagram.getFilter().active) {
             // don't generate thumbnail
         } else {
             structurizr.diagram.exportCurrentThumbnailToPNG(function (thumbnail) {

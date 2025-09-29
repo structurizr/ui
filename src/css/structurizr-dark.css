@@ -167,6 +167,17 @@ hr {
     border: solid 1px #333333;
 }
 
+#filterModal .tagOn {
+    background: #aaaaaa;
+    color: #ffffff;
+    border: solid 1px #aaaaaa;
+}
+#filterModal .tagOff {
+    background: #111111;
+    color: #aaaaaa;
+    border: solid 1px #aaaaaa;
+}
+
 #documentationContent table th, #decisionLogContent table th {
     background: #333333;
 }

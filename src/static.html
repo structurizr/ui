@@ -177,7 +177,7 @@
 
         const perspective = getParameter('perspective');
         if (perspective) {
-            structurizr.diagram.changePerspective(perspective);
+            structurizr.diagram.showPerspective(perspective);
             tooltip.disable();
             toggleTooltip();
         }
@@ -578,15 +578,13 @@
                 };
             }));
 
-            openNavigationModal(options, function(perspective) {
+            openNavigationModal(options, structurizr.diagram.getPerspective(), function(perspective) {
                 if (perspective.length > 0) {
-                    structurizr.diagram.changePerspective(perspective);
-                    structurizr.diagram.renderPerspectiveOrTagsFilter();
+                    structurizr.diagram.showPerspective(perspective);
                     tooltip.disable();
                     toggleTooltip();
                 } else {
                     structurizr.diagram.clearPerspective();
-                    structurizr.diagram.renderPerspectiveOrTagsFilter();
                     tooltip.enable();
                     toggleTooltip();
                 }

@@ -29,12 +29,10 @@
             <button id="diagramKeyButton" class="btn btn-default" title="Diagram key [i]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/info-circle.svg" class="icon-btn" /></button>
             <button id="diagramTooltipOnButton" class="btn btn-default diagramTooltipOnButton" title="Diagram tooltips on [t]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/chat-square-text.svg" class="icon-btn" /></button>
             <button id="diagramTooltipOffButton" class="btn btn-default hidden diagramTooltipOffButton" title="Diagram tooltips off [t]"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/chat-square-text-fill.svg" class="icon-btn" /></button>
-            <button id="tagsOnButton" class="btn btn-default"  title="Tags"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/tags.svg" class="icon-btn" /></button>
-            <button id="tagsOffButton" class="btn btn-default hidden" title="Tags"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/tags-fill.svg" class="icon-btn" /></button>
+            <button id="filterOnButton" class="btn btn-default"  title="Filter"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/funnel.svg" class="icon-btn" /></button>
+            <button id="filterOffButton" class="btn btn-default hidden" title="Filter"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/funnel-fill.svg" class="icon-btn" /></button>
             <button id="perspectivesOnButton" class="btn btn-default hidden" title="Perspectives"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/binoculars.svg" class="icon-btn" /></button>
             <button id="perspectivesOffButton" class="btn btn-default hidden" title="Perspectives"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/binoculars-fill.svg" class="icon-btn" /></button>
-            <button id="showDiagramScopeOnButton" class="btn btn-default hidden" title="Toggle diagram scope on"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/pin-map.svg" class="icon-btn" /></button>
-            <button id="showDiagramScopeOffButton" class="btn btn-default hidden" title="Toggle diagram scope off"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/pin-map-fill.svg" class="icon-btn" /></button>
             <button id="healthOnButton" class="btn btn-default hidden" title="Health checks"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/heart-pulse.svg" class="icon-btn" /></button>
             <button id="healthOffButton" class="btn btn-default hidden" title="Health checks"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/heart-pulse-fill.svg" class="icon-btn" /></button>
             <button id="explorationsButton" class="btn btn-default hidden" title="Explore"><img src="${structurizrConfiguration.cdnUrl}/bootstrap-icons/diagram-3.svg" class="icon-btn" /></button>
@@ -43,8 +41,14 @@
             $('#diagramKeyButton').click(function() { showKey(); });
             $('#diagramTooltipOnButton').click(function() { toggleTooltip(); });
             $('#diagramTooltipOffButton').click(function() { toggleTooltip(); });
-            $('#tagsOnButton').click(function() { openTagsModal(); });
-            $('#tagsOffButton').click(function() { openTagsModal(); });
+            $('#filterOnButton').click(function() {
+                openFilterModal();
+                $('#filterOnButton').addClass('hidden');
+                $('#filterOffButton').removeClass('hidden');
+            });
+            $('#filterOffButton').click(function() {
+                openFilterModal();
+            });
             $('#perspectivesOnButton').click(function() { openPerspectivesModal(); });
             $('#perspectivesOffButton').click(function() { openPerspectivesModal(); });
             $('#showDiagramScopeOnButton').click(function() { showDiagramScope(true); });
