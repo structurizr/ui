@@ -5532,6 +5532,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         hideAllLines('1.0');
         hideAllElements('1.0');
         unfadeAllElements();
+        runFilter();
 
         if (this.currentViewIsDynamic()) {
             linesToAnimate = undefined;
