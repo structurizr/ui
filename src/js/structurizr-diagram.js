@@ -108,7 +108,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     var onKeyDownEventHandler;
     var onKeyPressEventHandler;
 
-    var taintedCanvasErrorImageAsDataUri;
     var imageMetadata = undefined;
     var imagePreloadAttempts = 0;
     var diagramRendered = false;
@@ -182,8 +181,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         });
 
         tags.forEach(function(tag) {
-            var icon = undefined;
-
             structurizr.ui.themes.forEach(function(theme) {
                 theme.elements.forEach(function(elementStyle) {
                     if (elementStyle.tag === tag && elementStyle.icon) {
@@ -226,18 +223,6 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
     }
 
     function preloadImages() {
-        const taintedCanvasErrorImage = new Image();
-        taintedCanvasErrorImage.onload = function() {
-            const canvas = document.createElement('canvas');
-            canvas.width = this.naturalWidth;
-            canvas.height = this.naturalHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(this, 0, 0);
-
-            taintedCanvasErrorImageAsDataUri = canvas.toDataURL('image/png');
-        };
-        taintedCanvasErrorImage.src = '/static/img/tainted-canvas-error.png';
-
         if (imageMetadata === undefined) {
             imageMetadata = [];
 
@@ -253,13 +238,20 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
             imageMetadata.forEach(function(im) {
                 const image = new Image();
-                image.setAttribute('crossorigin', 'anonymous');
+                image.crossOrigin = 'anonymous';
                 image.addEventListener('load', function () {
                     im.width = this.naturalWidth;
                     im.height = this.naturalHeight;
                     im.ratio = (this.naturalWidth / this.naturalHeight);
                     im.loaded = true;
                     im.error = false;
+
+                    var canvas = document.createElement('canvas');
+                    var ctx = canvas.getContext('2d');
+                    canvas.height = this.naturalHeight;
+                    canvas.width = this.naturalWidth;
+                    ctx.drawImage(this, 0, 0);
+                    im.dataURL = canvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG);
                 });
                 image.addEventListener('error', function (error) {
                     // there was an error loading the image, so ignore and continue
@@ -1757,7 +1749,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         if (configuration.icon && configuration.iconPosition !== 'Left') {
             const iconRefX = (((width - widthOfIcon) / 2) / width);
 
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
+            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = getImageMetadata(configuration.icon).dataURL;
             cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
             cell.attributes.attrs['.structurizrIcon']['height'] = heightOfIcon;
             cell.attributes.attrs['.structurizrIcon']['ref-x'] = iconRefX;
@@ -1801,7 +1793,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                     iconY = nameY + 3;
                 }
 
-                cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
+                cell.attributes.attrs['.structurizrIcon']['xlink:href'] = getImageMetadata(configuration.icon).dataURL;
                 cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
                 cell.attributes.attrs['.structurizrIcon']['height'] = heightOfIcon;
                 cell.attributes.attrs['.structurizrIcon']['x'] = horizontalOffset + horizontalPadding;
@@ -2973,7 +2965,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
                 size: { width: getImageRatio(icon) * diagramMetadataHeight, height: diagramMetadataHeight },
                 attrs: {
                     image: {
-                        'xlink:href': icon,
+                        'xlink:href': getImageMetadata(icon).dataURL,
                         width: getImageRatio(icon) * diagramMetadataHeight,
                         height: diagramMetadataHeight
                     }
@@ -3781,7 +3773,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             var iconRatio = getImageRatio(icon);
             var widthOfIcon = (heightOfIcon * iconRatio);
 
-            boundary.attributes.attrs['.structurizrIcon']['xlink:href'] = icon;
+            boundary.attributes.attrs['.structurizrIcon']['xlink:href'] = getImageMetadata(icon).dataURL;
             boundary.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
             boundary.attributes.attrs['.structurizrIcon']['height'] = heightOfIcon;
             boundary.attributes.attrs['.structurizrIcon']['opacity'] = (elementStyle.opacity/100);
@@ -3880,7 +3872,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
             var iconRatio = getImageRatio(configuration.icon);
             var widthOfIcon = (heightOfIcon * iconRatio);
 
-            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = configuration.icon;
+            cell.attributes.attrs['.structurizrIcon']['xlink:href'] = getImageMetadata(configuration.icon).dataURL;
             cell.attributes.attrs['.structurizrIcon']['width'] = widthOfIcon;
             cell.attributes.attrs['.structurizrIcon']['height'] = heightOfIcon;
             cell.attributes.attrs['.structurizrIcon']['opacity'] = (configuration.opacity/100);
@@ -4848,7 +4840,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         if (icon) {
             var iconWidth = (getImageRatio(icon) * heightOfIcon);
-            svg += '<image xlink:href="' + icon + '" x="' + (offsetX + ((width-iconWidth)/2)) + '" y="' + iconY + '" width="' + iconWidth + '" height="' + heightOfIcon + '" opacity="' + (opacity ? (opacity/100) : 1) + '"/>';
+            svg += '<image xlink:href="' + getImageMetadata(icon).dataURL + '" x="' + (offsetX + ((width-iconWidth)/2)) + '" y="' + iconY + '" width="' + iconWidth + '" height="' + heightOfIcon + '" opacity="' + (opacity ? (opacity/100) : 1) + '"/>';
         }
 
         return svg;
@@ -4940,56 +4932,29 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         // remove any control characters (these shouldn't be there anyway, but...)
         svgMarkup = svgMarkup.replace(/[\x00-\x19]+/g, "");
 
-        return svgToPng(svgMarkup, canvas.outerWidth(), canvas.outerHeight(), callback);
+        return svgToPng(svgMarkup, exportedWidth, exportedHeight, callback);
     }
 
     function svgToPng(svgMarkup, width, height, callback) {
-        const taintedCanvasMessage = 'tainted canvases may not be exported';
-
         const canvas = document.createElement("canvas");
         canvas.width = width;
         canvas.height = height;
 
-        const canvasContext = canvas.getContext("2d");
-
-        if (callback) {
-            canvg(canvas,
-                svgMarkup,
-                {
-                    useCORS: true,
-                    renderCallback: function () {
-                        canvasContext.globalCompositeOperation = "destination-over";
-                        canvasContext.fillStyle = canvasColor;
-                        canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-
-                        try {
-                            const png = canvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG);
-                            callback(png);
-                        } catch (e) {
-                            console.log(e);
-                            if (e.message.toLowerCase().indexOf(taintedCanvasMessage) > 0) {
-                                callback(taintedCanvasErrorImageAsDataUri);
-                            }
-                        }
-                    }
-                });
-        } else {
-            canvg(canvas, svgMarkup, { useCORS: true });
-
-            canvasContext.globalCompositeOperation = "destination-over";
-            canvasContext.fillStyle = canvasColor;
-            canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-
+        const img = new Image();
+        img.onload = function() {
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
             try {
-                return canvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG);
+                const png = canvas.toDataURL(structurizr.constants.CONTENT_TYPE_IMAGE_PNG);
+                callback(png);
             } catch (e) {
                 console.log(e);
-                if (e.message.toLowerCase().indexOf(taintedCanvasMessage) > 0) {
-                    return taintedCanvasErrorImageAsDataUri;
-                }
             }
-        }
+        };
+
+        img.src = 'data:image/svg+xml;base64,' + btoa(svgMarkup);
     }
+
 
     this.exportCurrentDiagramToSVG = function(includeDiagramMetadata, includeFont) {
         var currentScale = scale;
@@ -5074,20 +5039,11 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         this.zoomTo(1.0);
         $(".structurizrNavigation").attr('display', 'none');
 
-        if (callback) {
-            convertSvgToPng(includeDiagramMetadata, crop, function(png) {
-                $(".structurizrNavigation").attr('display', 'block');
-                self.zoomTo(currentScale);
-                callback(png);
-            });
-        } else {
-            var png = convertSvgToPng(includeDiagramMetadata, crop);
-
+        convertSvgToPng(includeDiagramMetadata, crop, function(png) {
             $(".structurizrNavigation").attr('display', 'block');
-            this.zoomTo(currentScale);
-
-            return png;
-        }
+            self.zoomTo(currentScale);
+            callback(png);
+        });
     };
 
     this.exportCurrentDiagramKeyToPNG = function(callback) {
