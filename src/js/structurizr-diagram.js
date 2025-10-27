@@ -3722,11 +3722,12 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
         const cornerRadius = (elementStyle.shape === 'Box' ? 0 : 20);
 
-        var heightOfIcon = elementStyle.fontSize;
+        var heightOfIcon = (elementStyle.fontSize * nameFontSizeDifferenceRatio);
         if (metadata !== undefined) {
-            heightOfIcon = heightOfIcon * 2;
             if (elementStyle !== undefined && elementStyle.metadata !== undefined && elementStyle.metadata === false) {
                 metadata = '';
+            } else {
+                heightOfIcon = (heightOfIcon * 1.2) + (elementStyle.fontSize * metadataFontSizeDifferenceRatio);
             }
         } else {
             metadata = '';
@@ -3816,13 +3817,13 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         }
 
         var metadata = '';
-        var heightOfIcon = configuration.fontSize;
+        var heightOfIcon = (configuration.fontSize * nameFontSizeDifferenceRatio);
 
         if (configuration.metadata !== undefined && configuration.metadata === false) {
             metadata = ''
         } else {
             metadata = structurizr.ui.getMetadataForElement(element, true);
-            heightOfIcon = heightOfIcon * 2;
+            heightOfIcon = (heightOfIcon * 1.2) + (configuration.fontSize * metadataFontSizeDifferenceRatio);
         }
 
         var cell = new structurizr.shapes.DeploymentNode({
