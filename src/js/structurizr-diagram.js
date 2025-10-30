@@ -4904,25 +4904,29 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         };
     }
 
-    function convertSvgToPng(includeDiagramMetadata, crop, callback) {
+    function convertDiagramToPNG(includeDiagramMetadata, crop, callback) {
         var svgMarkup = self.exportCurrentDiagramToSVG(includeDiagramMetadata, false);
 
-        var exportedWidth = diagramWidth;
-        var exportedHeight = diagramHeight;
-
+        var contentArea;
         if (crop === true) {
-            // find content area
-            var contentArea = findContentArea(true, 50);
-
-            exportedWidth = contentArea.maxX - contentArea.minX;
-            exportedHeight = contentArea.maxY - contentArea.minY;
-
-            var viewbox = ' viewBox="' + contentArea.minX + " " + contentArea.minY + " " + exportedWidth + " " + exportedHeight + '"';
-            var croppedSvgOpeningTag = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="' + exportedWidth +'" height="' + exportedHeight + '" style="width: ' + exportedWidth + 'px; height: ' + exportedHeight + 'px; background: #ffffff"' + viewbox + '>';
-
-            svgMarkup = svgMarkup.substring(svgMarkup.indexOf('>') + 1, svgMarkup.length);
-            svgMarkup = croppedSvgOpeningTag + svgMarkup;
+            contentArea = findContentArea(true, 50);
+        } else {
+            contentArea = {
+                minX: 0,
+                minY: 0,
+                maxX: diagramWidth,
+                maxY: diagramHeight
+            }
         }
+
+        const width = contentArea.maxX - contentArea.minX;
+        const height = contentArea.maxY - contentArea.minY;
+
+        const viewbox = ' viewBox="' + contentArea.minX + " " + contentArea.minY + " " + width + " " + height + '"';
+        const svgOpeningTag = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="' + width +'" height="' + height + '" style="width: ' + width + 'px; height: ' + height + 'px; background: ' + canvasColor + '"' + viewbox + '>';
+
+        // replace opening tag with dimensions (some browsers seem to require this)
+        svgMarkup = svgOpeningTag + svgMarkup.substring(svgMarkup.indexOf('>') + 1, svgMarkup.length);
 
         // this hides the handles used to change vertices
         svgMarkup = svgMarkup.replace(/class="marker-vertices"/g, 'class="marker-vertices" display="none"');
@@ -4933,7 +4937,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         // remove any control characters (these shouldn't be there anyway, but...)
         svgMarkup = svgMarkup.replace(/[\x00-\x19]+/g, "");
 
-        return svgToPng(svgMarkup, exportedWidth, exportedHeight, callback);
+        return svgToPng(svgMarkup, width, height, callback);
     }
 
     function svgToPng(svgMarkup, width, height, callback) {
@@ -5040,7 +5044,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
         this.zoomTo(1.0);
         $(".structurizrNavigation").attr('display', 'none');
 
-        convertSvgToPng(includeDiagramMetadata, crop, function(png) {
+        convertDiagramToPNG(includeDiagramMetadata, crop, function(png) {
             $(".structurizrNavigation").attr('display', 'block');
             self.zoomTo(currentScale);
             callback(png);
@@ -5057,7 +5061,7 @@ structurizr.ui.Diagram = function(id, diagramIsEditable, constructionCompleteCal
 
     this.exportCurrentThumbnailToPNG = function(callback) {
         try {
-            convertSvgToPng(true, false, function(exportedImage) {
+            convertDiagramToPNG(true, false, function(exportedImage) {
                 $(".structurizrNavigation").attr('display', 'block');
                 resizeImage(exportedImage, thumbnailWidth, Math.floor(diagramHeight / (diagramWidth / thumbnailWidth)), callback);
             });
