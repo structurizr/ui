@@ -57,7 +57,7 @@
     var link;
     var nodeHighlighted;
 
-    var viewKey = '<c:out value="${view}" />';
+    var viewKey = decodeURIComponent('<c:out value="${view}" />');
     var view;
 
     const relationshipsBySourceAndDestination = [];
@@ -83,7 +83,7 @@
 
         if (viewKey.length === 0) {
             if (window.location.hash.length > 1) {
-                viewKey = window.location.hash.substring(1);
+                viewKey = decodeURIComponent(window.location.hash.substring(1));
             } else {
                 viewKey = structurizr.workspace.getViews()[0].key;
             }
