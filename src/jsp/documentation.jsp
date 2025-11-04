@@ -678,8 +678,8 @@
                             var embeddedDiagramDiv = exportWindow.document.createElement("div");
                             embeddedDiagramDiv.className = 'img-thumbnail';
 
-                            var svgMarkupForDiagram = iframe.contentWindow.structurizr.diagram.exportCurrentDiagramToSVG(true, false);
-                            var svgMarkupForDiagramKey = iframe.contentWindow.structurizr.diagram.exportCurrentDiagramKeyToSVG(false);
+                            var svgMarkupForDiagram = iframe.contentWindow.structurizr.diagram.exportCurrentDiagramToSVG(true);
+                            var svgMarkupForDiagramKey = iframe.contentWindow.structurizr.diagram.exportCurrentDiagramKeyToSVG();
 
                             var parentDiv = iframe.parentNode;
                             embeddedDiagramDiv.innerHTML = svgMarkupForDiagram + '<div class="diagramKey">' + svgMarkupForDiagramKey + '</div>';

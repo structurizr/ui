@@ -180,7 +180,7 @@
     progressMessage.show('<p>Loading workspace...</p>');
 
     const DARK_MODE_COOKIE_NAME = 'structurizr.darkMode';
-    structurizr.ui.DEFAULT_FONT_NAME = "Open Sans";
+    structurizr.ui.DEFAULT_FONT_NAME = "Open Sans, Tahoma, Arial";
 
     $('#renderingModeLightLink').click(function(event) {
         event.preventDefault();
@@ -292,14 +292,14 @@
                     options.includeMetadata = true;
                 }
 
-                var svg = structurizr.diagram.exportCurrentDiagramToSVG(options.includeMetadata, true);
+                var svg = structurizr.diagram.exportCurrentDiagramToSVG(options.includeMetadata);
                 svg = replaceLocalThemes(svg);
 
                 return svg;
             };
 
             this.exportCurrentDiagramKeyToSVG = function() {
-                var svg = structurizr.diagram.exportCurrentDiagramKeyToSVG(true);
+                var svg = structurizr.diagram.exportCurrentDiagramKeyToSVG();
                 svg = replaceLocalThemes(svg);
 
                 return svg;
